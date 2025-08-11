@@ -10,13 +10,8 @@
 @endpush
 
 @section('content')
-    <!-- Hero Section -->
 
 
-    <!-- Library Features -->
-
-
-    <!-- Call to Action -->
 
 @endsection
 

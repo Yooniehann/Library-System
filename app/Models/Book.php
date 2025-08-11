@@ -16,4 +16,6 @@ class Book extends Model
         'publisher_id',       // Foreign key
         'category_id'         // Foreign key
     ];
+    
 }
+

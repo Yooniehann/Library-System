@@ -3,24 +3,184 @@
 @section('title', 'Welcome to Our Library')
 
 @push('styles')
-    <!-- Any page-specific styles would go here -->
-    <style>
-        
-    </style>
+<style>
+    /* Color Definitions */
+    .bg-primary-orange { background-color: #EEBA30 !important; }
+    .text-primary-orange { color: #EEBA30 !important; }
+    .bg-dark-orange { background-color: #D3A625 !important; }
+    .text-dark-orange { color: #D3A625 !important; }
+    .from-primary-orange { --tw-gradient-from: #EEBA30 !important; }
+    .to-dark-orange { --tw-gradient-to: #D3A625 !important; }
+    
+    /* Book Grid */
+    .book-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+        gap: 2rem;
+    }
+    
+    /* Book Card */
+    .book-card {
+        background: white;
+        border-radius: 8px;
+        overflow: hidden;
+        transition: all 0.3s ease;
+        box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    }
+    .book-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 20px rgba(0,0,0,0.15);
+    }
+    
+    /* Section Styling */
+    .section-title {
+        font-family: 'Playfair Display', serif;
+        font-size: 2rem;
+        font-weight: 700;
+        margin-bottom: 2rem;
+        padding-bottom: 0.5rem;
+        border-bottom: 2px solid #EEBA30;
+        display: inline-block;
+    }
+    
+    /* Buttons */
+    .btn-primary {
+        background-color: #EEBA30;
+        color: black;
+        padding: 0.75rem 1.5rem;
+        border-radius: 6px;
+        font-weight: 600;
+        transition: all 0.3s ease;
+    }
+    .btn-primary:hover {
+        background-color: #D3A625;
+    }
+    .btn-outline {
+        border: 2px solid rgb(255, 255, 255);
+        color: rgb(255, 255, 255);
+        padding: 0.75rem 1.5rem;
+        border-radius: 6px;
+        font-weight: 600;
+        transition: all 0.3s ease;
+    }
+    .btn-outline:hover {
+        background-color: #eef0f4;
+        color:black;
+    }
+
+     /* Testimonial */
+    .testimonial-card {
+        background: linear-gradient(145deg, #1a1a1a 0%, #2d2d2d 100%);
+        border-radius: 12px;
+        padding: 2rem;
+        position: relative;
+        transition: all 0.3s ease;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        border-left: 4px solid #EEBA30;
+        display: flex;
+        flex-direction: column;
+        height: 100%;
+    }
+    .testimonial-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 15px 35px rgba(0,0,0,0.4);
+    }
+    .testimonial-quote {
+        position: relative;
+        font-size: 1.1rem;
+        line-height: 1.8;
+        padding-left: 1.5rem;
+        margin-bottom: 1.5rem;
+        flex-grow: 1;
+    }
+    .testimonial-quote:before {
+        content: '"';
+        position: absolute;
+        left: 0;
+        top: -0.5rem;
+        font-size: 3rem;
+        color: rgba(238, 186, 48, 0.2);
+        font-family: serif;
+    }
+    .testimonial-author {
+        display: flex;
+        align-items: center;
+        margin-top: auto; /* Pushes author to bottom */
+        padding-top: 1.5rem;
+        border-top: 1px solid rgba(238, 186, 48, 0.2);
+    }
+    .testimonial-avatar {
+        width: 50px;
+        height: 50px;
+        border-radius: 50%;
+        background-color: #EEBA30;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-right: 1rem;
+        color: black;
+        font-weight: bold;
+        font-size: 1.2rem;
+        flex-shrink: 0;
+    }
+    .testimonial-author-info {
+        text-align: left;
+    }
+    .testimonial-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 2rem;
+        align-items: stretch;
+    }
+
+    /* Membership Cards */
+    .membership-card {
+        background: white;
+        border-radius: 10px;
+        overflow: hidden;
+        box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+        transition: all 0.3s ease;
+    }
+    .membership-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+    }
+    .membership-header {
+        background-color: #EEBA30;
+        padding: 1.5rem;
+        text-align: center;
+    }
+    .membership-popular {
+        position: absolute;
+        width: 150px;
+        overflow: hidden;
+        top: 12px;
+        right: -32px;
+        background-color: #f8f7f5;
+        color: rgb(21, 14, 14);
+        padding: 0.25rem 2rem;
+        font-size: 0.8rem;
+        font-weight: 600;
+        transform:rotate(30deg);
+    }
+</style>
 @endpush
 
 @section('content')
 
     <!-- Hero Section -->
-    <section class="bg-gradient-to-r from-primary-orange to-dark-orange text-white py-20 px-4 mb-16">
+    <section class="bg-gradient-to-r from-primary-orange to-dark-orange text-white py-20 px-4">
         <div class="container mx-auto text-center max-w-6xl">
-            <h1 class="text-4xl md:text-6xl font-playfair mb-6 font-bold">Welcome to Our Library</h1>
+            <h1 class="text-4xl md:text-6xl font-bold mb-6" style="font-family: 'Playfair Display', serif;">Welcome to Our Library</h1>
             <p class="text-xl md:text-2xl mb-8 max-w-3xl mx-auto leading-relaxed">
-                Where stories come to life and knowledge finds its home. Explore our vast collection of over 50,000 books, from timeless classics to cutting-edge research.
+                Discover your next great read from our collection of 50,000+ books
             </p>
             <div class="relative max-w-xl mx-auto">
-                <input type="text" placeholder="Search by title, author, or ISBN..." 
-                       class="w-full py-4 px-6 rounded-full text-gray-800 shadow-lg focus:outline-none focus:ring-2 focus:ring-black">
+                <input 
+                    type="text" 
+                    placeholder="Search by title, author, or ISBN..." 
+                    class="w-full py-4 px-6 rounded-full text-gray-800 shadow-lg focus:outline-none focus:ring-2 focus:ring-black"
+                >
                 <button class="absolute right-3 top-1/2 transform -translate-y-1/2 bg-black text-primary-orange p-2 rounded-full hover:bg-gray-800 transition">
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
@@ -31,229 +191,589 @@
     </section>
 
     <!-- Library Introduction -->
-    <section class="container mx-auto px-4 mb-16 max-w-6xl">
-        <div class="bg-white p-8 md:p-12 rounded-xl shadow-lg">
-            <h2 class="text-3xl font-playfair mb-6 text-center font-bold">About Our Library</h2>
-            <div class="grid md:grid-cols-2 gap-8 items-center">
-                <div>
-                    <p class="mb-4 text-lg leading-relaxed">
-                        Founded in 1985, our libray has grown from a small community library to one of the region's premier knowledge centers. We serve over 10,000 members annually with:
+    <section class="py-16">
+        <div class="text-white container mx-auto px-4 max-w-6xl">
+            <div class="flex flex-col md:flex-row gap-12 items-center">
+                <div class="md:w-1/2">
+                    <h2 class="section-title">About Our Library</h2>
+                    <p class="text-lg mb-6">
+                        Founded in 1985, Lux Library serves as a cultural hub for our community with:
                     </p>
+                    <ul class="space-y-3 mb-8">
+                        <li class="flex items-start">
+                            <span class="text-primary-orange mr-3 text-xl">✓</span>
+                            <span class="text-lg">50,000+ books across all genres</span>
+                        </li>
+                        <li class="flex items-start">
+                            <span class="text-primary-orange mr-3 text-xl">✓</span>
+                            <span class="text-lg">State-of-the-art study spaces</span>
+                        </li>
+                        <li class="flex items-start">
+                            <span class="text-primary-orange mr-3 text-xl">✓</span>
+                            <span class="text-lg">Weekly community events</span>
+                        </li>
+                    </ul>
+                    <div class="flex flex-wrap gap-4">
+                        <a href="#" class="btn-primary">Become a Member</a>
+                        <a href="#" class="btn-outline">Take a Tour</a>
+                    </div>
+                </div>
+                <div class="md:w-1/2">
+                    <img src="https://images.unsplash.com/photo-1589998059171-988d887df646?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80" 
+                         alt="Library interior" 
+                         class="rounded-xl shadow-xl w-full h-auto">
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Membership Plans Section -->
+    <section class="py-16">
+    <div class="container mx-auto px-4 max-w-6xl">
+        <h2 class="section-title text-white">Membership Plans</h2>
+        <p class="text-lg text-center mb-12 max-w-3xl mx-auto text-primary-orange">
+            Choose the perfect membership plan for your reading needs
+        </p>
+        
+        <div class="grid md:grid-cols-3 gap-8 items-end">
+            <!-- Student Membership -->
+            <div class="membership-card relative">
+                <div class="membership-header">
+                    <h3 class="text-xl font-bold text-black">Student</h3>
+                    <p class="text-gray-800">Ideal for students of all ages</p>
+                </div>
+                <div class="p-6">
+                    <div class="text-center mb-6">
+                        <span class="text-4xl font-bold text-black">$5</span>
+                        <span class="text-gray-600">/month</span>
+                        <p class="text-gray-600 mt-2">or $50 annually (save $10)</p>
+                    </div>
                     <ul class="space-y-3 mb-6">
                         <li class="flex items-start">
                             <span class="text-primary-orange mr-2">✓</span>
-                            <span>50,000+ physical books across all genres</span>
+                            <span>Borrow up to 10 books</span>
                         </li>
                         <li class="flex items-start">
                             <span class="text-primary-orange mr-2">✓</span>
-                            <span>15,000 e-books and audiobooks</span>
+                            <span>Access to study rooms</span>
                         </li>
                         <li class="flex items-start">
                             <span class="text-primary-orange mr-2">✓</span>
-                            <span>Quiet study areas and collaborative spaces</span>
+                            <span>Extended loan periods</span>
                         </li>
                         <li class="flex items-start">
                             <span class="text-primary-orange mr-2">✓</span>
-                            <span>Weekly events for all age groups</span>
+                            <span>Free printing (50 pages/month)</span>
                         </li>
                     </ul>
-                    <div class="flex space-x-4">
-                        <a href="#" class="bg-black text-primary-orange px-6 py-3 rounded-lg font-medium hover:bg-gray-800 transition">Become a Member</a>
-                        <a href="#" class="border-2 border-black px-6 py-3 rounded-lg font-medium hover:bg-gray-100 transition">Take a Virtual Tour</a>
+                    <button class="w-full btn-primary">Get Started</button>
+                </div>
+            </div>
+            
+            <!-- Public Membership (Popular)  -->
+            <div class="membership-card relative">
+                    <div class="membership-popular">Most Popular</div>
+                    <div class="membership-header text-black">
+                    <h3 class="text-xl font-bold">Public</h3>
+                    <p>For avid readers in our community</p>
+                </div>
+                <div class="p-6">
+                    <div class="text-center mb-6">
+                        <span class="text-4xl font-bold text-black">$10</span>
+                        <span class="text-gray-600">/month</span>
+                        <p class="text-gray-600 mt-2">or $100 annually (save $20)</p>
+                    </div>
+                    <ul class="space-y-3 mb-6">
+                        <li class="flex items-start">
+                            <span class="text-primary-orange mr-2">✓</span>
+                            <span>Borrow up to 20 books</span>
+                        </li>
+                        <li class="flex items-start">
+                            <span class="text-primary-orange mr-2">✓</span>
+                            <span>Priority access to new releases</span>
+                        </li>
+                        <li class="flex items-start">
+                            <span class="text-primary-orange mr-2">✓</span>
+                            <span>Free event tickets</span>
+                        </li>
+                        <li class="flex items-start">
+                            <span class="text-primary-orange mr-2">✓</span>
+                            <span>Access to premium online resources</span>
+                        </li>
+                        <li class="flex items-start">
+                            <span class="text-primary-orange mr-2">✓</span>
+                            <span>Free coffee during study sessions</span>
+                        </li>
+                    </ul>
+                    <button class="w-full btn-primary">Get Started</button>
+                </div>
+            </div>
+            
+            <!-- Family Membership -->
+            <div class="membership-card relative">
+                <div class="membership-header">
+                    <h3 class="text-xl font-bold text-black">Family</h3>
+                    <p class="text-gray-800">Perfect for households</p>
+                </div>
+                <div class="p-6">
+                    <div class="text-center mb-6">
+                        <span class="text-4xl font-bold text-black">$15</span>
+                        <span class="text-gray-600">/month</span>
+                        <p class="text-gray-600 mt-2">or $150 annually (save $30)</p>
+                    </div>
+                    <ul class="space-y-3 mb-6">
+                        <li class="flex items-start">
+                            <span class="text-primary-orange mr-2">✓</span>
+                            <span>Borrow up to 30 books</span>
+                        </li>
+                        <li class="flex items-start">
+                            <span class="text-primary-orange mr-2">✓</span>
+                            <span>Cards for up to 4 family members</span>
+                        </li>
+                        <li class="flex items-start">
+                            <span class="text-primary-orange mr-2">✓</span>
+                            <span>Free children's programs</span>
+                        </li>
+                        <li class="flex items-start">
+                            <span class="text-primary-orange mr-2">✓</span>
+                            <span>Discounted event tickets</span>
+                        </li>
+                    </ul>
+                    <button class="w-full btn-primary">Get Started</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+    <!-- New Arrivals Section -->
+    <section class="py-16">
+        <div class="text-white container mx-auto px-4 max-w-6xl">
+            <h2 class="section-title">New Arrivals</h2>
+            <div class="book-grid">
+                <!-- Book 1 -->
+                <div class="book-card">
+                    <img src="https://m.media-amazon.com/images/I/71FTb9X6wsL._AC_UF1000,1000_QL80_.jpg" 
+                         alt="The Great Gatsby" class="w-full h-72 object-cover">
+                    <div class="p-5">
+                        <h3 class="font-bold text-lg text-gray-700 mb-1">The Great Gatsby</h3>
+                        <p class="text-gray-600 mb-3">F. Scott Fitzgerald</p>
+                        <div class="flex justify-between items-center">
+                            <span class="text-primary-orange text-sm font-medium">New Release</span>
+                            <button class="btn-primary text-sm px-3 py-1">View</button>
+                        </div>
                     </div>
                 </div>
-                <div class="hidden md:block">
-                    <img src="https://images.unsplash.com/photo-1589998059171-988d887df646?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80" 
-                         alt="Library interior" 
-                         class="rounded-lg shadow-xl w-full h-auto object-cover">
+                
+                <!-- Book 2 -->
+                <div class="book-card">
+                    <img src="https://m.media-amazon.com/images/I/81af+MCATTL._AC_UF1000,1000_QL80_.jpg" 
+                         alt="Atomic Habits" class="w-full h-72 object-cover">
+                    <div class="p-5">
+                        <h3 class="font-bold text-lg text-gray-700 mb-1">Atomic Habits</h3>
+                        <p class="text-gray-600 mb-3">James Clear</p>
+                        <div class="flex justify-between items-center">
+                            <span class="text-primary-orange text-sm font-medium">New Release</span>
+                            <button class="btn-primary text-sm px-3 py-1">View</button>
+                        </div>
+                    </div>
                 </div>
+                
+                <!-- Book 3 -->
+                <div class="book-card">
+                    <img src="https://m.media-amazon.com/images/I/71UwSHSZRnS._AC_UF1000,1000_QL80_.jpg" 
+                         alt="Educated" class="w-full h-72 object-cover">
+                    <div class="p-5">
+                        <h3 class="font-bold text-lg text-gray-700 mb-1">Educated</h3>
+                        <p class="text-gray-600 mb-3">Tara Westover</p>
+                        <div class="flex justify-between items-center">
+                            <span class="text-primary-orange text-sm font-medium">New Release</span>
+                            <button class="btn-primary text-sm px-3 py-1">View</button>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Book 4 -->
+                <div class="book-card">
+                    <img src="https://m.media-amazon.com/images/I/81bsw6fnUiL._AC_UF1000,1000_QL80_.jpg" 
+                         alt="The Silent Patient" class="w-full h-72 object-cover">
+                    <div class="p-5">
+                        <h3 class="font-bold text-lg text-gray-700 mb-1">The Silent Patient</h3>
+                        <p class="text-gray-600 mb-3">Alex Michaelides</p>
+                        <div class="flex justify-between items-center">
+                            <span class="text-primary-orange text-sm font-medium">New Release</span>
+                            <button class="btn-primary text-sm px-3 py-1">View</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="text-center mt-10">
+                <a href="#" class="btn-outline inline-block">View All New Arrivals</a>
             </div>
         </div>
     </section>
 
-    <!-- Featured Sections -->
-    <section class="container mx-auto px-4 mb-16 max-w-6xl">
-        <h2 class="text-3xl font-playfair mb-8 text-center font-bold">Explore Our Collection</h2>
-        
-        <div class="grid md:grid-cols-3 gap-8 mb-12">
-            <!-- New Arrivals -->
-            <div class="bg-white p-6 rounded-xl shadow-md hover:shadow-lg transition">
-                <div class="flex items-center mb-4">
-                    <div class="bg-primary-orange w-2 h-8 mr-3 rounded-full"></div>
-                    <h3 class="text-2xl font-playfair font-bold">New Arrivals</h3>
-                </div>
-                <p class="mb-4 text-gray-700">
-                    Discover our latest additions to the collection, updated weekly by our expert librarians.
-                </p>
-                <div class="space-y-4">
-                    <div class="flex items-start space-x-4">
-                        <img src="https://m.media-amazon.com/images/I/71FTb9X6wsL._AC_UF1000,1000_QL80_.jpg" 
-                             alt="Book cover" 
-                             class="w-16 h-20 object-cover rounded shadow">
-                        <div>
-                            <h4 class="font-semibold">The Great Gatsby</h4>
-                            <p class="text-sm text-gray-600">F. Scott Fitzgerald</p>
-                            <div class="text-xs text-primary-orange mt-1">Just added</div>
+    <!-- Bestsellers Section -->
+    <section class="py-16">
+        <div class="text-white container mx-auto px-4 max-w-6xl">
+            <h2 class="section-title">Bestsellers</h2>
+            <div class="book-grid">
+                <!-- Book 1 -->
+                <div class="book-card">
+                    <img src="https://m.media-amazon.com/images/I/71FxgtFKcQL._AC_UF1000,1000_QL80_.jpg" 
+                         alt="To Kill a Mockingbird" class="w-full h-72 object-cover">
+                    <div class="p-5">
+                        <h3 class="font-bold text-lg text-gray-700 mb-1">To Kill a Mockingbird</h3>
+                        <p class="text-gray-600 mb-3">Harper Lee</p>
+                        <div class="flex justify-between items-center">
+                            <span class="text-primary-orange text-sm font-medium">#1 Bestseller</span>
+                            <button class="btn-primary text-sm px-3 py-1">View</button>
                         </div>
                     </div>
-                    <!-- More books... -->
                 </div>
-                <a href="#" class="mt-4 inline-block text-black font-medium hover:text-dark-orange transition">
-                    View all new arrivals →
-                </a>
-            </div>
-            
-            <!-- Bestsellers -->
-            <div class="bg-white p-6 rounded-xl shadow-md hover:shadow-lg transition">
-                <div class="flex items-center mb-4">
-                    <div class="text-primary-orange w-2 h-8 mr-3 rounded-full"></div>
-                    <h3 class="text-2xl font-playfair font-bold">Bestsellers</h3>
-                </div>
-                <p class="mb-4 text-gray-700">
-                    The books our members can't put down. Updated monthly based on borrowing statistics.
-                </p>
-                <div class="space-y-4">
-                    <div class="flex items-start space-x-4">
-                        <img src="https://m.media-amazon.com/images/I/71FxgtFKcQL._AC_UF1000,1000_QL80_.jpg" 
-                             alt="Book cover" 
-                             class="w-16 h-20 object-cover rounded shadow">
-                        <div>
-                            <h4 class="font-semibold">To Kill a Mockingbird</h4>
-                            <p class="text-sm text-gray-600">Harper Lee</p>
-                            <div class="text-xs text-primary-orange mt-1">#1 this month</div>
+                
+                <!-- Book 2 -->
+                <div class="book-card">
+                    <img src="https://m.media-amazon.com/images/I/61ZewDE3beL._AC_UF1000,1000_QL80_.jpg" 
+                         alt="1984" class="w-full h-72 object-cover">
+                    <div class="p-5">
+                        <h3 class="font-bold text-lg text-gray-700 mb-1">1984</h3>
+                        <p class="text-gray-600 mb-3">George Orwell</p>
+                        <div class="flex justify-between items-center">
+                            <span class="text-primary-orange text-sm font-medium">Top 10</span>
+                            <button class="btn-primary text-sm px-3 py-1">View</button>
                         </div>
                     </div>
-                    <!-- More books... -->
                 </div>
-                <a href="#" class="mt-4 inline-block text-black font-medium hover:text-dark-orange transition">
-                    View all bestsellers →
-                </a>
-            </div>
-            
-            <!-- Events -->
-            <div class="bg-white p-6 rounded-xl shadow-md hover:shadow-lg transition">
-                <div class="flex items-center mb-4">
-                    <div class="bg-primary-orange w-2 h-8 mr-3 rounded-full"></div>
-                    <h3 class="text-2xl font-playfair font-bold">Upcoming Events</h3>
-                </div>
-                <p class="mb-4 text-gray-700">
-                    Join our vibrant community of readers and thinkers at these upcoming events.
-                </p>
-                <div class="space-y-4">
-                    <div class="border-l-4 border-primary-orange pl-4 py-2">
-                        <h4 class="font-semibold">Author Talk: Margaret Atwood</h4>
-                        <p class="text-sm text-gray-600">June 15 | 6:00 PM</p>
-                        <p class="text-sm mt-1">The award-winning author discusses her latest work.</p>
+                
+                <!-- Book 3 -->
+                <div class="book-card">
+                    <img src="https://m.media-amazon.com/images/I/71Q1tPupKjL._AC_UF1000,1000_QL80_.jpg" 
+                         alt="Pride and Prejudice" class="w-full h-72 object-cover">
+                    <div class="p-5">
+                        <h3 class="font-bold text-lg text-gray-700 mb-1">Pride and Prejudice</h3>
+                        <p class="text-gray-600 mb-3">Jane Austen</p>
+                        <div class="flex justify-between items-center">
+                            <span class="text-primary-orange text-sm font-medium">Top 10</span>
+                            <button class="btn-primary text-sm px-3 py-1">View</button>
+                        </div>
                     </div>
-                    <!-- More events... -->
                 </div>
-                <a href="#" class="mt-4 inline-block text-black font-medium hover:text-dark-orange transition">
-                    View all events →
-                </a>
+                
+                <!-- Book 4 -->
+                <div class="book-card">
+                    <img src="https://m.media-amazon.com/images/I/71X1p4TGlxL._AC_UF1000,1000_QL80_.jpg" 
+                         alt="The Hobbit" class="w-full h-72 object-cover">
+                    <div class="p-5">
+                        <h3 class="font-bold text-lg text-gray-700 mb-1">The Hobbit</h3>
+                        <p class="text-gray-600 mb-3">J.R.R. Tolkien</p>
+                        <div class="flex justify-between items-center">
+                            <span class="text-primary-orange text-sm font-medium">Top 10</span>
+                            <button class="btn-primary text-sm px-3 py-1">View</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="text-center mt-10">
+                <a href="#" class="btn-outline inline-block">View All Bestsellers</a>
             </div>
         </div>
     </section>
 
-    <!-- Staff Picks -->
-    <section class="container mx-auto px-4 mb-16 max-w-6xl">
-        <div class="text-center mb-10">
-            <h2 class="text-3xl font-playfair font-bold mb-2">Staff Picks</h2>
-            <p class="text-lg text-gray-600 max-w-2xl mx-auto">
-                Curated selections from our librarians who know our collection best. Updated seasonally with thematic recommendations.
+    <!-- Staff Picks Section -->
+    <section class="py-16">
+        <div class="text-white container mx-auto px-4 max-w-6xl">
+            <h2 class="section-title">Staff Picks</h2>
+            <p class="text-lg text-primary-orange text-center mb-12 max-w-3xl mx-auto">
+                Our librarians personally recommend these outstanding reads
             </p>
-        </div>
-        
-        <div class="grid grid-cols-2 md:grid-cols-4 gap-6">
-            <!-- Book 1 -->
-            <div class="bg-white rounded-xl overflow-hidden shadow-md hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1">
-                <div class="relative pb-[150%] overflow-hidden">
-                    <img src="https://m.media-amazon.com/images/I/61ZewDE3beL._AC_UF1000,1000_QL80_.jpg" 
-                         alt="1984 book cover" 
-                         class="absolute w-full h-full object-cover">
-                    <div class="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent"></div>
-                    <div class="absolute bottom-0 left-0 p-4">
-                        <span class="bg-primary-orange text-black text-xs font-bold px-2 py-1 rounded">Librarian's Choice</span>
-                    </div>
-                </div>
-                <div class="p-4">
-                    <h3 class="font-semibold text-lg mb-1">1984</h3>
-                    <p class="text-sm text-gray-600 mb-3">George Orwell</p>
-                    <div class="flex justify-between items-center">
-                        <div class="flex">
-                            <span class="text-primary-orange">★★★★★</span>
-                        </div>
-                        <button class="text-sm font-medium bg-black text-primary-orange px-3 py-1 rounded hover:bg-gray-800 transition">
-                            Reserve
-                        </button>
-                    </div>
-                </div>
-            </div>
-            <div class="bg-white rounded-xl overflow-hidden shadow-md hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1">
-                <div class="relative pb-[150%] overflow-hidden">
-                    <img src="https://m.media-amazon.com/images/I/61ZewDE3beL._AC_UF1000,1000_QL80_.jpg" 
-                         alt="1984 book cover" 
-                         class="absolute w-full h-full object-cover">
-                    <div class="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent"></div>
-                    <div class="absolute bottom-0 left-0 p-4">
-                        <span class="bg-primary-orange text-black text-xs font-bold px-2 py-1 rounded">Librarian's Choice</span>
-                    </div>
-                </div>
-                <div class="p-4">
-                    <h3 class="font-semibold text-lg mb-1">Book 2</h3>
-                    <p class="text-sm text-gray-600 mb-3">Author 2</p>
-                    <div class="flex justify-between items-center">
-                        <div class="flex">
-                            <span class="text-primary-orange">★★★★★</span>
-                        </div>
-                        <button class="text-sm font-medium bg-black text-primary-orange px-3 py-1 rounded hover:bg-gray-800 transition">
-                            Reserve
-                        </button>
-                    </div>
-                </div>
-            </div>
             
-            <!-- More books... -->
+            <div class="book-grid">
+                <!-- Book 1 -->
+                <div class="book-card">
+                    <img src="https://m.media-amazon.com/images/I/81bsw6fnUiL._AC_UF1000,1000_QL80_.jpg" 
+                         alt="The Silent Patient" class="w-full h-72 object-cover">
+                    <div class="p-5">
+                        <h3 class="font-bold text-lg text-gray-700 mb-1">The Silent Patient</h3>
+                        <p class="text-gray-600 mb-4">Alex Michaelides</p>
+                        <div class="bg-gray-100 p-3 rounded-lg">
+                            <p class="text-sm italic text-gray-700">
+                                "The twist left me speechless - couldn't put it down!"
+                            </p>
+                            <p class="text-primary-orange text-sm font-medium mt-2">- Sarah, Head Librarian</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Book 2 -->
+                <div class="book-card">
+                    <img src="https://m.media-amazon.com/images/I/71UwSHSZRnS._AC_UF1000,1000_QL80_.jpg" 
+                         alt="Educated" class="w-full h-72 object-cover">
+                    <div class="p-5">
+                        <h3 class="font-bold text-lg text-gray-700 mb-1">Educated</h3>
+                        <p class="text-gray-600 mb-4">Tara Westover</p>
+                        <div class="bg-gray-100 p-3 rounded-lg">
+                            <p class="text-sm italic text-gray-700">
+                                "A powerful memoir about resilience and self-discovery"
+                            </p>
+                            <p class="text-primary-orange text-sm font-medium mt-2">- David, Reference</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Book 3 -->
+                <div class="book-card">
+                    <img src="https://m.media-amazon.com/images/I/81af+MCATTL._AC_UF1000,1000_QL80_.jpg" 
+                         alt="Atomic Habits" class="w-full h-72 object-cover">
+                    <div class="p-5">
+                        <h3 class="font-bold text-lg text-gray-700 mb-1">Atomic Habits</h3>
+                        <p class="text-gray-600 mb-4">James Clear</p>
+                        <div class="bg-gray-100 p-3 rounded-lg">
+                            <p class="text-sm italic text-gray-700">
+                                "Changed how I approach personal growth - highly practical!"
+                            </p>
+                            <p class="text-primary-orange text-sm font-medium mt-2">- Michael, Tech</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Book 4 -->
+                <div class="book-card">
+                    <img src="https://m.media-amazon.com/images/I/71X1p4TGlxL._AC_UF1000,1000_QL80_.jpg" 
+                         alt="Where the Crawdads Sing" class="w-full h-72 object-cover">
+                    <div class="p-5">
+                        <h3 class="font-bold text-lg text-gray-700 mb-1">Where the Crawdads Sing</h3>
+                        <p class="text-gray-600 mb-4">Delia Owens</p>
+                        <div class="bg-gray-100 p-3 rounded-lg">
+                            <p class="text-sm italic text-gray-700">
+                                "Beautiful prose with a mystery that keeps you guessing"
+                            </p>
+                            <p class="text-primary-orange text-sm font-medium mt-2">- Emily, Fiction</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
     </section>
 
     <!-- Testimonials -->
-    <section class="bg-black text-primary-orange py-16 mb-16">
-        <div class="container mx-auto px-4 max-w-4xl">
-            <h2 class="text-3xl font-playfair mb-12 text-center font-bold">What Our Members Say</h2>
-            <div class="grid md:grid-cols-2 gap-8">
-                <div class="bg-gray-900 p-6 rounded-xl">
-                    <div class="flex items-center mb-4">
-                        <div class="w-12 h-12 rounded-full bg-primary-orange mr-4 flex items-center justify-center text-black font-bold">A</div>
-                        <div>
-                            <h4 class="font-semibold">Alex Johnson</h4>
-                            <p class="text-sm text-gray-400">Member since 2018</p>
-                        </div>
-                    </div>
-                    <p class="italic">
-                        "The staff recommendations are always spot on. I've discovered so many amazing books I would have never found on my own."
-                    </p>
+    <section class="bg-black text-white py-20">
+    <div class="container mx-auto px-4 max-w-6xl">
+        <div class="text-center">
+            <h2 class="text-3xl font-bold mb-6" style="font-family: 'Playfair Display', serif;">What Our Readers Say</h2>
+            <p class="text-xl text-primary-orange mb-12 max-w-3xl mx-auto">
+                Don't just take our word for it - hear from our community
+            </p>
+        </div>
+        
+        <div class="testimonial-grid">
+            <div class="testimonial-card">
+                <div class="testimonial-quote">
+                    This library has completely transformed my reading habits. The staff recommendations are always spot on! I've discovered so many new favorites.
                 </div>
-                div class="bg-gray-900 p-6 rounded-xl">
-                    <div class="flex items-center mb-4">
-                        <div class="w-12 h-12 rounded-full bg-primary-orange mr-4 flex items-center justify-center text-black font-bold">A</div>
-                        <div>
-                            <h4 class="font-semibold">Alex Johnson</h4>
-                            <p class="text-sm text-gray-400">Member since 2018</p>
-                        </div>
+                <div class="testimonial-author">
+                    <div class="testimonial-avatar">JD</div>
+                    <div class="testimonial-author-info">
+                        <div class="text-primary-orange font-bold">Jane D.</div>
+                        <div class="text-gray-400 text-sm">Member since 2018</div>
                     </div>
-                    <p class="italic">
-                        "The staff recommendations are always spot on. I've discovered so many amazing books I would have never found on my own."
-                    </p>
+                </div>
+            </div>
+            
+            <div class="testimonial-card">
+                <div class="testimonial-quote">
+                    The perfect quiet space to study, with an incredible selection of resources. My second home! The membership is worth every penny.
+                </div>
+                <div class="testimonial-author">
+                    <div class="testimonial-avatar">MT</div>
+                    <div class="testimonial-author-info">
+                        <div class="text-primary-orange font-bold">Mark T.</div>
+                        <div class="text-gray-400 text-sm">Student Member</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="testimonial-card">
+                <div class="testimonial-quote">
+                    As a family, we've saved hundreds on books and activities. The children's programs are exceptional and my kids love story time every weekend.
+                </div>
+                <div class="testimonial-author">
+                    <div class="testimonial-avatar">SP</div>
+                    <div class="testimonial-author-info">
+                        <div class="text-primary-orange font-bold">Sarah P.</div>
+                        <div class="text-gray-400 text-sm">Family Member</div>
+                    </div>
                 </div>
             </div>
         </div>
-    </section>
+    </div>
+</section>
+
+    <!-- Call to Action -->
+    <section class="bg-gradient-to-r from-primary-orange to-dark-orange py-16">
+    <div class="container mx-auto px-4 max-w-4xl text-center text-white">
+        <h2 class="text-3xl font-bold mb-6" style="font-family: 'Playfair Display', serif;">Ready to Join Our Community?</h2>
+        <p class="text-xl mb-8 max-w-2xl mx-auto">
+            Become a member today and unlock access to our vast collection of resources and services.
+        </p>
+        <div class="flex flex-wrap justify-center gap-4">
+            <a href="/contact" class="btn-primary">Become a Member</a>
+            <a href="#faq-section" class="btn-outline">Browse Questions</a>
+        </div>
+    </div>
+</section>
+
+<!-- FAQ Section -->
+<section id="faq-section" class="py-16 ">
+    <div class="container mx-auto px-4 max-w-4xl">
+        <h2 class="section-title text-white text-center">Frequently Asked Questions</h2>
+        <p class="text-lg text-center mb-12 max-w-2xl mx-auto text-primary-orange">
+            Find answers to common questions about our library services
+        </p>
+
+        <div class="space-y-6">
+            <!-- FAQ Item 1 -->
+            <div class="bg-white rounded-xl shadow-md overflow-hidden">
+                <button class="faq-question w-full text-left p-6 focus:outline-none">
+                    <div class="flex justify-between items-center">
+                        <h3 class="text-lg font-bold">How do I become a library member?</h3>
+                        <svg class="w-6 h-6 text-primary-orange transform transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                        </svg>
+                    </div>
+                </button>
+                <div class="faq-answer px-6 pb-6 hidden">
+                    <p class="text-gray-700">You can become a member by visiting any of our branches with a valid ID and proof of address. 
+                    We offer online registration as well through our website. Membership is free for local residents.</p>
+                </div>
+            </div>
+
+            <!-- FAQ Item 2 -->
+            <div class="bg-white rounded-xl shadow-md overflow-hidden">
+                <button class="faq-question w-full text-left p-6 focus:outline-none">
+                    <div class="flex justify-between items-center">
+                        <h3 class="text-lg font-bold">What are your opening hours?</h3>
+                        <svg class="w-6 h-6 text-primary-orange transform transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                        </svg>
+                    </div>
+                </button>
+                <div class="faq-answer px-6 pb-6 hidden">
+                    <p class="text-gray-700">Our main branch is open Monday to Friday from 9am to 8pm, and Saturday to Sunday from 10am to 6pm. 
+                    Some services may have different hours - please check our website for specific department hours.</p>
+                </div>
+            </div>
+
+            <!-- FAQ Item 3 -->
+            <div class="bg-white rounded-xl shadow-md overflow-hidden">
+                <button class="faq-question w-full text-left p-6 focus:outline-none">
+                    <div class="flex justify-between items-center">
+                        <h3 class="text-lg font-bold">How many books can I borrow at once?</h3>
+                        <svg class="w-6 h-6 text-primary-orange transform transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                        </svg>
+                    </div>
+                </button>
+                <div class="faq-answer px-6 pb-6 hidden">
+                    <p class="text-gray-700">Standard members can borrow up to 10 items at a time. Premium members can borrow up to 20 items. 
+                    Some special collections may have additional restrictions.</p>
+                </div>
+            </div>
+
+            <!-- FAQ Item 4 -->
+            <div class="bg-white rounded-xl shadow-md overflow-hidden">
+                <button class="faq-question w-full text-left p-6 focus:outline-none">
+                    <div class="flex justify-between items-center">
+                        <h3 class="text-lg font-bold">Do you offer digital resources?</h3>
+                        <svg class="w-6 h-6 text-primary-orange transform transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                        </svg>
+                    </div>
+                </button>
+                <div class="faq-answer px-6 pb-6 hidden">
+                    <p class="text-gray-700">Yes! We offer a wide range of digital resources including e-books, audiobooks, digital magazines, 
+                    and research databases. All you need is your library card to access these resources from home.</p>
+                </div>
+            </div>
+
+            <!-- FAQ Item 5 -->
+            <div class="bg-white rounded-xl shadow-md overflow-hidden">
+                <button class="faq-question w-full text-left p-6 focus:outline-none">
+                    <div class="flex justify-between items-center">
+                        <h3 class="text-lg font-bold">What if I return a book late?</h3>
+                        <svg class="w-6 h-6 text-primary-orange transform transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                        </svg>
+                    </div>
+                </button>
+                <div class="faq-answer px-6 pb-6 hidden">
+                    <p class="text-gray-700">We charge a small daily fine for overdue items. However, we offer a 3-day grace period. 
+                    Fines max out after 14 days. You can renew items online if no one else has requested them.</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="text-center mt-12">
+            <p class="text-gray-200 mb-4">Didn't find what you were looking for?</p>
+            <a href="/contact" class="btn-primary inline-block">Contact Our Support Team</a>
+        </div>
+    </div>
+</section>
 
 @endsection
+
 
 @push('scripts')
     <!-- Any page-specific scripts would go here -->
     <script>
+        // Simple animation for membership cards
+        document.addEventListener('DOMContentLoaded', function() {
+            const cards = document.querySelectorAll('.membership-card');
+            
+            cards.forEach((card, index) => {
+                // Add slight delay for staggered animation
+                card.style.transitionDelay = `${index * 100}ms`;
+                card.classList.add('transform', 'transition-all', 'duration-500', 'ease-in-out');
+                
+                // Intersection Observer for scroll animation
+                const observer = new IntersectionObserver((entries) => {
+                    entries.forEach(entry => {
+                        if (entry.isIntersecting) {
+                            entry.target.classList.remove('opacity-0', 'translate-y-10');
+                            entry.target.classList.add('opacity-100', 'translate-y-0');
+                        }
+                    });
+                });
+                
+                observer.observe(card);
+            });
+        });
 
+        // FAQ Accordion Functionality
+    document.addEventListener('DOMContentLoaded', function() {
+        const faqQuestions = document.querySelectorAll('.faq-question');
+        
+        faqQuestions.forEach(question => {
+            question.addEventListener('click', () => {
+                const answer = question.nextElementSibling;
+                const icon = question.querySelector('svg');
+                
+                // Toggle answer visibility
+                answer.classList.toggle('hidden');
+                answer.classList.toggle('block');
+                
+                // Rotate icon
+                icon.classList.toggle('rotate-180');
+                
+                // Close other open FAQs
+                faqQuestions.forEach(otherQuestion => {
+                    if (otherQuestion !== question) {
+                        otherQuestion.nextElementSibling.classList.add('hidden');
+                        otherQuestion.querySelector('svg').classList.remove('rotate-180');
+                    }
+                });
+            });
+        });
+    });
     </script>
 @endpush

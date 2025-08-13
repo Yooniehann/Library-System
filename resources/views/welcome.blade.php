@@ -133,35 +133,91 @@
         align-items: stretch;
     }
 
-    /* Membership Cards */
+    /* Membership Carousel Styles */
+    .membership-carousel {
+        position: relative;
+        padding: 0 50px;
+        margin: 0 auto;
+        max-width: 1200px;
+    }
+    .membership-cards-container {
+        display: flex;
+        overflow: hidden;
+        scroll-behavior: smooth;
+        padding: 20px 0;
+        scroll-snap-type: x mandatory;
+    }
     .membership-card {
         background: white;
         border-radius: 10px;
         overflow: hidden;
         box-shadow: 0 4px 20px rgba(0,0,0,0.1);
         transition: all 0.3s ease;
+        flex: 0 0 calc(33.333% - 2rem);
+        margin: 0 1rem;
+        transform: scale(0.9);
+        opacity: 0.8;
+        scroll-snap-align: center;
+        position: relative;
+    }
+    .membership-card.active {
+        transform: scale(1.05);
+        opacity: 1;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.2);
     }
     .membership-card:hover {
-        transform: translateY(-5px);
-        box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+        transform: scale(1.05) !important;
+        box-shadow: 0 15px 35px rgba(0,0,0,0.25);
     }
     .membership-header {
         background-color: #EEBA30;
         padding: 1.5rem;
         text-align: center;
+        position: relative;
+        overflow: hidden;
     }
     .membership-popular {
+        width: 200px;
+        background-color: #D3A625;
+        color: black;
+        font-size: 0.9rem;
         position: absolute;
-        width: 150px;
-        overflow: hidden;
-        top: 12px;
-        right: -32px;
-        background-color: #f8f7f5;
-        color: rgb(21, 14, 14);
-        padding: 0.25rem 2rem;
-        font-size: 0.8rem;
+        top: 20px;
+        right: -50px;
+        transform: rotate(30deg);
+        text-align: center;
+        padding: 0.25rem 0;
         font-weight: 600;
-        transform:rotate(30deg);
+    }
+    .carousel-nav {
+        position: absolute;
+        top: 50%;
+        transform: translateY(-50%);
+        width: 40px;
+        height: 40px;
+        background: #EEBA30;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        z-index: 10;
+        border: none;
+        color: black;
+        font-weight: bold;
+        font-size: 1.2rem;
+    }
+    .carousel-nav:hover {
+        background: #D3A625;
+    }
+    .carousel-prev {
+        left: 0;
+    }
+    .carousel-next {
+        right: 0;
+    }
+    .membership-features {
+        min-height: 180px;
     }
 </style>
 @endpush
@@ -227,124 +283,159 @@
         </div>
     </section>
 
-    <!-- Membership Plans Section -->
+    <!-- Membership Plans Carousel -->
     <section class="py-16">
-    <div class="container mx-auto px-4 max-w-6xl">
-        <h2 class="section-title text-white">Membership Plans</h2>
-        <p class="text-lg text-center mb-12 max-w-3xl mx-auto text-primary-orange">
-            Choose the perfect membership plan for your reading needs
-        </p>
-        
-        <div class="grid md:grid-cols-3 gap-8 items-end">
-            <!-- Student Membership -->
-            <div class="membership-card relative">
-                <div class="membership-header">
-                    <h3 class="text-xl font-bold text-black">Student</h3>
-                    <p class="text-gray-800">Ideal for students of all ages</p>
-                </div>
-                <div class="p-6">
-                    <div class="text-center mb-6">
-                        <span class="text-4xl font-bold text-black">$5</span>
-                        <span class="text-gray-600">/month</span>
-                        <p class="text-gray-600 mt-2">or $50 annually (save $10)</p>
-                    </div>
-                    <ul class="space-y-3 mb-6">
-                        <li class="flex items-start">
-                            <span class="text-primary-orange mr-2">✓</span>
-                            <span>Borrow up to 10 books</span>
-                        </li>
-                        <li class="flex items-start">
-                            <span class="text-primary-orange mr-2">✓</span>
-                            <span>Access to study rooms</span>
-                        </li>
-                        <li class="flex items-start">
-                            <span class="text-primary-orange mr-2">✓</span>
-                            <span>Extended loan periods</span>
-                        </li>
-                        <li class="flex items-start">
-                            <span class="text-primary-orange mr-2">✓</span>
-                            <span>Free printing (50 pages/month)</span>
-                        </li>
-                    </ul>
-                    <button class="w-full btn-primary">Get Started</button>
-                </div>
-            </div>
+        <div class="container mx-auto px-4 max-w-6xl">
+            <h2 class="section-title text-white">Membership Plans</h2>
+            <p class="text-lg text-center mb-12 max-w-3xl mx-auto text-primary-orange">
+                Choose the perfect membership plan for your reading needs
+            </p>
             
-            <!-- Public Membership (Popular)  -->
-            <div class="membership-card relative">
-                    <div class="membership-popular">Most Popular</div>
-                    <div class="membership-header text-black">
-                    <h3 class="text-xl font-bold">Public</h3>
-                    <p>For avid readers in our community</p>
-                </div>
-                <div class="p-6">
-                    <div class="text-center mb-6">
-                        <span class="text-4xl font-bold text-black">$10</span>
-                        <span class="text-gray-600">/month</span>
-                        <p class="text-gray-600 mt-2">or $100 annually (save $20)</p>
+            <div class="membership-carousel">
+                <button class="carousel-nav carousel-prev">❮</button>
+                <div class="membership-cards-container">
+                    <!-- Kids Membership -->
+                    <div class="membership-card active">
+                        <div class="membership-popular">Best for Kids</div>
+                        <div class="membership-header text-black">
+                            <h3 class="text-xl font-bold">Kids</h3>
+                            <p>For children under 13</p>
+                        </div>
+                        <div class="p-6">
+                            <div class="text-center mb-6">
+                                <span class="text-4xl font-bold text-black">$2</span>
+                                <span class="text-gray-600">/month</span>
+                                <p class="text-gray-600 mt-2">or $20 annually (save $4)</p>
+                            </div>
+                            <ul class="space-y-3 mb-6 membership-features">
+                                <li class="flex items-start">
+                                    <span class="text-primary-orange mr-2">✓</span>
+                                    <span>Borrow up to 5 books</span>
+                                </li>
+                                <li class="flex items-start">
+                                    <span class="text-primary-orange mr-2">✓</span>
+                                    <span>Weekly story time sessions</span>
+                                </li>
+                                <li class="flex items-start">
+                                    <span class="text-primary-orange mr-2">✓</span>
+                                    <span>Child-friendly reading areas</span>
+                                </li>
+                                <li class="flex items-start">
+                                    <span class="text-primary-orange mr-2">✓</span>
+                                    <span>Educational activities</span>
+                                </li>
+                            </ul>
+                            <button class="w-full btn-primary">Get Started</button>
+                        </div>
                     </div>
-                    <ul class="space-y-3 mb-6">
-                        <li class="flex items-start">
-                            <span class="text-primary-orange mr-2">✓</span>
-                            <span>Borrow up to 20 books</span>
-                        </li>
-                        <li class="flex items-start">
-                            <span class="text-primary-orange mr-2">✓</span>
-                            <span>Priority access to new releases</span>
-                        </li>
-                        <li class="flex items-start">
-                            <span class="text-primary-orange mr-2">✓</span>
-                            <span>Free event tickets</span>
-                        </li>
-                        <li class="flex items-start">
-                            <span class="text-primary-orange mr-2">✓</span>
-                            <span>Access to premium online resources</span>
-                        </li>
-                        <li class="flex items-start">
-                            <span class="text-primary-orange mr-2">✓</span>
-                            <span>Free coffee during study sessions</span>
-                        </li>
-                    </ul>
-                    <button class="w-full btn-primary">Get Started</button>
-                </div>
-            </div>
-            
-            <!-- Family Membership -->
-            <div class="membership-card relative">
-                <div class="membership-header">
-                    <h3 class="text-xl font-bold text-black">Family</h3>
-                    <p class="text-gray-800">Perfect for households</p>
-                </div>
-                <div class="p-6">
-                    <div class="text-center mb-6">
-                        <span class="text-4xl font-bold text-black">$15</span>
-                        <span class="text-gray-600">/month</span>
-                        <p class="text-gray-600 mt-2">or $150 annually (save $30)</p>
+
+                    <!-- Student Membership -->
+                    <div class="membership-card">
+                        <div class="membership-header">
+                            <h3 class="text-xl font-bold text-black">Student</h3>
+                            <p class="text-gray-800">For learners of all ages</p>
+                        </div>
+                        <div class="p-6">
+                            <div class="text-center mb-6">
+                                <span class="text-4xl font-bold text-black">$5</span>
+                                <span class="text-gray-600">/month</span>
+                                <p class="text-gray-600 mt-2">or $50 annually (save $10)</p>
+                            </div>
+                            <ul class="space-y-3 mb-6 membership-features">
+                                <li class="flex items-start">
+                                    <span class="text-primary-orange mr-2">✓</span>
+                                    <span>Borrow up to 10 books</span>
+                                </li>
+                                <li class="flex items-start">
+                                    <span class="text-primary-orange mr-2">✓</span>
+                                    <span>Access to study rooms</span>
+                                </li>
+                                <li class="flex items-start">
+                                    <span class="text-primary-orange mr-2">✓</span>
+                                    <span>Extended loan periods</span>
+                                </li>
+                                <li class="flex items-start">
+                                    <span class="text-primary-orange mr-2">✓</span>
+                                    <span>Free printing (50 pages/month)</span>
+                                </li>
+                            </ul>
+                            <button class="w-full btn-primary">Get Started</button>
+                        </div>
                     </div>
-                    <ul class="space-y-3 mb-6">
-                        <li class="flex items-start">
-                            <span class="text-primary-orange mr-2">✓</span>
-                            <span>Borrow up to 30 books</span>
-                        </li>
-                        <li class="flex items-start">
-                            <span class="text-primary-orange mr-2">✓</span>
-                            <span>Cards for up to 4 family members</span>
-                        </li>
-                        <li class="flex items-start">
-                            <span class="text-primary-orange mr-2">✓</span>
-                            <span>Free children's programs</span>
-                        </li>
-                        <li class="flex items-start">
-                            <span class="text-primary-orange mr-2">✓</span>
-                            <span>Discounted event tickets</span>
-                        </li>
-                    </ul>
-                    <button class="w-full btn-primary">Get Started</button>
+                    
+                    <!-- Public Membership -->
+                    <div class="membership-card">
+                        <div class="membership-popular">Most Popular</div>
+                        <div class="membership-header">
+                            <h3 class="text-xl font-bold text-black">Public</h3>
+                            <p class="text-gray-800">For avid readers</p>
+                        </div>
+                        <div class="p-6">
+                            <div class="text-center mb-6">
+                                <span class="text-4xl font-bold text-black">$10</span>
+                                <span class="text-gray-600">/month</span>
+                                <p class="text-gray-600 mt-2">or $100 annually (save $20)</p>
+                            </div>
+                            <ul class="space-y-3 mb-6 membership-features">
+                                <li class="flex items-start">
+                                    <span class="text-primary-orange mr-2">✓</span>
+                                    <span>Borrow up to 20 books</span>
+                                </li>
+                                <li class="flex items-start">
+                                    <span class="text-primary-orange mr-2">✓</span>
+                                    <span>Priority access to new releases</span>
+                                </li>
+                                <li class="flex items-start">
+                                    <span class="text-primary-orange mr-2">✓</span>
+                                    <span>Free event tickets</span>
+                                </li>
+                                <li class="flex items-start">
+                                    <span class="text-primary-orange mr-2">✓</span>
+                                    <span>Premium online resources</span>
+                                </li>
+                            </ul>
+                            <button class="w-full btn-primary">Get Started</button>
+                        </div>
+                    </div>
+                    
+                    <!-- Family Membership -->
+                    <div class="membership-card">
+                        <div class="membership-header">
+                            <h3 class="text-xl font-bold text-black">Family</h3>
+                            <p class="text-gray-800">Perfect for households</p>
+                        </div>
+                        <div class="p-6">
+                            <div class="text-center mb-6">
+                                <span class="text-4xl font-bold text-black">$15</span>
+                                <span class="text-gray-600">/month</span>
+                                <p class="text-gray-600 mt-2">or $150 annually (save $30)</p>
+                            </div>
+                            <ul class="space-y-3 mb-6 membership-features">
+                                <li class="flex items-start">
+                                    <span class="text-primary-orange mr-2">✓</span>
+                                    <span>Borrow up to 30 books</span>
+                                </li>
+                                <li class="flex items-start">
+                                    <span class="text-primary-orange mr-2">✓</span>
+                                    <span>Cards for 4 family members</span>
+                                </li>
+                                <li class="flex items-start">
+                                    <span class="text-primary-orange mr-2">✓</span>
+                                    <span>Free children's programs</span>
+                                </li>
+                                <li class="flex items-start">
+                                    <span class="text-primary-orange mr-2">✓</span>
+                                    <span>Discounted event tickets</span>
+                                </li>
+                            </ul>
+                            <button class="w-full btn-primary">Get Started</button>
+                        </div>
+                    </div>
                 </div>
+                <button class="carousel-nav carousel-next">❯</button>
             </div>
         </div>
-    </div>
-</section>
+    </section>
 
     <!-- New Arrivals Section -->
     <section class="py-16">
@@ -742,28 +833,72 @@
 @push('scripts')
     <!-- Any page-specific scripts would go here -->
     <script>
-        // Simple animation for membership cards
+        // Membership Cards
         document.addEventListener('DOMContentLoaded', function() {
-            const cards = document.querySelectorAll('.membership-card');
+        const container = document.querySelector('.membership-cards-container');
+        const cards = document.querySelectorAll('.membership-card');
+        const prevBtn = document.querySelector('.carousel-prev');
+        const nextBtn = document.querySelector('.carousel-next');
+        let currentIndex = 0;
+        const cardCount = cards.length;
+        
+        // Set initial active card (center of viewport)
+        function setActiveCard() {
+            const containerRect = container.getBoundingClientRect();
+            const containerCenter = containerRect.left + containerRect.width / 2;
             
             cards.forEach((card, index) => {
-                // Add slight delay for staggered animation
-                card.style.transitionDelay = `${index * 100}ms`;
-                card.classList.add('transform', 'transition-all', 'duration-500', 'ease-in-out');
+                const cardRect = card.getBoundingClientRect();
+                const cardCenter = cardRect.left + cardRect.width / 2;
                 
-                // Intersection Observer for scroll animation
-                const observer = new IntersectionObserver((entries) => {
-                    entries.forEach(entry => {
-                        if (entry.isIntersecting) {
-                            entry.target.classList.remove('opacity-0', 'translate-y-10');
-                            entry.target.classList.add('opacity-100', 'translate-y-0');
-                        }
-                    });
-                });
-                
-                observer.observe(card);
+                // Check if card is near the center of the container
+                if (Math.abs(cardCenter - containerCenter) < cardRect.width / 2) {
+                    card.classList.add('active');
+                    currentIndex = index;
+                } else {
+                    card.classList.remove('active');
+                }
             });
+        }
+        
+        // Scroll to card at specific index
+        function scrollToCard(index) {
+            if (index < 0) index = 0;
+            if (index > cardCount - 1) index = cardCount - 1;
+            
+            const card = cards[index];
+            const containerRect = container.getBoundingClientRect();
+            const cardRect = card.getBoundingClientRect();
+            
+            const scrollPosition = card.offsetLeft - (containerRect.width / 2 - cardRect.width / 2);
+            
+            container.scrollTo({
+                left: scrollPosition,
+                behavior: 'smooth'
+            });
+            
+            // Update active card after scroll completes
+            setTimeout(setActiveCard, 500);
+        }
+        
+        // Navigation handlers
+        nextBtn.addEventListener('click', () => {
+            scrollToCard(currentIndex + 1);
         });
+        
+        prevBtn.addEventListener('click', () => {
+            scrollToCard(currentIndex - 1);
+        });
+        
+        // Initialize
+        setActiveCard();
+        
+        // Handle scroll events for manual dragging
+        container.addEventListener('scroll', setActiveCard);
+        
+        // Handle window resize
+        window.addEventListener('resize', setActiveCard);
+    });
 
         // FAQ Accordion Functionality
     document.addEventListener('DOMContentLoaded', function() {

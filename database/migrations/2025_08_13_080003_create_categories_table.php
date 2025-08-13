@@ -11,20 +11,20 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('authors', function (Blueprint $table) {
-            $table->id('author_id'); // Primary key with custom name
-            $table->string('author_name');
-            $table->text('bio')->nullable();
-            $table->string('nationality')->nullable();
-            $table->date('birth_date')->nullable();
+        Schema::create('categories', function (Blueprint $table) {
+            $table->id('category_id'); // Primary key
+            $table->string('category_name', 50);
+            $table->text('description')->nullable();
+            $table->date('created_date')->default(now());
             $table->timestamps();
         });
     }
+
     /**
      * Reverse the migrations.
      */
     public function down(): void
     {
-        Schema::dropIfExists('authors');
+        Schema::dropIfExists('categories');
     }
 };

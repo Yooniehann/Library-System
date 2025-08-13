@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 
-class FeedbackController extends Controller
+class BorrowController extends Controller
 {
     //
 }

@@ -2,15 +2,22 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Notifications\DatabaseNotification;
 
-class Notification extends Model
+class Notification extends DatabaseNotification
 {
-    protected $fillable = [
-        'user_id',      // Foreign key to users (required)
-        'message',      // Notification content (required)
-        'type',         // Enum: notification type (required)
-        'sent_date',    // Defaults to current timestamp
-        'is_read'       // Boolean read status (default false)
+    use HasFactory;
+
+    protected $primaryKey = 'notification_id';
+
+    protected $casts = [
+        'sent_date' => 'datetime'
     ];
+
+    public function user()
+    {
+        return $this->belongsTo(User::class, 'user_id');
+    }
 }

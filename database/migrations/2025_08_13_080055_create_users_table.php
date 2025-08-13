@@ -12,16 +12,27 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('users', function (Blueprint $table) {
-            $table->id('user_id');
-            $table->string('fullname');
+            $table->id('user_id'); // Primary key
+            $table->foreignId('membership_type_id')
+                ->constrained(
+                    table: 'membership_types',
+                    column: 'membership_type_id'  // Explicitly reference this column
+                )
+                ->onDelete('cascade');
+            $table->string('fullname', 100);
             $table->string('email')->unique();
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
-            $table->rememberToken();
-            $table->enum('role', ['Member', 'Guest', 'Librarian'])->default('Guest');
-            $table->string('phone_number')->nullable();
+            $table->string('phone', 20)->nullable();
             $table->text('address')->nullable();
-            $table->unsignedBigInteger('membership_id')->nullable();
+            $table->date('date_of_birth')->nullable();
+            $table->enum('gender', ['male', 'female', 'other'])->nullable();
+            $table->enum('role', ['Member', 'Guest', 'Librarian'])->default('Guest');
+            $table->boolean('is_kid')->default(false);
+            $table->date('membership_start_date')->default(now());
+            $table->date('membership_end_date')->nullable();
+            $table->enum('status', ['active', 'inactive', 'suspended'])->default('active');
+            $table->rememberToken();
             $table->timestamps();
         });
 

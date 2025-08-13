@@ -12,14 +12,16 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('publishers', function (Blueprint $table) {
-            $table->id('publisher_id');
-            $table->string('publisher_name');
+            $table->id('publisher_id'); // Primary key
+            $table->string('publisher_name', 100);
+            $table->string('phone', 20)->nullable();
+            $table->string('email', 100)->nullable();
             $table->text('address')->nullable();
-            $table->string('contact_email')->nullable();
-            $table->string('phone')->nullable();
+            $table->string('website', 255)->nullable();
             $table->timestamps();
         });
     }
+
 
     /**
      * Reverse the migrations.

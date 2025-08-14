@@ -195,7 +195,7 @@
                                     <i class="fas fa-user text-slate-400"></i>
                                 </div>
                                 <input id="fullname" name="fullname" type="text" required
-                                    class="w-full pl-10 pr-3 py-3 bg-slate-800/50 border border-slate-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-300 focus:border-transparent text-white placeholder-slate-400 input-field"
+                                    class="w-full pl-10 pr-3 py-3 bg-slate-800/50 border border-slate-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-300 focus:border-transparent text-black placeholder-slate-400 input-field"
                                     placeholder="John Doe" value="{{ old('fullname') }}">
                             </div>
                             @error('fullname')
@@ -210,7 +210,7 @@
                                     <i class="fas fa-envelope text-slate-400"></i>
                                 </div>
                                 <input id="email" name="email" type="email" required
-                                    class="w-full pl-10 pr-3 py-3 bg-slate-800/50 border border-slate-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-300 focus:border-transparent text-white placeholder-slate-400 input-field"
+                                    class="w-full pl-10 pr-3 py-3 bg-slate-800/50 border border-slate-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-300 focus:border-transparent text-black placeholder-slate-400 input-field"
                                     placeholder="your@email.com" value="{{ old('email') }}">
                             </div>
                             @error('email')
@@ -226,7 +226,7 @@
                                         <i class="fas fa-birthday-cake text-slate-400"></i>
                                     </div>
                                     <input id="date_of_birth" name="date_of_birth" type="date" required
-                                        class="w-full pl-10 pr-3 py-3 bg-slate-800/50 border border-slate-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-300 focus:border-transparent text-white placeholder-slate-400 input-field"
+                                        class="w-full pl-10 pr-3 py-3 bg-slate-800/50 border border-slate-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-300 focus:border-transparent text-black placeholder-slate-400 input-field"
                                         value="{{ old('date_of_birth') }}"
                                         max="{{ date('Y-m-d') }}">
                                 </div>
@@ -265,7 +265,7 @@
                                         <i class="fas fa-phone text-slate-400"></i>
                                     </div>
                                     <input id="phone_number" name="phone_number" type="tel"
-                                        class="w-full pl-10 pr-3 py-3 bg-slate-800/50 border border-slate-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-300 focus:border-transparent text-white placeholder-slate-400 input-field"
+                                        class="w-full pl-10 pr-3 py-3 bg-slate-800/50 border border-slate-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-300 focus:border-transparent text-black placeholder-slate-400 input-field"
                                         placeholder="+1 (555) 123-4567" value="{{ old('phone_number') }}">
                                 </div>
                                 @error('phone_number')
@@ -280,7 +280,7 @@
                                         <i class="fas fa-map-marker-alt text-slate-400"></i>
                                     </div>
                                     <input id="address" name="address" type="text"
-                                        class="w-full pl-10 pr-3 py-3 bg-slate-800/50 border border-slate-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-300 focus:border-transparent text-white placeholder-slate-400 input-field"
+                                        class="w-full pl-10 pr-3 py-3 bg-slate-800/50 border border-slate-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-300 focus:border-transparent text-black placeholder-slate-400 input-field"
                                         placeholder="123 Library St" value="{{ old('address') }}">
                                 </div>
                                 @error('address')
@@ -297,7 +297,7 @@
                                         <i class="fas fa-lock text-slate-400"></i>
                                     </div>
                                     <input id="password" name="password" type="password" required
-                                        class="w-full pl-10 pr-3 py-3 bg-slate-800/50 border border-slate-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-300 focus:border-transparent text-white placeholder-slate-400 input-field"
+                                        class="w-full pl-10 pr-3 py-3 bg-slate-800/50 border border-slate-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-300 focus:border-transparent text-black placeholder-slate-400 input-field"
                                         placeholder="Create a password">
                                 </div>
                                 @error('password')
@@ -320,7 +320,7 @@
                                         <i class="fas fa-lock text-slate-400"></i>
                                     </div>
                                     <input id="password_confirmation" name="password_confirmation" type="password" required
-                                        class="w-full pl-10 pr-3 py-3 bg-slate-800/50 border border-slate-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-300 focus:border-transparent text-white placeholder-slate-400 input-field"
+                                        class="w-full pl-10 pr-3 py-3 bg-slate-800/50 border border-slate-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-300 focus:border-transparent text-black placeholder-slate-400 input-field"
                                         placeholder="Confirm your password">
                                 </div>
                                 @error('password_confirmation')

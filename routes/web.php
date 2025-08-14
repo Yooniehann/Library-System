@@ -43,9 +43,6 @@ Route::controller(BookController::class)->name('books.')->group(function () {
     Route::get('/books/{book}', 'show')->name('show');
 });
 
-// Categories
-Route::get('/categories', [CategoryController::class, 'index'])->name('categories.index');
-
 // sitemap
 Route::get('/sitemap.xml', function() {
     return Sitemap::create()

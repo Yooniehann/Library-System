@@ -11,6 +11,7 @@ use App\Http\Controllers\{
     CategoryController,
     FeedbackController,
     FineController,
+    HomeController,
     NotificationController,
     ProfileController,
     PublisherController,
@@ -29,6 +30,7 @@ Route::get('/', function () {
     return view('welcome');
 })->name('home');
 
+
 // Static Pages
 Route::view('/about', 'static.about')->name('about');
 Route::view('/contact', 'static.contact')->name('contact');
@@ -44,14 +46,14 @@ Route::controller(BookController::class)->name('books.')->group(function () {
 });
 
 // sitemap
-Route::get('/sitemap.xml', function() {
-    return Sitemap::create()
-        ->add(Url::create('/'))
-        ->add(Url::create('/books'))
-        ->add(Url::create('/categories'))
-        // Add all your important routes
-        ->writeToFile(public_path('sitemap.xml'));
-});
+// Route::get('/sitemap.xml', function() {
+//     return Sitemap::create()
+//         ->add(Url::create('/'))
+//         ->add(Url::create('/books'))
+//         ->add(Url::create('/categories'))
+//         // Add all your important routes
+//         ->writeToFile(public_path('sitemap.xml'));
+// });
 
 /*
 |--------------------------------------------------------------------------
@@ -167,3 +169,4 @@ Route::middleware(['auth', 'verified', 'can:admin'])->prefix('admin')->name('adm
     // Feedback Management
     Route::get('/feedback', [FeedbackController::class, 'adminIndex'])->name('feedback.index');
 });
+

@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -107,6 +106,18 @@
                 <p class="mt-2 text-white">Sign in to your library account</p>
             </div>
 
+            @if (session('success'))
+                <div class="mt-6 bg-green-500/20 text-green-200 p-4 rounded-lg">
+                    {{ session('success') }}
+                </div>
+            @endif
+
+            @if (session('error'))
+                <div class="mt-6 bg-red-500/20 text-red-200 p-4 rounded-lg">
+                    {{ session('error') }}
+                </div>
+            @endif
+
             @if ($errors->any())
                 <div class="mt-6 bg-red-500/20 text-red-200 p-4 rounded-lg">
                     <ul>
@@ -127,12 +138,12 @@
                                 <i class="fas fa-envelope text-slate-400"></i>
                             </div>
                             <input id="email" name="email" type="email" autocomplete="email" required
-                                class="w-full pl-10 pr-3 py-3 bg-slate-800/50 border border-slate-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-300 focus:border-transparent text-white placeholder-slate-400 input-field"
+                                class="w-full pl-10 pr-3 py-3 bg-slate-800/50 border border-slate-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-300 focus:border-transparent text-black placeholder-slate-400 input-field"
                                 placeholder="your@email.com" value="{{ old('email') }}">
+                            @error('email')
+                                <p class="mt-1 text-sm text-red-400">{{ $message }}</p>
+                            @enderror
                         </div>
-                        @error('email')
-                            <p class="mt-1 text-sm text-red-400">{{ $message }}</p>
-                        @enderror
                     </div>
 
                     <div>
@@ -142,12 +153,16 @@
                                 <i class="fas fa-lock text-slate-400"></i>
                             </div>
                             <input id="password" name="password" type="password" autocomplete="current-password" required
-                                class="w-full pl-10 pr-3 py-3 bg-slate-800/50 border border-slate-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-300 focus:border-transparent text-white placeholder-slate-400 input-field"
+                                class="w-full pl-10 pr-3 py-3 bg-slate-800/50 border border-slate-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-300 focus:border-transparent text-black placeholder-slate-400 input-field"
                                 placeholder="Your password">
+                            <button type="button" class="absolute right-3 top-3 text-slate-400 hover:text-black"
+                                onclick="togglePasswordVisibility('password', this)">
+                                <i class="fas fa-eye"></i>
+                            </button>
+                            @error('password')
+                                <p class="mt-1 text-sm text-red-400">{{ $message }}</p>
+                            @enderror
                         </div>
-                        @error('password')
-                            <p class="mt-1 text-sm text-red-400">{{ $message }}</p>
-                        @enderror
                     </div>
                 </div>
 
@@ -189,10 +204,26 @@
     <!-- Scripts -->
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script>
-        // Simple password visibility toggle
+        // Password visibility toggle
+        function togglePasswordVisibility(inputId, button) {
+            const input = document.getElementById(inputId);
+            const type = input.getAttribute('type') === 'password' ? 'text' : 'password';
+            input.setAttribute('type', type);
+
+            // Toggle eye icon
+            button.innerHTML = type === 'password'
+                ? '<i class="fas fa-eye"></i>'
+                : '<i class="fas fa-eye-slash"></i>';
+        }
+
+        // Auto-focus email field if empty, otherwise password
         document.addEventListener('DOMContentLoaded', function() {
-            // You can add any client-side interactions here
-            console.log('Login page loaded');
+            const emailField = document.querySelector('input[name="email"]');
+            if (emailField && !emailField.value) {
+                emailField.focus();
+            } else {
+                document.querySelector('input[name="password"]')?.focus();
+            }
         });
     </script>
 </body>

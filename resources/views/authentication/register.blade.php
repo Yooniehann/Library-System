@@ -12,7 +12,9 @@
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Playfair+Display:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Playfair+Display:wght@400;500;600;700&display=swap"
+        rel="stylesheet">
 
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -92,11 +94,6 @@
             box-shadow: 0 0 0 3px rgba(245, 158, 11, 0.3);
         }
 
-        .role-selector input[type="radio"]:checked + label {
-            border-color: var(--primary);
-            background-color: rgba(245, 158, 11, 0.1);
-        }
-
         .gender-option {
             transition: all 0.2s ease;
         }
@@ -104,6 +101,14 @@
         .gender-option input[type="radio"]:checked + label {
             border-color: var(--primary);
             background-color: rgba(245, 158, 11, 0.1);
+        }
+
+        .age-feedback {
+            display: none;
+        }
+
+        .age-feedback.show {
+            display: block;
         }
     </style>
 </head>
@@ -116,25 +121,30 @@
                 <div class="hidden md:block md:w-1/2 p-6">
                     <div class="flex flex-col h-full justify-between">
                         <div>
-                            <div class="w-20 h-20 bg-yellow-300 rounded-full flex items-center justify-center text-black mb-6 mx-auto pulse-animation">
+                            <div
+                                class="w-20 h-20 bg-yellow-300 rounded-full flex items-center justify-center text-black mb-6 mx-auto pulse-animation">
                                 <i class="fas fa-book-open text-2xl"></i>
                             </div>
                             <h2 class="text-2xl font-bold text-white text-center mb-4">Join Our Library</h2>
                             <p class="text-white text-center mb-6">
-                                Become a member and unlock access to thousands of books, resources, and exclusive content.
+                                Become a member and unlock access to thousands of books, resources, and exclusive
+                                content.
                             </p>
                             <div class="space-y-4">
                                 <div class="flex items-start space-x-3 glass-card p-4 rounded-lg">
-                                    <div class="w-10 h-10 bg-yellow-300/20 rounded-full flex items-center justify-center text-yellow-300 mt-1">
+                                    <div
+                                        class="w-10 h-10 bg-yellow-300/20 rounded-full flex items-center justify-center text-yellow-300 mt-1">
                                         <i class="fas fa-book"></i>
                                     </div>
                                     <div>
                                         <h4 class="font-medium text-white">Extensive Collection</h4>
-                                        <p class="text-sm text-slate-400">Access thousands of books across all genres</p>
+                                        <p class="text-sm text-slate-400">Access thousands of books across all genres
+                                        </p>
                                     </div>
                                 </div>
                                 <div class="flex items-start space-x-3 glass-card p-4 rounded-lg">
-                                    <div class="w-10 h-10 bg-yellow-300/20 rounded-full flex items-center justify-center text-yellow-300 mt-1">
+                                    <div
+                                        class="w-10 h-10 bg-yellow-300/20 rounded-full flex items-center justify-center text-yellow-300 mt-1">
                                         <i class="fas fa-user-graduate"></i>
                                     </div>
                                     <div>
@@ -143,7 +153,8 @@
                                     </div>
                                 </div>
                                 <div class="flex items-start space-x-3 glass-card p-4 rounded-lg">
-                                    <div class="w-10 h-10 bg-yellow-300/20 rounded-full flex items-center justify-center text-yellow-300 mt-1">
+                                    <div
+                                        class="w-10 h-10 bg-yellow-300/20 rounded-full flex items-center justify-center text-yellow-300 mt-1">
                                         <i class="fas fa-calendar-alt"></i>
                                     </div>
                                     <div>
@@ -168,7 +179,8 @@
                 <div class="md:w-1/2">
                     <div class="text-center md:text-left">
                         <div class="flex justify-center md:justify-start">
-                            <div class="w-16 h-16 bg-yellow-300 rounded-full flex items-center justify-center text-black mb-4 pulse-animation md:hidden">
+                            <div
+                                class="w-16 h-16 bg-yellow-300 rounded-full flex items-center justify-center text-black mb-4 pulse-animation md:hidden">
                                 <i class="fas fa-book-open text-xl"></i>
                             </div>
                         </div>
@@ -220,15 +232,15 @@
 
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <div>
-                                <label for="date_of_birth" class="block text-sm font-medium text-white mb-1">Date of Birth *</label>
+                                <label for="date_of_birth" class="block text-sm font-medium text-white mb-1">Date of
+                                    Birth *</label>
                                 <div class="relative">
                                     <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                                         <i class="fas fa-birthday-cake text-slate-400"></i>
                                     </div>
                                     <input id="date_of_birth" name="date_of_birth" type="date" required
                                         class="w-full pl-10 pr-3 py-3 bg-slate-800/50 border border-slate-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-300 focus:border-transparent text-black placeholder-slate-400 input-field"
-                                        value="{{ old('date_of_birth') }}"
-                                        max="{{ date('Y-m-d') }}">
+                                        value="{{ old('date_of_birth') }}" max="{{ date('Y-m-d') }}">
                                 </div>
                                 @error('date_of_birth')
                                     <p class="mt-1 text-sm text-red-400">{{ $message }}</p>
@@ -239,14 +251,18 @@
                                 <label class="block text-sm font-medium text-white mb-1">Gender *</label>
                                 <div class="grid grid-cols-2 gap-2">
                                     <div class="gender-option">
-                                        <input type="radio" id="male" name="gender" value="male" class="hidden" {{ old('gender') == 'male' ? 'checked' : '' }} required>
-                                        <label for="male" class="block w-full text-white text-center py-2 px-3 border border-yellow-300 rounded-lg cursor-pointer bg-slate-800/50 hover:bg-yellow-400 hover:text-black">
+                                        <input type="radio" id="male" name="gender" value="male"
+                                            class="hidden" {{ old('gender') == 'male' ? 'checked' : '' }} required>
+                                        <label for="male"
+                                            class="block w-full text-white text-center py-2 px-3 border border-yellow-300 rounded-lg cursor-pointer bg-slate-800/50 hover:bg-yellow-400 hover:text-black">
                                             <i class="fas fa-mars mr-2"></i> Male
                                         </label>
                                     </div>
                                     <div class="gender-option">
-                                        <input type="radio" id="female" name="gender" value="female" class="hidden" {{ old('gender') == 'female' ? 'checked' : '' }} required>
-                                        <label for="female" class="block w-full text-white text-center py-2 px-3 border border-yellow-300 rounded-lg cursor-pointer bg-slate-800/50 hover:bg-yellow-400 hover:text-black">
+                                        <input type="radio" id="female" name="gender" value="female"
+                                            class="hidden" {{ old('gender') == 'female' ? 'checked' : '' }} required>
+                                        <label for="female"
+                                            class="block w-full text-white text-center py-2 px-3 border border-yellow-300 rounded-lg cursor-pointer bg-slate-800/50 hover:bg-yellow-400 hover:text-black">
                                             <i class="fas fa-venus mr-2"></i> Female
                                         </label>
                                     </div>
@@ -259,7 +275,8 @@
 
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <div>
-                                <label for="phone_number" class="block text-sm font-medium text-white mb-1">Phone Number</label>
+                                <label for="phone_number" class="block text-sm font-medium text-white mb-1">Phone
+                                    Number</label>
                                 <div class="relative">
                                     <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                                         <i class="fas fa-phone text-slate-400"></i>
@@ -274,7 +291,8 @@
                             </div>
 
                             <div>
-                                <label for="address" class="block text-sm font-medium text-white mb-1">Address</label>
+                                <label for="address"
+                                    class="block text-sm font-medium text-white mb-1">Address</label>
                                 <div class="relative">
                                     <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                                         <i class="fas fa-map-marker-alt text-slate-400"></i>
@@ -291,14 +309,21 @@
 
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <div>
-                                <label for="password" class="block text-sm font-medium text-white mb-1">Password *</label>
+                                <label for="password" class="block text-sm font-medium text-white mb-1">Password
+                                    *</label>
                                 <div class="relative">
                                     <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                                         <i class="fas fa-lock text-slate-400"></i>
                                     </div>
                                     <input id="password" name="password" type="password" required
                                         class="w-full pl-10 pr-3 py-3 bg-slate-800/50 border border-slate-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-300 focus:border-transparent text-black placeholder-slate-400 input-field"
-                                        placeholder="Create a password">
+                                        placeholder="Password">
+                                    <!-- Password toggle button -->
+                                    <button type="button"
+                                        class="absolute right-3 top-3 text-slate-400 hover:text-black"
+                                        onclick="togglePasswordVisibility('password', this)">
+                                        <i class="fas fa-eye"></i>
+                                    </button>
                                 </div>
                                 @error('password')
                                     <p class="mt-1 text-sm text-red-400">{{ $message }}</p>
@@ -314,19 +339,33 @@
                             </div>
 
                             <div>
-                                <label for="password_confirmation" class="block text-sm font-medium text-white mb-1">Confirm Password *</label>
+                                <label for="password_confirmation"
+                                    class="block text-sm font-medium text-white mb-1">Confirm Password *</label>
                                 <div class="relative">
                                     <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                                         <i class="fas fa-lock text-slate-400"></i>
                                     </div>
-                                    <input id="password_confirmation" name="password_confirmation" type="password" required
+                                    <input id="password_confirmation" name="password_confirmation" type="password"
+                                        required
                                         class="w-full pl-10 pr-3 py-3 bg-slate-800/50 border border-slate-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-300 focus:border-transparent text-black placeholder-slate-400 input-field"
-                                        placeholder="Confirm your password">
+                                        placeholder="Confirm Password">
+                                    <!-- Password toggle button -->
+                                    <button type="button"
+                                        class="absolute right-3 top-3 text-slate-400 hover:text-black"
+                                        onclick="togglePasswordVisibility('password_confirmation', this)">
+                                        <i class="fas fa-eye"></i>
+                                    </button>
                                 </div>
                                 @error('password_confirmation')
                                     <p class="mt-1 text-sm text-red-400">{{ $message }}</p>
                                 @enderror
                             </div>
+                        </div>
+
+                        <!-- Age feedback display -->
+                        <div id="age-feedback" class="text-sm hidden">
+                            <span id="age-text"></span>
+                            <span id="role-text" class="font-semibold"></span>
                         </div>
 
                         <!-- Hidden role field that will be set by JavaScript -->
@@ -339,8 +378,10 @@
                             </div>
                             <div class="ml-3 text-sm">
                                 <label for="terms" class="text-white">
-                                    I agree to the <a href="{{ route('terms') }}" class="auth-link font-medium">Terms of Service</a>
-                                    and <a href="{{ route('privacy') }}" class="auth-link font-medium">Privacy Policy</a>
+                                    I agree to the <a href="{{ route('terms') }}" class="auth-link font-medium">Terms
+                                        of Service</a>
+                                    and <a href="{{ route('privacy') }}" class="auth-link font-medium">Privacy
+                                        Policy</a>
                                 </label>
                             </div>
                         </div>
@@ -369,28 +410,25 @@
     <!-- Scripts -->
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script>
+        // Password visibility toggle
+        function togglePasswordVisibility(inputId, button) {
+            const input = document.getElementById(inputId);
+            const type = input.getAttribute('type') === 'password' ? 'text' : 'password';
+            input.setAttribute('type', type);
+
+            // Toggle eye icon
+            button.innerHTML = type === 'password' ?
+                '<i class="fas fa-eye"></i>' :
+                '<i class="fas fa-eye-slash"></i>';
+        }
+
+        // Enhanced age calculation with feedback
         document.addEventListener('DOMContentLoaded', function() {
-            const passwordInput = document.getElementById('password');
-            const requirements = {
-                length: document.querySelector('[data-requirement="length"]'),
-                uppercase: document.querySelector('[data-requirement="uppercase"]'),
-                number: document.querySelector('[data-requirement="number"]')
-            };
-
-            if (passwordInput) {
-                passwordInput.addEventListener('input', function() {
-                    const value = this.value;
-
-                    // Check each requirement
-                    requirements.length.classList.toggle('text-green-400', value.length >= 8);
-                    requirements.uppercase.classList.toggle('text-green-400', /[A-Z]/.test(value));
-                    requirements.number.classList.toggle('text-green-400', /\d/.test(value));
-                });
-            }
-
-            // Calculate age based on date of birth and set role accordingly
             const dobInput = document.getElementById('date_of_birth');
             const roleInput = document.getElementById('role');
+            const ageFeedback = document.getElementById('age-feedback');
+            const ageText = document.getElementById('age-text');
+            const roleText = document.getElementById('role-text');
 
             if (dobInput) {
                 dobInput.addEventListener('change', function() {
@@ -406,12 +444,39 @@
                     // Set role based on age
                     if (age < 13) {
                         roleInput.value = 'kid';
+                        roleText.textContent = ' (Child Account)';
+                        roleText.className = 'font-semibold text-yellow-300';
                     } else {
                         roleInput.value = 'member';
+                        roleText.textContent = ' (Adult Account)';
+                        roleText.className = 'font-semibold text-green-300';
                     }
+
+                    // Show feedback
+                    ageText.textContent = `Age: ${age} years`;
+                    ageText.className = age < 13 ? 'text-yellow-300' : 'text-green-300';
+                    ageFeedback.classList.remove('hidden');
+                });
+            }
+
+            // Password strength indicator
+            const passwordInput = document.getElementById('password');
+            const requirements = {
+                length: document.querySelector('[data-requirement="length"]'),
+                uppercase: document.querySelector('[data-requirement="uppercase"]'),
+                number: document.querySelector('[data-requirement="number"]')
+            };
+
+            if (passwordInput) {
+                passwordInput.addEventListener('input', function() {
+                    const value = this.value;
+                    requirements.length.classList.toggle('text-green-400', value.length >= 8);
+                    requirements.uppercase.classList.toggle('text-green-400', /[A-Z]/.test(value));
+                    requirements.number.classList.toggle('text-green-400', /\d/.test(value));
                 });
             }
         });
     </script>
 </body>
+
 </html>

@@ -14,6 +14,7 @@ return new class extends Migration
         Schema::create('users', function (Blueprint $table) {
             $table->id('user_id'); // Primary key
             $table->foreignId('membership_type_id')
+                ->nullable()
                 ->constrained(
                     table: 'membership_types',
                     column: 'membership_type_id'  // Explicitly reference this column
@@ -27,7 +28,7 @@ return new class extends Migration
             $table->text('address')->nullable();
             $table->date('date_of_birth')->nullable();
             $table->enum('gender', ['male', 'female', 'other'])->nullable();
-            $table->enum('role', ['Member', 'Guest', 'Librarian'])->default('Guest');
+            $table->enum('role', ['Member', 'Guest', 'Admin', 'Kid'])->default('Guest');
             $table->boolean('is_kid')->default(false);
             $table->date('membership_start_date')->default(now());
             $table->date('membership_end_date')->nullable();

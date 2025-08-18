@@ -28,7 +28,10 @@ class AuthenticatedSessionController extends Controller
 
         $request->session()->regenerate();
 
-        return redirect()->intended(route('dashboard', absolute: false));
+        // Flash success message to session
+        return redirect()->to(route('home') . '#membership-plans')
+            ->with('status', 'success')
+            ->with('message', 'Login successful! Please Get Started Membership Plan To Continue.');
     }
 
     /**

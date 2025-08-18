@@ -165,8 +165,6 @@
                         class="text-white hover:text-yellow-300 transition duration-300 font-medium">Home</a>
                     <a href="{{ route('books.index') }}"
                         class="text-white hover:text-yellow-300 transition duration-300 font-medium">Books</a>
-                    <a href="{{ route('categories.index') }}"
-                        class="text-white hover:text-yellow-300 transition duration-300 font-medium">Categories</a>
                     <a href="{{ route('borrowed.index') }}"
                         class="text-white hover:text-yellow-300 transition duration-300 font-medium">My Books</a>
                     <a href="{{ route('about') }}"
@@ -241,8 +239,6 @@
                 <a href="{{ route('home') }}" class="block px-3 py-2 text-white hover:text-yellow-300">Home</a>
                 <a href="{{ route('books.index') }}"
                     class="block px-3 py-2 text-white hover:text-yellow-300">Books</a>
-                <a href="{{ route('categories.index') }}"
-                    class="block px-3 py-2 text-white hover:text-yellow-300">Categories</a>
                 <a href="{{ route('borrowed.index') }}" class="block px-3 py-2 text-white hover:text-yellow-300">My
                     Books</a>
                 <a href="{{ route('about') }}" class="block px-3 py-2 text-white hover:text-yellow-300">About</a>
@@ -336,9 +332,6 @@
                         <li><a href="{{ route('books.index') }}"
                                 class="text-gray-400 hover:text-yellow-300 transition duration-300 flex items-center footer-link">
                                 <i class="fas fa-chevron-right text-xs mr-2 text-yellow-300"></i> Book Catalog</a></li>
-                        <li><a href="{{ route('categories.index') }}"
-                                class="text-gray-400 hover:text-yellow-300 transition duration-300 flex items-center footer-link">
-                                <i class="fas fa-chevron-right text-xs mr-2 text-yellow-300"></i> Categories</a></li>
                         <li><a href="{{ route('borrowed.index') }}"
                                 class="text-gray-400 hover:text-yellow-300 transition duration-300 flex items-center footer-link">
                                 <i class="fas fa-chevron-right text-xs mr-2 text-yellow-300"></i> My Books</a></li>

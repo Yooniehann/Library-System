@@ -9,7 +9,9 @@ class MembershipType extends Model
 {
     use HasFactory;
 
-    protected $primaryKey = 'membership_type_id';
+    protected $primaryKey = 'membership_type_id'; // Make sure this matches exactly
+    protected $keyType = 'integer'; // Add this line
+    public $incrementing = true; // Add this line
 
     protected $fillable = [
         'type_name',

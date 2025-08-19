@@ -9,6 +9,7 @@ use App\Http\Controllers\{
     ProfileController,
     MembershipTypeController
 };
+use App\Http\Controllers\Admin\SearchController;
 
 /*
 |--------------------------------------------------------------------------
@@ -74,9 +75,13 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     // Membership routes
     Route::prefix('membership')->group(function () {
+        // let controller decide whether user can select
+        Route::get('/select/{type}', [MembershipTypeController::class, 'select'])
+            ->name('membership.select')
+            ->middleware('auth');
+
+        // only Guests can proceed to purchase/payment
         Route::middleware('role:Guest')->group(function () {
-            Route::get('/select/{type}', [MembershipTypeController::class, 'select'])
-                ->name('membership.select');
             Route::post('/choose', [MembershipTypeController::class, 'choose'])
                 ->name('membership.choose');
             Route::get('/payment', [MembershipTypeController::class, 'payment'])
@@ -85,10 +90,15 @@ Route::middleware(['auth', 'verified'])->group(function () {
                 ->name('membership.process-payment');
         });
 
-        // ✅ Success should be accessible for upgraded Members/Kids
+        // success page (available once upgraded)
         Route::get('/success', [MembershipTypeController::class, 'success'])
             ->name('membership.success')
             ->middleware('auth');
+    });
+
+
+    Route::get('/test-flash', function () {
+        return redirect('/')->with('info', 'This is a test message');
     });
 
 
@@ -140,4 +150,15 @@ Route::middleware(['auth', 'verified', 'role:Kid'])->prefix('kid')->name('kid.')
     Route::get('/activities', function () {
         return view('dashboard.kid.activities');
     })->name('activities');
+});
+
+
+// Admin routes group
+Route::prefix('admin')->name('admin.')->middleware(['auth', 'verified', 'role:admin'])->group(function () {
+    // ... your other admin routes ...
+
+    // Search route
+    Route::get('/search', [SearchController::class, 'search'])->name('search');
+
+    // ... rest of your admin routes ...
 });

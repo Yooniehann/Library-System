@@ -60,6 +60,35 @@
                 </ul>
             </li>
 
+            <!-- Manage Suppliers with dropdown -->
+            <li x-data="{ open: false }">
+                <div @click="open = !open"
+                    class="sidebar-item flex items-center justify-between p-2 rounded cursor-pointer">
+                    <div class="flex items-center space-x-2">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" viewBox="0 0 24 24" fill="currentColor">
+                            <!-- Hat -->
+                            <path d="M2 10h20l-2-4H4l-2 4z" />
+                            <!-- Face -->
+                            <circle cx="12" cy="15" r="3" />
+                            <!-- Shoulders -->
+                            <path d="M6 22c0-3 4-5 6-5s6 2 6 5H6z" />
+                        </svg>
+                        <span x-show="sidebarExpanded">Manage Suppliers</span>
+                    </div>
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 transition-transform duration-200"
+                        :class="{ 'transform rotate-90': open }" fill="none" viewBox="0 0 24 24"
+                        stroke="currentColor" x-show="sidebarExpanded">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+                    </svg>
+                </div>
+                <ul x-show="open && sidebarExpanded" x-collapse class="pl-8 mt-1 space-y-1">
+                    <li><a href="#" class="dropdown-item block p-2 text-sm rounded">Add New Supplier</a></li>
+                    <li><a href="#" class="dropdown-item block p-2 text-sm rounded">View All Suppliers</a></li>
+                    <li><a href="#" class="dropdown-item block p-2 text-sm rounded">Edit Suppliers</a></li>
+                </ul>
+            </li>
+
+
             <!-- Manage Members with dropdown -->
             <li x-data="{ open: false }">
                 <div @click="open = !open"

@@ -16,8 +16,12 @@ class MembershipTypeController extends Controller
         $user = Auth::user();
 
         if ($user->role !== 'Guest') {
-            return redirect()->route('home')->with('info', 'You already have an active membership');
+            return redirect()->route('home')->with(
+                'info',
+                '🎉 You are already an active member! No need to purchase another membership plan.'
+            );
         }
+
 
         $membershipType = MembershipType::findOrFail($type);
         return view('membership.select', ['membershipType' => $membershipType]);

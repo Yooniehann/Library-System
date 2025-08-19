@@ -158,7 +158,115 @@
 
 
                 <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                    
+                    <!-- Current Borrowings -->
+                    <div class="lg:col-span-2">
+                        <div class="bg-slate-800 rounded-lg shadow overflow-hidden">
+                            <div class="px-6 py-4 border-b border-slate-700">
+                                <h2 class="text-lg font-semibold text-white">Currently Borrowed Books</h2>
+                            </div>
+                            <div class="divide-y divide-slate-700">
+                                <div class="p-4 hover:bg-slate-700">
+                                    <div class="flex items-center">
+                                        <div class="flex-shrink-0 h-16 w-12 bg-slate-600 flex items-center justify-center">
+                                            <i class="fas fa-book text-gray-400"></i>
+                                        </div>
+                                        <div class="ml-4 flex-1">
+                                            <h3 class="text-sm font-medium text-white">The Silent Patient</h3>
+                                            <p class="text-sm text-gray-400">Alex Michaelides</p>
+                                            <p class="text-xs text-gray-500">Due: May 15, 2023</p>
+                                        </div>
+                                        <div class="ml-4">
+                                            <span class="px-2 py-1 text-xs font-semibold rounded-full bg-red-900 text-red-300">Overdue</span>
+                                            <button class="ml-2 text-sm text-primary-orange hover:text-dark-orange">Renew</button>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="p-4 hover:bg-slate-700">
+                                    <div class="flex items-center">
+                                        <div class="flex-shrink-0 h-16 w-12 bg-slate-600 flex items-center justify-center">
+                                            <i class="fas fa-book text-gray-400"></i>
+                                        </div>
+                                        <div class="ml-4 flex-1">
+                                            <h3 class="text-sm font-medium text-white">Educated</h3>
+                                            <p class="text-sm text-gray-400">Tara Westover</p>
+                                            <p class="text-xs text-gray-500">Due: May 20, 2023</p>
+                                        </div>
+                                        <div class="ml-4">
+                                            <button class="text-sm text-primary-orange hover:text-dark-orange">Renew</button>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="p-4 hover:bg-slate-700">
+                                    <div class="flex items-center">
+                                        <div class="flex-shrink-0 h-16 w-12 bg-slate-600 flex items-center justify-center">
+                                            <i class="fas fa-book text-gray-400"></i>
+                                        </div>
+                                        <div class="ml-4 flex-1">
+                                            <h3 class="text-sm font-medium text-white">Atomic Habits</h3>
+                                            <p class="text-sm text-gray-400">James Clear</p>
+                                            <p class="text-xs text-gray-500">Due: May 25, 2023</p>
+                                        </div>
+                                        <div class="ml-4">
+                                            <button class="text-sm text-primary-orange hover:text-dark-orange">Renew</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="px-6 py-4 border-t border-slate-700 bg-slate-900">
+                                <a href="#" class="text-sm font-medium text-primary-orange hover:text-dark-orange">View all borrowed books →</a>
+                            </div>
+                        </div>
+                    </div> 
+
+                    <!-- Notifications -->
+                    <div>
+                        <div class="bg-slate-800 rounded-lg shadow overflow-hidden">
+                            <div class="px-6 py-4 border-b border-slate-700">
+                                <h2 class="text-lg font-semibold text-white">Notifications</h2>
+                            </div>
+                            <div class="divide-y divide-slate-700">
+                                <div class="p-4 hover:bg-slate-700">
+                                    <div class="flex">
+                                        <div class="flex-shrink-0">
+                                            <i class="h-5 w-5 text-red-400 fas fa-exclamation-circle"></i>
+                                        </div>
+                                        <div class="ml-3">
+                                            <p class="text-sm font-medium text-white">Overdue book</p>
+                                            <p class="text-sm text-gray-400">"The Silent Patient" was due on May 15</p>
+                                            <p class="text-xs text-gray-500">2 days ago</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="p-4 hover:bg-slate-700">
+                                    <div class="flex">
+                                        <div class="flex-shrink-0">
+                                            <i class="h-5 w-5 text-green-400 fas fa-check-circle"></i>
+                                        </div>
+                                        <div class="ml-3">
+                                            <p class="text-sm font-medium text-white">Reservation ready</p>
+                                            <p class="text-sm text-gray-400">"Where the Crawdads Sing" is available for pickup</p>
+                                            <p class="text-xs text-gray-500">1 day ago</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="p-4 hover:bg-slate-700">
+                                    <div class="flex">
+                                        <div class="flex-shrink-0">
+                                            <i class="h-5 w-5 text-blue-400 fas fa-info-circle"></i>
+                                        </div>
+                                        <div class="ml-3">
+                                            <p class="text-sm font-medium text-white">Library announcement</p>
+                                            <p class="text-sm text-gray-400">Extended hours this weekend</p>
+                                            <p class="text-xs text-gray-500">3 days ago</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="px-6 py-4 border-t border-slate-700 bg-slate-900">
+                                <a href="#" class="text-sm font-medium text-primary-orange hover:text-dark-orange">View all notifications →</a>
+                            </div>
+                        </div>
+                    </div> 
                 </div>
             </main>
         </div>

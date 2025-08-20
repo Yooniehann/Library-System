@@ -144,16 +144,6 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'verified', 'role:Ad
         Route::delete('/{supplier}', [SupplierController::class, 'destroy'])->name('destroy');
     });
 
-    // Authors Routes
-    Route::prefix('authors')->name('authors.')->group(function () {
-        Route::get('/', [CategoryController::class, 'index'])->name('index');
-        Route::get('/create', [CategoryController::class, 'create'])->name('create');
-        Route::post('/', [CategoryController::class, 'store'])->name('store');
-        Route::get('/{author}/edit', [CategoryController::class, 'edit'])->name('edit');
-        Route::put('/{author}', [CategoryController::class, 'update'])->name('update');
-        Route::delete('/{author}', [CategoryController::class, 'destroy'])->name('destroy');
-    });
-
     // ... other admin routes can be added here ...
 });
 

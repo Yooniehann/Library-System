@@ -9,6 +9,7 @@ use App\Http\Controllers\{
     ProfileController,
     MembershipTypeController
 };
+use App\Http\Controllers\AuthorController;
 use App\Http\Controllers\Admin\SearchController;
 
 /*
@@ -118,13 +119,27 @@ Route::middleware(['auth', 'verified', 'role:Admin'])->prefix('admin')->name('ad
     Route::get('/dashboard', function () {
         return view('dashboard.admin.index');
     })->name('dashboard');
+
     Route::get('/books', function () {
         return view('dashboard.admin.books');
     })->name('books');
+
     Route::get('/users', function () {
         return view('dashboard.admin.users');
     })->name('users');
+
+    // Authors Routes
+    Route::prefix('authors')->name('authors.')->group(function () {
+        Route::get('/', [AuthorController::class, 'index'])->name('index');
+        Route::get('/create', [AuthorController::class, 'create'])->name('create');
+        Route::post('/', [AuthorController::class, 'store'])->name('store');
+        Route::get('/{author}/edit', [AuthorController::class, 'edit'])->name('edit');
+        Route::put('/{author}', [AuthorController::class, 'update'])->name('update');
+        Route::delete('/{author}', [AuthorController::class, 'destroy'])->name('destroy');
+    });
+    
 });
+
 
 // Member routes
 Route::middleware(['auth', 'verified', 'is.member', 'check.membership'])->prefix('member')->name('member.')->group(function () {

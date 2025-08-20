@@ -8,11 +8,28 @@ use Illuminate\Validation\Rule;
 
 class SupplierController extends Controller
 {
-    // Display all suppliers
-    public function index()
+    // Display all suppliers with optional search
+    public function index(Request $request)
     {
-        $suppliers = Supplier::latest()->paginate(10);
-        return view('dashboard.admin.suppliers.index', compact('suppliers'));
+        $query = Supplier::query();
+
+        // Search functionality
+        if ($request->has('search') && !empty($request->search)) {
+            $searchTerm = $request->search;
+
+            $query->where(function ($q) use ($searchTerm) {
+                $q->where('supplier_name', 'LIKE', "%{$searchTerm}%")
+                    ->orWhere('contact_person', 'LIKE', "%{$searchTerm}%")
+                    ->orWhere('phone', 'LIKE', "%{$searchTerm}%")
+                    ->orWhere('email', 'LIKE', "%{$searchTerm}%");
+            });
+        }
+
+        $suppliers = $query->latest()->paginate(10);
+
+        // Pass search term to view to maintain it in the search input
+        return view('dashboard.admin.suppliers.index', compact('suppliers'))
+            ->with('searchTerm', $request->search);
     }
 
     // Show create form

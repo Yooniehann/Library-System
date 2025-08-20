@@ -34,4 +34,5 @@ class MembershipType extends Model
     {
         return $this->hasMany(User::class, 'membership_type_id');
     }
+
 }

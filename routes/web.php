@@ -10,6 +10,7 @@ use App\Http\Controllers\{
     CategoryController,
     ProfileController,
     MembershipTypeController,
+    UserController,
     SupplierController
 };
 use App\Http\Controllers\Admin\SearchController;
@@ -154,6 +155,17 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'verified', 'role:Ad
         Route::put('/{author}', [AuthorController::class, 'update'])->name('update');
         Route::delete('/{author}', [AuthorController::class, 'destroy'])->name('destroy');
     });
+    
+    // Users Routes - Make sure the name prefix is 'users.' (plural)
+    Route::prefix('users')->name('users.')->group(function () {
+        Route::get('/', [UserController::class, 'index'])->name('index');
+        Route::get('/create', [UserController::class, 'create'])->name('create');
+        Route::post('/', [UserController::class, 'store'])->name('store');
+        Route::get('/{user}/edit', [UserController::class, 'edit'])->name('edit');
+        Route::put('/{user}', [UserController::class, 'update'])->name('update');
+        Route::delete('/{user}', [UserController::class, 'destroy'])->name('destroy');
+    });
+
 
     // Books Routes
     Route::prefix('books')->name('books.')->group(function () {

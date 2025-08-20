@@ -11,6 +11,7 @@ use App\Http\Controllers\{
     MembershipTypeController,
     SupplierController
 };
+use App\Http\Controllers\AuthorController;
 use App\Http\Controllers\Admin\SearchController;
 
 /*
@@ -121,31 +122,8 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'verified', 'role:Ad
         return view('dashboard.admin.index');
     })->name('dashboard');
 
-    // Search route
-    Route::get('/search', [SearchController::class, 'search'])->name('search');
-
-    // Categories Routes
-    Route::prefix('categories')->name('categories.')->group(function () {
-        Route::get('/', [CategoryController::class, 'index'])->name('index');
-        Route::get('/create', [CategoryController::class, 'create'])->name('create');
-        Route::post('/', [CategoryController::class, 'store'])->name('store');
-        Route::get('/{category}/edit', [CategoryController::class, 'edit'])->name('edit');
-        Route::put('/{category}', [CategoryController::class, 'update'])->name('update');
-        Route::delete('/{category}', [CategoryController::class, 'destroy'])->name('destroy');
-    });
-
-    // Suppliers Routes
-    Route::prefix('suppliers')->name('suppliers.')->group(function () {
-        Route::get('/', [SupplierController::class, 'index'])->name('index');
-        Route::get('/create', [SupplierController::class, 'create'])->name('create');
-        Route::post('/', [SupplierController::class, 'store'])->name('store');
-        Route::get('/{supplier}/edit', [SupplierController::class, 'edit'])->name('edit');
-        Route::put('/{supplier}', [SupplierController::class, 'update'])->name('update');
-        Route::delete('/{supplier}', [SupplierController::class, 'destroy'])->name('destroy');
-    });
-
-    // ... other admin routes can be added here ...
 });
+
 
 // Member routes
 Route::middleware(['auth', 'verified', 'is.member', 'check.membership'])->prefix('member')->name('member.')->group(function () {

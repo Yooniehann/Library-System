@@ -82,9 +82,10 @@
                     </svg>
                 </div>
                 <ul x-show="open && sidebarExpanded" x-collapse class="pl-8 mt-1 space-y-1">
-                    <li><a href="#" class="dropdown-item block p-2 text-sm rounded">Add New Supplier</a></li>
-                    <li><a href="#" class="dropdown-item block p-2 text-sm rounded">View All Suppliers</a></li>
-                    <li><a href="#" class="dropdown-item block p-2 text-sm rounded">Edit Suppliers</a></li>
+                    <li><a href="{{ route('admin.suppliers.create') }}"
+                            class="dropdown-item block p-2 text-sm rounded">Add New Supplier</a></li>
+                    <li><a href="{{ route('admin.suppliers.index') }}"
+                            class="dropdown-item block p-2 text-sm rounded">View All Suppliers</a></li>
                 </ul>
             </li>
 
@@ -159,9 +160,10 @@
                     </svg>
                 </div>
                 <ul x-show="open && sidebarExpanded" x-collapse class="pl-8 mt-1 space-y-1">
-                    <li><a href="#" class="dropdown-item block p-2 text-sm rounded">Add New Category</a></li>
-                    <li><a href="#" class="dropdown-item block p-2 text-sm rounded">View All Categories</a></li>
-                    <li><a href="#" class="dropdown-item block p-2 text-sm rounded">Edit Categories</a></li>
+                    <li><a href="{{ route('admin.categories.create') }}"
+                            class="dropdown-item block p-2 text-sm rounded">Add New Category</a></li>
+                    <li><a href="{{ route('admin.categories.index') }}"
+                            class="dropdown-item block p-2 text-sm rounded">View All Categories</a></li>
                 </ul>
             </li>
 

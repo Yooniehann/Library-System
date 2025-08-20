@@ -8,11 +8,26 @@ use Illuminate\Validation\Rule;
 
 class CategoryController extends Controller
 {
-    // Display all categories
-    public function index()
+    // Display all categories with optional search
+    public function index(Request $request)
     {
-        $categories = Category::latest()->paginate(10);
-        return view('dashboard.admin.categories.index', compact('categories'));
+        $query = Category::query();
+
+        // Search functionality
+        if ($request->has('search') && !empty($request->search)) {
+            $searchTerm = $request->search;
+
+            $query->where(function ($q) use ($searchTerm) {
+                $q->where('category_name', 'LIKE', "%{$searchTerm}%")
+                    ->orWhere('description', 'LIKE', "%{$searchTerm}%");
+            });
+        }
+
+        $categories = $query->latest()->paginate(10);
+
+        // Pass search term to view to maintain it in the search input
+        return view('dashboard.admin.categories.index', compact('categories'))
+            ->with('searchTerm', $request->search);
     }
 
     // Show create form

@@ -6,8 +6,10 @@ use App\Models\MembershipType;
 use App\Http\Controllers\{
     BookController,
     BorrowController,
+    CategoryController,
     ProfileController,
-    MembershipTypeController
+    MembershipTypeController,
+    SupplierController
 };
 use App\Http\Controllers\AuthorController;
 use App\Http\Controllers\Admin\SearchController;
@@ -97,11 +99,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
             ->middleware('auth');
     });
 
-
     Route::get('/test-flash', function () {
         return redirect('/')->with('info', 'This is a test message');
     });
-
 
     // Borrowing
     Route::get('/borrowed', [BorrowController::class, 'index'])
@@ -114,30 +114,14 @@ Route::middleware(['auth', 'verified'])->group(function () {
 | Role-Based Dashboards
 |--------------------------------------------------------------------------
 */
-// Admin routes
-Route::middleware(['auth', 'verified', 'role:Admin'])->prefix('admin')->name('admin.')->group(function () {
+
+// Admin routes - Consolidated all admin routes into one group
+Route::prefix('admin')->name('admin.')->middleware(['auth', 'verified', 'role:Admin'])->group(function () {
+    // Dashboard
     Route::get('/dashboard', function () {
         return view('dashboard.admin.index');
     })->name('dashboard');
 
-    Route::get('/books', function () {
-        return view('dashboard.admin.books');
-    })->name('books');
-
-    Route::get('/users', function () {
-        return view('dashboard.admin.users');
-    })->name('users');
-
-    // Authors Routes
-    Route::prefix('authors')->name('authors.')->group(function () {
-        Route::get('/', [AuthorController::class, 'index'])->name('index');
-        Route::get('/create', [AuthorController::class, 'create'])->name('create');
-        Route::post('/', [AuthorController::class, 'store'])->name('store');
-        Route::get('/{author}/edit', [AuthorController::class, 'edit'])->name('edit');
-        Route::put('/{author}', [AuthorController::class, 'update'])->name('update');
-        Route::delete('/{author}', [AuthorController::class, 'destroy'])->name('destroy');
-    });
-    
 });
 
 
@@ -165,15 +149,4 @@ Route::middleware(['auth', 'verified', 'role:Kid'])->prefix('kid')->name('kid.')
     Route::get('/activities', function () {
         return view('dashboard.kid.activities');
     })->name('activities');
-});
-
-
-// Admin routes group
-Route::prefix('admin')->name('admin.')->middleware(['auth', 'verified', 'role:admin'])->group(function () {
-    // ... your other admin routes ...
-
-    // Search route
-    Route::get('/search', [SearchController::class, 'search'])->name('search');
-
-    // ... rest of your admin routes ...
 });

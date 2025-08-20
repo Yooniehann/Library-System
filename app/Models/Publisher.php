@@ -2,14 +2,25 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class Publisher extends Model
 {
+    use HasFactory;
+
+    protected $primaryKey = 'publisher_id';
+
     protected $fillable = [
-        'publisher_name',  // Required field
-        'address',         // Nullable
-        'contact_email',   // Nullable
-        'phone'            // Nullable
+        'publisher_name',
+        'phone',
+        'email',
+        'address',
+        'website'
     ];
+
+    public function books()
+    {
+        return $this->hasMany(Book::class, 'publisher_id');
+    }
 }

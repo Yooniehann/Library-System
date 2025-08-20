@@ -1,30 +1,22 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use Spatie\Sitemap\Sitemap;
-use Spatie\Sitemap\Tags\Url;
+use Illuminate\Support\Facades\Auth;
+use App\Models\MembershipType;
 use App\Http\Controllers\{
-    AuthorController,
     BookController,
-    BookCopyController,
-    BorrowRecordController,
-    CategoryController,
-    FeedbackController,
-    FineController,
-    NotificationController,
+    BorrowController,
     ProfileController,
-    PublisherController,
-    ReservationController,
-    UserController
+    MembershipTypeController
 };
+use App\Http\Controllers\Admin\SearchController;
 
 /*
 |--------------------------------------------------------------------------
-| Public Routes (accessible to all users)
+| Public Routes
 |--------------------------------------------------------------------------
 */
 
-// Home Page
 Route::get('/', function () {
     return view('welcome');
 })->name('home');
@@ -35,6 +27,7 @@ Route::view('/contact', 'static.contact')->name('contact');
 Route::view('/faq', 'static.faq')->name('faq');
 Route::view('/privacy', 'static.privacy')->name('privacy');
 Route::view('/terms', 'static.terms')->name('terms');
+Route::view('/memberplan', 'static.memberplan')->name('memberplan');
 
 // Book Catalog
 Route::controller(BookController::class)->name('books.')->group(function () {
@@ -43,25 +36,12 @@ Route::controller(BookController::class)->name('books.')->group(function () {
     Route::get('/books/{book}', 'show')->name('show');
 });
 
-// Categories
-Route::get('/categories', [CategoryController::class, 'index'])->name('categories.index');
-
-// sitemap
-Route::get('/sitemap.xml', function() {
-    return Sitemap::create()
-        ->add(Url::create('/'))
-        ->add(Url::create('/books'))
-        ->add(Url::create('/categories'))
-        // Add all your important routes
-        ->writeToFile(public_path('sitemap.xml'));
-});
-
 /*
 |--------------------------------------------------------------------------
-| Authentication Routes (Laravel Breeze/UI)
+| Authentication Routes
 |--------------------------------------------------------------------------
 */
-require __DIR__.'/auth.php';
+require __DIR__ . '/auth.php';
 
 /*
 |--------------------------------------------------------------------------
@@ -69,104 +49,116 @@ require __DIR__.'/auth.php';
 |--------------------------------------------------------------------------
 */
 Route::middleware(['auth', 'verified'])->group(function () {
-    // Dashboard
+    // Dashboard redirect
     Route::get('/dashboard', function () {
-        return view('dashboard');
+        $user = Auth::user();
+
+        if ($user->role === 'Guest') {
+            return redirect()->route('membership.select', MembershipType::first()->id)
+                ->with('info', 'Please select a membership plan to continue');
+        }
+
+        return match ($user->role) {
+            'Admin' => redirect()->route('admin.dashboard'),
+            'Member' => redirect()->route('member.dashboard'),
+            'Kid' => redirect()->route('kid.dashboard'),
+            default => redirect()->route('home')
+        };
     })->name('dashboard');
 
-    // Profile
+    // Profile routes
     Route::controller(ProfileController::class)->name('profile.')->group(function () {
         Route::get('/profile', 'edit')->name('edit');
         Route::patch('/profile', 'update')->name('update');
         Route::delete('/profile', 'destroy')->name('destroy');
     });
 
-    // Borrowing System
-    Route::controller(BorrowRecordController::class)->name('borrowed.')->prefix('borrowed')->group(function () {
-        Route::get('/', 'index')->name('index');
-        Route::post('/{bookCopy}', 'store')->name('store');
-        Route::post('/return/{borrowRecord}', 'return')->name('return');
+    // Membership routes
+    Route::prefix('membership')->group(function () {
+        // let controller decide whether user can select
+        Route::get('/select/{type}', [MembershipTypeController::class, 'select'])
+            ->name('membership.select')
+            ->middleware('auth');
+
+        // only Guests can proceed to purchase/payment
+        Route::middleware('role:Guest')->group(function () {
+            Route::post('/choose', [MembershipTypeController::class, 'choose'])
+                ->name('membership.choose');
+            Route::get('/payment', [MembershipTypeController::class, 'payment'])
+                ->name('membership.payment');
+            Route::post('/process-payment', [MembershipTypeController::class, 'processPayment'])
+                ->name('membership.process-payment');
+        });
+
+        // success page (available once upgraded)
+        Route::get('/success', [MembershipTypeController::class, 'success'])
+            ->name('membership.success')
+            ->middleware('auth');
     });
 
-    // Reservations
-    Route::controller(ReservationController::class)->name('reservations.')->prefix('reservations')->group(function () {
-        Route::get('/', 'index')->name('index');
-        Route::post('/{book}', 'store')->name('store');
-        Route::delete('/{reservation}', 'destroy')->name('destroy');
+
+    Route::get('/test-flash', function () {
+        return redirect('/')->with('info', 'This is a test message');
     });
 
-    // Feedback
-    Route::resource('feedback', FeedbackController::class)->only(['index', 'store']);
 
-    // Notifications
-    Route::controller(NotificationController::class)->name('notifications.')->prefix('notifications')->group(function () {
-        Route::get('/', 'index')->name('index');
-        Route::post('/mark-as-read', 'markAsRead')->name('markAsRead');
-    });
-
-    // Fines
-    Route::get('/fines', [FineController::class, 'index'])->name('fines.index');
+    // Borrowing
+    Route::get('/borrowed', [BorrowController::class, 'index'])
+        ->middleware('role:Member,Kid')
+        ->name('borrowed.index');
 });
 
 /*
 |--------------------------------------------------------------------------
-| Admin Routes
+| Role-Based Dashboards
 |--------------------------------------------------------------------------
 */
-Route::middleware(['auth', 'verified', 'can:admin'])->prefix('admin')->name('admin.')->group(function () {
-    // Dashboard
+// Admin routes
+Route::middleware(['auth', 'verified', 'role:Admin'])->prefix('admin')->name('admin.')->group(function () {
     Route::get('/dashboard', function () {
-        return view('admin.dashboard');
+        return view('dashboard.admin.index');
     })->name('dashboard');
+    Route::get('/books', function () {
+        return view('dashboard.admin.books');
+    })->name('books');
+    Route::get('/users', function () {
+        return view('dashboard.admin.users');
+    })->name('users');
+});
 
-    // Books Management
-    Route::controller(BookController::class)->name('books.')->prefix('books')->group(function () {
-        Route::get('/', 'adminIndex')->name('index');
-        Route::get('/create', 'create')->name('create');
-        Route::post('/', 'store')->name('store');
-        Route::get('/{book}/edit', 'edit')->name('edit');
-        Route::put('/{book}', 'update')->name('update');
-        Route::delete('/{book}', 'destroy')->name('destroy');
-    });
+// Member routes
+Route::middleware(['auth', 'verified', 'is.member', 'check.membership'])->prefix('member')->name('member.')->group(function () {
+    Route::get('/dashboard', function () {
+        return view('dashboard.member.index');
+    })->name('dashboard');
+    Route::get('/books', function () {
+        return view('dashboard.member.books');
+    })->name('books');
+    Route::get('/profile', function () {
+        return view('dashboard.member.profile');
+    })->name('profile');
+});
 
-    // Book Copies Management
-    Route::resource('book-copies', BookCopyController::class)->except(['show']);
+// Kid routes
+Route::middleware(['auth', 'verified', 'role:Kid'])->prefix('kid')->name('kid.')->group(function () {
+    Route::get('/dashboard', function () {
+        return view('dashboard.kid.index');
+    })->name('dashboard');
+    Route::get('/books', function () {
+        return view('dashboard.kid.books');
+    })->name('books');
+    Route::get('/activities', function () {
+        return view('dashboard.kid.activities');
+    })->name('activities');
+});
 
-    // Authors Management
-    Route::resource('authors', AuthorController::class)->except(['show']);
 
-    // Publishers Management
-    Route::resource('publishers', PublisherController::class)->except(['show']);
+// Admin routes group
+Route::prefix('admin')->name('admin.')->middleware(['auth', 'verified', 'role:admin'])->group(function () {
+    // ... your other admin routes ...
 
-    // Categories Management
-    Route::resource('categories', CategoryController::class)->except(['index', 'show']);
+    // Search route
+    Route::get('/search', [SearchController::class, 'search'])->name('search');
 
-    // Borrow Records Management
-    Route::controller(BorrowRecordController::class)->name('borrow-records.')->prefix('borrow-records')->group(function () {
-        Route::get('/', 'adminIndex')->name('index');
-        Route::post('/approve/{borrowRecord}', 'approve')->name('approve');
-        Route::post('/reject/{borrowRecord}', 'reject')->name('reject');
-    });
-
-    // User Management
-    Route::controller(UserController::class)->name('users.')->prefix('users')->group(function () {
-        Route::get('/', 'index')->name('index');
-        Route::post('/{user}/promote', 'promote')->name('promote');
-        Route::post('/{user}/demote', 'demote')->name('demote');
-        Route::post('/{user}/suspend', 'suspend')->name('suspend');
-        Route::post('/{user}/activate', 'activate')->name('activate');
-    });
-
-    // Fines Management
-    Route::controller(FineController::class)->name('fines.')->prefix('fines')->group(function () {
-        Route::get('/', 'adminIndex')->name('index');
-        Route::post('/{fine}/waive', 'waive')->name('waive');
-        Route::post('/{fine}/pay', 'markAsPaid')->name('markAsPaid');
-    });
-
-    // Reservations Management
-    Route::get('/reservations', [ReservationController::class, 'adminIndex'])->name('reservations.index');
-
-    // Feedback Management
-    Route::get('/feedback', [FeedbackController::class, 'adminIndex'])->name('feedback.index');
+    // ... rest of your admin routes ...
 });

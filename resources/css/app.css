@@ -1,3 +1,20 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@import 'home.css';
+/* Custom fonts */
+.font-playfair {
+    font-family: 'Playfair Display', serif;
+}
+.font-roboto {
+    font-family: 'Roboto', sans-serif;
+}
+
+/* Custom animations */
+.hover\:scale-105:hover {
+    transform: scale(1.05);
+}
+.transition-all {
+    transition: all 0.3s ease;
+}

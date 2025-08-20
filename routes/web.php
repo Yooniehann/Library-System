@@ -7,7 +7,8 @@ use App\Http\Controllers\{
     BookController,
     BorrowController,
     ProfileController,
-    MembershipTypeController
+    MembershipTypeController,
+    UserController
 };
 use App\Http\Controllers\AuthorController;
 use App\Http\Controllers\Admin\SearchController;
@@ -138,6 +139,16 @@ Route::middleware(['auth', 'verified', 'role:Admin'])->prefix('admin')->name('ad
         Route::delete('/{author}', [AuthorController::class, 'destroy'])->name('destroy');
     });
     
+    // Users Routes - Make sure the name prefix is 'users.' (plural)
+    Route::prefix('users')->name('users.')->group(function () {
+        Route::get('/', [UserController::class, 'index'])->name('index');
+        Route::get('/create', [UserController::class, 'create'])->name('create');
+        Route::post('/', [UserController::class, 'store'])->name('store');
+        Route::get('/{user}/edit', [UserController::class, 'edit'])->name('edit');
+        Route::put('/{user}', [UserController::class, 'update'])->name('update');
+        Route::delete('/{user}', [UserController::class, 'destroy'])->name('destroy');
+    });
+
 });
 
 

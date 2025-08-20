@@ -4,6 +4,7 @@ use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Auth;
 use App\Models\MembershipType;
 use App\Http\Controllers\{
+    AuthorController,
     BookController,
     BorrowController,
     CategoryController,
@@ -11,7 +12,6 @@ use App\Http\Controllers\{
     MembershipTypeController,
     SupplierController
 };
-use App\Http\Controllers\AuthorController;
 use App\Http\Controllers\Admin\SearchController;
 
 /*
@@ -122,8 +122,41 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'verified', 'role:Ad
         return view('dashboard.admin.index');
     })->name('dashboard');
 
-});
+    // Search route
+    Route::get('/search', [SearchController::class, 'search'])->name('search');
 
+    // Categories Routes
+    Route::prefix('categories')->name('categories.')->group(function () {
+        Route::get('/', [CategoryController::class, 'index'])->name('index');
+        Route::get('/create', [CategoryController::class, 'create'])->name('create');
+        Route::post('/', [CategoryController::class, 'store'])->name('store');
+        Route::get('/{category}/edit', [CategoryController::class, 'edit'])->name('edit');
+        Route::put('/{category}', [CategoryController::class, 'update'])->name('update');
+        Route::delete('/{category}', [CategoryController::class, 'destroy'])->name('destroy');
+    });
+
+    // Suppliers Routes
+    Route::prefix('suppliers')->name('suppliers.')->group(function () {
+        Route::get('/', [SupplierController::class, 'index'])->name('index');
+        Route::get('/create', [SupplierController::class, 'create'])->name('create');
+        Route::post('/', [SupplierController::class, 'store'])->name('store');
+        Route::get('/{supplier}/edit', [SupplierController::class, 'edit'])->name('edit');
+        Route::put('/{supplier}', [SupplierController::class, 'update'])->name('update');
+        Route::delete('/{supplier}', [SupplierController::class, 'destroy'])->name('destroy');
+    });
+
+    // Authors Routes
+    Route::prefix('authors')->name('authors.')->group(function () {
+        Route::get('/', [AuthorController::class, 'index'])->name('index');
+        Route::get('/create', [AuthorController::class, 'create'])->name('create');
+        Route::post('/', [AuthorController::class, 'store'])->name('store');
+        Route::get('/{author}/edit', [AuthorController::class, 'edit'])->name('edit');
+        Route::put('/{author}', [AuthorController::class, 'update'])->name('update');
+        Route::delete('/{author}', [AuthorController::class, 'destroy'])->name('destroy');
+    });
+
+    // ... other admin routes can be added here ...
+});
 
 // Member routes
 Route::middleware(['auth', 'verified', 'is.member', 'check.membership'])->prefix('member')->name('member.')->group(function () {

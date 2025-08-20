@@ -6,8 +6,10 @@ use App\Models\MembershipType;
 use App\Http\Controllers\{
     BookController,
     BorrowController,
+    CategoryController,
     ProfileController,
-    MembershipTypeController
+    MembershipTypeController,
+    SupplierController
 };
 use App\Http\Controllers\Admin\SearchController;
 
@@ -96,11 +98,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
             ->middleware('auth');
     });
 
-
     Route::get('/test-flash', function () {
         return redirect('/')->with('info', 'This is a test message');
     });
-
 
     // Borrowing
     Route::get('/borrowed', [BorrowController::class, 'index'])
@@ -113,17 +113,48 @@ Route::middleware(['auth', 'verified'])->group(function () {
 | Role-Based Dashboards
 |--------------------------------------------------------------------------
 */
-// Admin routes
-Route::middleware(['auth', 'verified', 'role:Admin'])->prefix('admin')->name('admin.')->group(function () {
+
+// Admin routes - Consolidated all admin routes into one group
+Route::prefix('admin')->name('admin.')->middleware(['auth', 'verified', 'role:Admin'])->group(function () {
+    // Dashboard
     Route::get('/dashboard', function () {
         return view('dashboard.admin.index');
     })->name('dashboard');
-    Route::get('/books', function () {
-        return view('dashboard.admin.books');
-    })->name('books');
-    Route::get('/users', function () {
-        return view('dashboard.admin.users');
-    })->name('users');
+
+    // Search route
+    Route::get('/search', [SearchController::class, 'search'])->name('search');
+
+    // Categories Routes
+    Route::prefix('categories')->name('categories.')->group(function () {
+        Route::get('/', [CategoryController::class, 'index'])->name('index');
+        Route::get('/create', [CategoryController::class, 'create'])->name('create');
+        Route::post('/', [CategoryController::class, 'store'])->name('store');
+        Route::get('/{category}/edit', [CategoryController::class, 'edit'])->name('edit');
+        Route::put('/{category}', [CategoryController::class, 'update'])->name('update');
+        Route::delete('/{category}', [CategoryController::class, 'destroy'])->name('destroy');
+    });
+
+    // Suppliers Routes
+    Route::prefix('suppliers')->name('suppliers.')->group(function () {
+        Route::get('/', [SupplierController::class, 'index'])->name('index');
+        Route::get('/create', [SupplierController::class, 'create'])->name('create');
+        Route::post('/', [SupplierController::class, 'store'])->name('store');
+        Route::get('/{supplier}/edit', [SupplierController::class, 'edit'])->name('edit');
+        Route::put('/{supplier}', [SupplierController::class, 'update'])->name('update');
+        Route::delete('/{supplier}', [SupplierController::class, 'destroy'])->name('destroy');
+    });
+
+    // Authors Routes
+    Route::prefix('authors')->name('authors.')->group(function () {
+        Route::get('/', [CategoryController::class, 'index'])->name('index');
+        Route::get('/create', [CategoryController::class, 'create'])->name('create');
+        Route::post('/', [CategoryController::class, 'store'])->name('store');
+        Route::get('/{author}/edit', [CategoryController::class, 'edit'])->name('edit');
+        Route::put('/{author}', [CategoryController::class, 'update'])->name('update');
+        Route::delete('/{author}', [CategoryController::class, 'destroy'])->name('destroy');
+    });
+
+    // ... other admin routes can be added here ...
 });
 
 // Member routes
@@ -150,15 +181,4 @@ Route::middleware(['auth', 'verified', 'role:Kid'])->prefix('kid')->name('kid.')
     Route::get('/activities', function () {
         return view('dashboard.kid.activities');
     })->name('activities');
-});
-
-
-// Admin routes group
-Route::prefix('admin')->name('admin.')->middleware(['auth', 'verified', 'role:admin'])->group(function () {
-    // ... your other admin routes ...
-
-    // Search route
-    Route::get('/search', [SearchController::class, 'search'])->name('search');
-
-    // ... rest of your admin routes ...
 });

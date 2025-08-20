@@ -112,9 +112,8 @@
                     </svg>
                 </div>
                 <ul x-show="open && sidebarExpanded" x-collapse class="pl-8 mt-1 space-y-1">
-                    <li><a href="#" class="dropdown-item block p-2 text-sm rounded">Register New Member</a></li>
-                    <li><a href="#" class="dropdown-item block p-2 text-sm rounded">View All Members</a></li>
-                    <li><a href="#" class="dropdown-item block p-2 text-sm rounded">Edit Members</a></li>
+                    <li><a href="{{ route('admin.users.create') }}" class="dropdown-item block p-2 text-sm rounded">Add New User</a></li>
+                    <li><a href="{{ route('admin.users.index') }}" class="dropdown-item block p-2 text-sm rounded">View All Users</a></li>
                 </ul>
             </li>
 

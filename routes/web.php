@@ -12,6 +12,8 @@ use App\Http\Controllers\{
     MembershipTypeController,
     UserController,
     SupplierController,
+    StockInController,
+    StockInDetailController,
     CatalogController,
 };
 use App\Http\Controllers\Admin\SearchController;

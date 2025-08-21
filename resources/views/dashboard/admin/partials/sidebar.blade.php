@@ -199,6 +199,32 @@
                 </ul>
             </li>
 
+            <!-- Stock Management -->
+            <li x-data="{ open: false }">
+                <div @click="open = !open"
+                    class="sidebar-item flex items-center justify-between p-2 rounded cursor-pointer">
+                    <div class="flex items-center space-x-2">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path>
+                        </svg>
+                        <span x-show="sidebarExpanded">Stock Management</span>
+                    </div>
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 transition-transform duration-200"
+                        :class="{ 'transform rotate-90': open }" fill="none" viewBox="0 0 24 24"
+                        stroke="currentColor" x-show="sidebarExpanded">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+                    </svg>
+                </div>
+                <ul x-show="open && sidebarExpanded" x-collapse class="pl-8 mt-1 space-y-1">
+                    <li><a href="{{ route('admin.stockins.create') }}"
+                            class="dropdown-item block p-2 text-sm rounded">Create Stock In</a></li>
+                    <li><a href="{{ route('admin.stockins.index') }}"
+                            class="dropdown-item block p-2 text-sm rounded">View Stock Ins</a></li>
+                    {{-- <li><a href="{{ route('admin.stockins.index') }}"
+                            class="dropdown-item block p-2 text-sm rounded">Manage Stock Details</a></li> --}}
+                </ul>
+            </li>
+
             <!-- Other menu items -->
             <li>
                 <a href="#" class="sidebar-item flex items-center space-x-2 p-2 rounded">

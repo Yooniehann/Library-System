@@ -176,6 +176,26 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'verified', 'role:Ad
         Route::delete('/{book}', [BookController::class, 'destroy'])->name('destroy');
     });
 
+    // StockIn Routes
+    Route::prefix('stockins')->name('stockins.')->group(function () {
+        Route::get('/', [StockInController::class, 'index'])->name('index');
+        Route::get('/create', [StockInController::class, 'create'])->name('create');
+        Route::post('/', [StockInController::class, 'store'])->name('store');
+        Route::get('/{stockin}', [StockInController::class, 'show'])->name('show');
+        Route::get('/{stockin}/edit', [StockInController::class, 'edit'])->name('edit');
+        Route::put('/{stockin}', [StockInController::class, 'update'])->name('update');
+        Route::delete('/{stockin}', [StockInController::class, 'destroy'])->name('destroy');
+
+        // StockInDetail Routes
+        Route::prefix('/{stockin}/details')->name('details.')->group(function () {
+            Route::get('/create', [StockInDetailController::class, 'create'])->name('create');
+            Route::post('/', [StockInDetailController::class, 'store'])->name('store');
+            Route::get('/{detail}/edit', [StockInDetailController::class, 'edit'])->name('edit');
+            Route::put('/{detail}', [StockInDetailController::class, 'update'])->name('update');
+            Route::delete('/{detail}', [StockInDetailController::class, 'destroy'])->name('destroy');
+        });
+    });
+
     // ... other admin routes can be added here ...
 });
 

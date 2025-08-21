@@ -11,7 +11,9 @@ use App\Http\Controllers\{
     ProfileController,
     MembershipTypeController,
     UserController,
-    SupplierController
+    SupplierController,
+    StockInController,
+    StockInDetailController
 };
 use App\Http\Controllers\Admin\SearchController;
 
@@ -156,7 +158,7 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'verified', 'role:Ad
         Route::delete('/{author}', [AuthorController::class, 'destroy'])->name('destroy');
     });
     
-    // Users Routes - Make sure the name prefix is 'users.' (plural)
+    // Users Routes 
     Route::prefix('users')->name('users.')->group(function () {
         Route::get('/', [UserController::class, 'index'])->name('index');
         Route::get('/create', [UserController::class, 'create'])->name('create');
@@ -175,6 +177,26 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'verified', 'role:Ad
         Route::get('/{book}/edit', [BookController::class, 'edit'])->name('edit');
         Route::put('/{book}', [BookController::class, 'update'])->name('update');
         Route::delete('/{book}', [BookController::class, 'destroy'])->name('destroy');
+    });
+
+    // StockIn Routes
+    Route::prefix('stockins')->name('stockins.')->group(function () {
+        Route::get('/', [StockInController::class, 'index'])->name('index');
+        Route::get('/create', [StockInController::class, 'create'])->name('create');
+        Route::post('/', [StockInController::class, 'store'])->name('store');
+        Route::get('/{stockin}', [StockInController::class, 'show'])->name('show');
+        Route::get('/{stockin}/edit', [StockInController::class, 'edit'])->name('edit');
+        Route::put('/{stockin}', [StockInController::class, 'update'])->name('update');
+        Route::delete('/{stockin}', [StockInController::class, 'destroy'])->name('destroy');
+        
+        // StockInDetail Routes
+        Route::prefix('/{stockin}/details')->name('details.')->group(function () {
+            Route::get('/create', [StockInDetailController::class, 'create'])->name('create');
+            Route::post('/', [StockInDetailController::class, 'store'])->name('store');
+            Route::get('/{detail}/edit', [StockInDetailController::class, 'edit'])->name('edit');
+            Route::put('/{detail}', [StockInDetailController::class, 'update'])->name('update');
+            Route::delete('/{detail}', [StockInDetailController::class, 'destroy'])->name('destroy');
+        });
     });
 
     // ... other admin routes can be added here ...

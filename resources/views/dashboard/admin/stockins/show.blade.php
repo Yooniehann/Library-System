@@ -44,10 +44,12 @@
             </div>
             <div>
                 <p class="text-gray-300 text-sm">Status</p>
-                <span class="px-2 py-1 text-xs rounded-full 
-                    @if($stockin->status == 'Received') bg-green-500 text-white
-                    @elseif($stockin->status == 'Canceled') bg-red-500 text-white
-                    @else bg-yellow-500 text-black @endif">
+                <span class="px-2 py-1 text-xs rounded-full text-white"
+                    @class([
+                        'bg-green-500' => $stockin->status === 'Received',
+                        'bg-red-500' => $stockin->status === 'Canceled',
+                        'bg-yellow-500 text-black' => $stockin->status !== 'Received' && $stockin->status !== 'Canceled',
+                    ])>
                     {{ $stockin->status }}
                 </span>
             </div>

@@ -13,7 +13,8 @@ use App\Http\Controllers\{
     UserController,
     SupplierController,
     StockInController,
-    StockInDetailController
+    StockInDetailController,
+    CatalogController,
 };
 use App\Http\Controllers\Admin\SearchController;
 
@@ -35,12 +36,8 @@ Route::view('/privacy', 'static.privacy')->name('privacy');
 Route::view('/terms', 'static.terms')->name('terms');
 Route::view('/memberplan', 'static.memberplan')->name('memberplan');
 
-// Book Catalog
-Route::controller(BookController::class)->name('books.')->group(function () {
-    Route::get('/books', 'index')->name('index');
-    Route::get('/books/search', 'search')->name('search');
-    Route::get('/books/{book}', 'show')->name('show');
-});
+// Book page in home
+Route::get('/books', [CatalogController::class, 'books'])->name('books.index');
 
 /*
 |--------------------------------------------------------------------------
@@ -157,8 +154,8 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'verified', 'role:Ad
         Route::put('/{author}', [AuthorController::class, 'update'])->name('update');
         Route::delete('/{author}', [AuthorController::class, 'destroy'])->name('destroy');
     });
-    
-    // Users Routes 
+
+    // Users Routes - Make sure the name prefix is 'users.' (plural)
     Route::prefix('users')->name('users.')->group(function () {
         Route::get('/', [UserController::class, 'index'])->name('index');
         Route::get('/create', [UserController::class, 'create'])->name('create');
@@ -188,7 +185,7 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'verified', 'role:Ad
         Route::get('/{stockin}/edit', [StockInController::class, 'edit'])->name('edit');
         Route::put('/{stockin}', [StockInController::class, 'update'])->name('update');
         Route::delete('/{stockin}', [StockInController::class, 'destroy'])->name('destroy');
-        
+
         // StockInDetail Routes
         Route::prefix('/{stockin}/details')->name('details.')->group(function () {
             Route::get('/create', [StockInDetailController::class, 'create'])->name('create');

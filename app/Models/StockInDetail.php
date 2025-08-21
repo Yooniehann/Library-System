@@ -13,6 +13,7 @@ class StockInDetail extends Model
 
     protected $fillable = [
         'stockin_id',
+        'book_id',
         'price_per_unit',
         'condition',
         'remarks',
@@ -22,6 +23,11 @@ class StockInDetail extends Model
     protected $casts = [
         'price_per_unit' => 'decimal:2',
     ];
+
+    public function book()
+    {
+        return $this->belongsTo(Book::class, 'book_id');
+    }
 
     public function stockIn()
     {

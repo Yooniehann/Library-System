@@ -14,37 +14,37 @@ class StockInController extends Controller
     public function index(Request $request)
     {
         $query = StockIn::with(['supplier', 'staff']);
-        
+
         // Search by supplier name
         if ($request->has('supplier') && !empty($request->supplier)) {
-            $query->whereHas('supplier', function($q) use ($request) {
+            $query->whereHas('supplier', function ($q) use ($request) {
                 $q->where('supplier_name', 'like', '%' . $request->supplier . '%');
             });
         }
-        
+
         // Search by staff name
         if ($request->has('staff') && !empty($request->staff)) {
-            $query->whereHas('staff', function($q) use ($request) {
+            $query->whereHas('staff', function ($q) use ($request) {
                 $q->where('fullname', 'like', '%' . $request->staff . '%');
             });
         }
-        
+
         // Filter by status
         if ($request->has('status') && !empty($request->status)) {
             $query->where('status', $request->status);
         }
-        
+
         // Filter by date range
         if ($request->has('from_date') && !empty($request->from_date)) {
             $query->whereDate('stockin_date', '>=', $request->from_date);
         }
-        
+
         if ($request->has('to_date') && !empty($request->to_date)) {
             $query->whereDate('stockin_date', '<=', $request->to_date);
         }
-        
+
         $stockins = $query->latest()->paginate(10);
-            
+
         return view('dashboard.admin.stockins.index', compact('stockins'));
     }
 
@@ -53,7 +53,7 @@ class StockInController extends Controller
     {
         $suppliers = Supplier::all();
         $staff = Staff::all();
-        
+
         return view('dashboard.admin.stockins.create', compact('suppliers', 'staff'));
     }
 
@@ -68,27 +68,28 @@ class StockInController extends Controller
         ]);
 
         $validated['total_books'] = 0; // Initialize with 0 books
-        
+
         StockIn::create($validated);
 
         return redirect()->route('admin.stockins.index')
             ->with('success', 'StockIn created successfully!');
     }
 
-    // Show stockin details
+    // In StockInController show method
     public function show(StockIn $stockin)
     {
-        $stockin->load(['supplier', 'staff', 'details.book']);
-        
+        $stockin->load(['supplier', 'staff', 'details.book', 'details.inventories']);
+
         return view('dashboard.admin.stockins.show', compact('stockin'));
     }
+
 
     // Show edit form
     public function edit(StockIn $stockin)
     {
         $suppliers = Supplier::all();
         $staff = Staff::all();
-        
+
         return view('dashboard.admin.stockins.edit', compact('stockin', 'suppliers', 'staff'));
     }
 
@@ -118,7 +119,7 @@ class StockInController extends Controller
         }
 
         $stockin->delete();
-        
+
         return redirect()->route('admin.stockins.index')
             ->with('success', 'StockIn deleted successfully!');
     }

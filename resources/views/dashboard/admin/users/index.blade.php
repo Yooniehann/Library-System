@@ -112,9 +112,8 @@
                                 </td>
                                 <td class="px-3 py-4 whitespace-nowrap text-sm font-medium">
                                     <div class="flex flex-col sm:flex-row sm:space-x-3 space-y-1 sm:space-y-0">
-                                        <a href="{{ route('admin.users.edit', $user) }}"
-                                            class="text-yellow-400 hover:text-yellow-300 transition-colors duration-200 whitespace-nowrap">
-                                            Edit
+                                        <a href="{{ route('admin.users.edit', $user) }}" class="text-yellow-400 hover:text-yellow-500 transition duration-300" title="Edit">
+                                            <i class="fas fa-edit fa-lg"></i>
                                         </a>
                                         @if ($user->role !== 'Librarian')
                                             <form action="{{ route('admin.users.destroy', $user) }}" method="POST"
@@ -124,7 +123,7 @@
                                                 <button type="submit"
                                                     class="text-red-500 hover:text-red-400 transition-colors duration-200 whitespace-nowrap"
                                                     onclick="return confirm('Are you sure you want to delete {{ $user->fullname }}?')">
-                                                    Delete
+                                                    <i class="fas fa-trash-alt fa-lg"></i>
                                                 </button>
                                             </form>
                                         @endif

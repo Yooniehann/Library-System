@@ -11,7 +11,8 @@ use App\Http\Controllers\{
     ProfileController,
     MembershipTypeController,
     UserController,
-    SupplierController
+    SupplierController,
+    CatalogController,
 };
 use App\Http\Controllers\Admin\SearchController;
 
@@ -33,12 +34,8 @@ Route::view('/privacy', 'static.privacy')->name('privacy');
 Route::view('/terms', 'static.terms')->name('terms');
 Route::view('/memberplan', 'static.memberplan')->name('memberplan');
 
-// Book Catalog
-Route::controller(BookController::class)->name('books.')->group(function () {
-    Route::get('/books', 'index')->name('index');
-    Route::get('/books/search', 'search')->name('search');
-    Route::get('/books/{book}', 'show')->name('show');
-});
+// Book page in home
+Route::get('/books', [CatalogController::class, 'books'])->name('books.index');
 
 /*
 |--------------------------------------------------------------------------
@@ -155,7 +152,7 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'verified', 'role:Ad
         Route::put('/{author}', [AuthorController::class, 'update'])->name('update');
         Route::delete('/{author}', [AuthorController::class, 'destroy'])->name('destroy');
     });
-    
+
     // Users Routes - Make sure the name prefix is 'users.' (plural)
     Route::prefix('users')->name('users.')->group(function () {
         Route::get('/', [UserController::class, 'index'])->name('index');

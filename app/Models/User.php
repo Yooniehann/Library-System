@@ -199,7 +199,11 @@ class User extends Authenticatable
             return false;
         }
 
-        return $this->activeBorrows()->count() < $this->membershipType->max_books_allowed;
+        $activeBorrowsCount = $this->borrows()
+            ->where('status', 'borrowed')
+            ->count();
+
+        return $activeBorrowsCount < $this->membershipType->max_books_allowed;
     }
 
     /**

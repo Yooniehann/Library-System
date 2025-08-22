@@ -473,7 +473,11 @@
                                                 <div class="card-actions">
                                                     <a href="#" class="btn-view">View Details</a>
                                                     @auth
-                                                        <a href="#" class="btn-borrow">Borrow</a>
+                                                        @if($book->isAvailable())
+                                                            <a href="{{ route('member.borrow.confirm', $book) }}" class="btn-borrow">Borrow</a>
+                                                        @else
+                                                            <button class="btn-borrow" disabled>Not Available</button>
+                                                        @endif
                                                     @else
                                                         <span class="login-prompt">Login to borrow</span>
                                                     @endauth

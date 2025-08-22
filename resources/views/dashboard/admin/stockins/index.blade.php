@@ -96,10 +96,12 @@
                     <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-300">{{ $stockin->stockin_date->format('M d, Y') }}</td>
                     <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-300">{{ $stockin->total_books }}</td>
                     <td class="px-6 py-4 whitespace-nowrap text-sm">
-                        <span class="px-2 py-1 text-xs rounded-full 
-                            @if($stockin->status == 'Received') bg-green-500 text-white
-                            @elseif($stockin->status == 'Canceled') bg-red-500 text-white
-                            @else bg-yellow-500 text-black @endif">
+                        <span class="px-2 py-1 text-xs rounded-full text-white"
+                            @class([
+                                'bg-green-500' => $stockin->status === 'Received',
+                                'bg-red-500' => $stockin->status === 'Canceled',
+                                'bg-yellow-500 text-black' => $stockin->status !== 'Received' && $stockin->status !== 'Canceled',
+                            ])>
                             {{ $stockin->status }}
                         </span>
                     </td>

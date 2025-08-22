@@ -210,6 +210,17 @@ Route::middleware(['auth', 'verified', 'is.member', 'check.membership'])->prefix
     Route::get('/profile', function () {
         return view('dashboard.member.profile');
     })->name('profile');
+
+    // Borrow routes for members
+    Route::middleware(['auth'])->prefix('member')->group(function () {
+        Route::get('/borrow/{book}/confirm', [BorrowController::class, 'confirm'])->name('borrow.confirm');
+        Route::post('/borrow/{book}', [BorrowController::class, 'store'])->name('borrow.store');
+        Route::get('/borrow/history', [BorrowController::class, 'index'])->name('borrow.history');
+        Route::post('/borrow/{borrow}/renew', [BorrowController::class, 'renew'])->name('borrow.renew');
+        Route::post('/borrow/{borrow}/return', [BorrowController::class, 'return'])->name('borrow.return');
+        Route::get('/borrow/success/{borrow}', [BorrowController::class, 'success'])->name('borrow.success');
+    });
+
 });
 
 // Kid routes

@@ -64,7 +64,7 @@
             </li>
 
             <!-- Manage Inventories (Book Copies) with dropdown -->
-            <li x-data="{ open: false }">
+            {{-- <li x-data="{ open: false }">
                 <div @click="open = !open"
                     class="sidebar-item flex items-center justify-between p-2 rounded cursor-pointer">
                     <div class="flex items-center space-x-2">
@@ -87,7 +87,7 @@
                     <li><a href="#" class="dropdown-item block p-2 text-sm rounded">Update Copies</a></li>
                     <li><a href="#" class="dropdown-item block p-2 text-sm rounded">Track Availability</a></li>
                 </ul>
-            </li>
+            </li> --}}
 
             <!-- Manage Suppliers with dropdown -->
             <li x-data="{ open: false }">

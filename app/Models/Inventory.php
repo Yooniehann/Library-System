@@ -28,12 +28,26 @@ class Inventory extends Model
     {
         return $this->belongsTo(Book::class, 'book_id');
     }
+
     public function stockInDetail()
     {
         return $this->belongsTo(StockInDetail::class, 'stockin_detail_id');
     }
+
     public function borrows()
     {
         return $this->hasMany(Borrow::class, 'inventory_id');
+    }
+
+    public function currentBorrow()
+    {
+        return $this->hasOne(Borrow::class, 'inventory_id')
+            ->where('status', 'active');
+    }
+
+    // Check if inventory is available
+    public function getIsAvailableAttribute()
+    {
+        return $this->status === 'available' && !$this->currentBorrow;
     }
 }

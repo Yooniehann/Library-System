@@ -7,23 +7,14 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 
 class User extends Authenticatable
 {
     use HasFactory, Notifiable;
 
-    /**
-     * The primary key for the model.
-     *
-     * @var string
-     */
     protected $primaryKey = 'user_id';
 
-    /**
-     * The attributes that are mass assignable.
-     *
-     * @var array<string>
-     */
     protected $fillable = [
         'membership_type_id',
         'fullname',
@@ -41,21 +32,11 @@ class User extends Authenticatable
         'email_verified_at'
     ];
 
-    /**
-     * The attributes that should be hidden for serialization.
-     *
-     * @var array<string>
-     */
     protected $hidden = [
         'password',
         'remember_token',
     ];
 
-    /**
-     * The attributes that should be cast.
-     *
-     * @var array<string, string>
-     */
     protected $casts = [
         'email_verified_at' => 'datetime',
         'password' => 'hashed',
@@ -65,28 +46,17 @@ class User extends Authenticatable
         'is_kid' => 'boolean',
     ];
 
-    /**
-     * The model's default values for attributes.
-     *
-     * @var array
-     */
     protected $attributes = [
         'role' => 'Guest',
         'status' => 'active',
         'is_kid' => false,
     ];
 
-    /**
-     * Get the membership type associated with the user.
-     */
     public function membershipType(): BelongsTo
     {
         return $this->belongsTo(MembershipType::class, 'membership_type_id');
     }
 
-    /**
-     * Get the borrows for the user.
-     */
     public function borrows(): HasMany
     {
         return $this->hasMany(Borrow::class, 'user_id');
@@ -94,10 +64,11 @@ class User extends Authenticatable
 
     /**
      * Get the current active borrows for the user.
+     * FIXED: Using status field instead of returned_at
      */
     public function activeBorrows(): HasMany
     {
-        return $this->borrows()->where('returned_at', null);
+        return $this->borrows()->where('status', 'active');
     }
 
     /**
@@ -110,10 +81,13 @@ class User extends Authenticatable
 
     /**
      * Get the active reservations for the user.
+     * FIXED: Using status field and expiry_date
      */
     public function activeReservations(): HasMany
     {
-        return $this->reservations()->where('expires_at', '>', now());
+        return $this->reservations()
+                    ->where('reservations.status', 'pending') // FIXED: Added table prefix
+                    ->where('expiry_date', '>', now());
     }
 
     /**
@@ -130,6 +104,30 @@ class User extends Authenticatable
     public function successfulPayments(): HasMany
     {
         return $this->payments()->where('status', 'completed');
+    }
+
+    /**
+     * Get the fines for the user through borrows.
+     */
+    public function fines(): HasManyThrough
+    {
+        return $this->hasManyThrough(
+            Fine::class,
+            Borrow::class,
+            'user_id',    // Foreign key on borrows table
+            'borrow_id',  // Foreign key on fines table
+            'user_id',    // Local key on users table
+            'borrow_id'   // Local key on borrows table
+        );
+    }
+
+    /**
+     * Get the unpaid fines for the user.
+     * FIXED: Added table prefix to avoid ambiguous column error
+     */
+    public function unpaidFines(): HasManyThrough
+    {
+        return $this->fines()->where('fines.status', 'unpaid'); // FIXED: Added fines. prefix
     }
 
     /**
@@ -192,6 +190,7 @@ class User extends Authenticatable
 
     /**
      * Check if user can borrow more books.
+     * FIXED: Use correct relationship
      */
     public function canBorrowMoreBooks(): bool
     {
@@ -199,15 +198,13 @@ class User extends Authenticatable
             return false;
         }
 
-        $activeBorrowsCount = $this->borrows()
-            ->where('status', 'borrowed')
-            ->count();
-
+        $activeBorrowsCount = $this->activeBorrows()->count();
         return $activeBorrowsCount < $this->membershipType->max_books_allowed;
     }
 
     /**
      * Get the remaining books the user can borrow.
+     * FIXED: Use correct relationship
      */
     public function remainingBookLimit(): int
     {
@@ -215,7 +212,25 @@ class User extends Authenticatable
             return 0;
         }
 
-        return max(0, $this->membershipType->max_books_allowed - $this->activeBorrows()->count());
+        $activeBorrowsCount = $this->activeBorrows()->count();
+        return max(0, $this->membershipType->max_books_allowed - $activeBorrowsCount);
+    }
+
+    /**
+     * Get the total amount of unpaid fines.
+     * FIXED: Added table prefix to avoid ambiguous column error
+     */
+    public function getTotalUnpaidFinesAttribute(): float
+    {
+        return $this->unpaidFines()->sum('fines.amount_per_day'); // FIXED: Added fines. prefix
+    }
+
+    /**
+     * Check if user has unpaid fines.
+     */
+    public function hasUnpaidFines(): bool
+    {
+        return $this->unpaidFines()->exists();
     }
 
     /**

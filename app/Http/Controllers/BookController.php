@@ -140,4 +140,12 @@ class BookController extends Controller
         return redirect()->route('admin.books.index')
             ->with('success', 'Book deleted successfully!');
     }
+
+    public function show($bookId)
+    {
+        $book = Book::with(['author', 'category', 'inventories'])
+            ->findOrFail($bookId);
+
+        return view('books.show', compact('book'));
+    }
 }

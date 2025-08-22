@@ -78,11 +78,11 @@ class BorrowController extends Controller
         // Check if user had a reservation for this book
         $reservation = Reservation::where('user_id', $user->user_id)
             ->where('book_id', $bookId)
-            ->where('status', 'pending')
+            ->where('status', 'active') // Changed from 'pending' to 'active'
             ->first();
 
         if ($reservation) {
-            $reservation->update(['status' => 'fulfilled']);
+            $reservation->update(['status' => 'fulfilled']); 
         }
 
         // Redirect based on user role

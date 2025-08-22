@@ -6,6 +6,7 @@ use App\Models\MembershipType;
 use App\Http\Controllers\{
     AuthorController,
     BookController,
+    BookReturnController,
     BorrowController,
     CategoryController,
     ProfileController,
@@ -15,6 +16,7 @@ use App\Http\Controllers\{
     StockInController,
     StockInDetailController,
     CatalogController,
+    ReservationController,
 };
 use App\Http\Controllers\Admin\SearchController;
 
@@ -38,6 +40,21 @@ Route::view('/memberplan', 'static.memberplan')->name('memberplan');
 
 // Book page in home
 Route::get('/books', [CatalogController::class, 'books'])->name('books.index');
+
+// Borrow routes
+Route::post('/borrow/{book}', [BorrowController::class, 'create'])->name('borrow.create')->middleware('auth');
+
+Route::post('/borrow/{borrow}/renew', [BorrowController::class, 'renew'])->name('borrow.renew')->middleware('auth');
+
+// Reservation routes
+Route::post('/reserve/{book}', [ReservationController::class, 'create'])->name('reservations.create')->middleware('auth');
+
+// Book details route
+Route::get('/books/{book}', [BookController::class, 'show'])->name('books.show');
+
+
+// Return routes
+Route::post('/return/{borrow}', [BookReturnController::class, 'returnBook'])->name('book.return')->middleware('auth');
 
 /*
 |--------------------------------------------------------------------------
@@ -204,12 +221,6 @@ Route::middleware(['auth', 'verified', 'is.member', 'check.membership'])->prefix
     Route::get('/dashboard', function () {
         return view('dashboard.member.index');
     })->name('dashboard');
-    Route::get('/books', function () {
-        return view('dashboard.member.books');
-    })->name('books');
-    Route::get('/profile', function () {
-        return view('dashboard.member.profile');
-    })->name('profile');
 });
 
 // Kid routes
@@ -217,10 +228,4 @@ Route::middleware(['auth', 'verified', 'role:Kid'])->prefix('kid')->name('kid.')
     Route::get('/dashboard', function () {
         return view('dashboard.kid.index');
     })->name('dashboard');
-    Route::get('/books', function () {
-        return view('dashboard.kid.books');
-    })->name('books');
-    Route::get('/activities', function () {
-        return view('dashboard.kid.activities');
-    })->name('activities');
 });

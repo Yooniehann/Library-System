@@ -149,6 +149,18 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
         
     // Reservations
+    // Route::get('/reservations', [ReservationController::class, 'index'])
+    //     ->middleware('role:Member,Kid')
+    //     ->name('reservations.index');
+    
+    // // Reservation cancel route
+    // Route::post('/reservations/{id}/cancel', [ReservationController::class, 'cancel'])
+    //     ->middleware('role:Member,Kid')
+    //     ->name('reservations.cancel')
+    //     ->name('borrowed.index')
+    //     ->middleware('role:Member,Kid');
+
+    // Reservations
     Route::get('/reservations', [ReservationController::class, 'index'])
         ->middleware('role:Member,Kid')
         ->name('reservations.index');
@@ -157,8 +169,6 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::post('/reservations/{id}/cancel', [ReservationController::class, 'cancel'])
         ->middleware('role:Member,Kid')
         ->name('reservations.cancel');
-        ->name('borrowed.index')
-        ->middleware('role:Member,Kid');
 });
 
 /*

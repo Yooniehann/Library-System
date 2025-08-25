@@ -162,3 +162,5 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'verified', 'role:ad
 
     // ... rest of your admin routes ...
 });
+
+

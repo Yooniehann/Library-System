@@ -242,7 +242,7 @@
             </p>
 
             <!-- Join Now button -->
-            <a href="{{ url('/join') }}" class="btn" style="margin-top: 20px;">Join Now</a>
+            <a href="{{ url('register') }}" class="btn" style="margin-top: 20px;">Join Now</a>
         </div>
     </div>
 

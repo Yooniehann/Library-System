@@ -14,6 +14,18 @@ class BorrowController extends Controller
 {
     public function create($bookId)
     {
+        $user = Auth::user();
+
+        // Check if user is authenticated
+        if (!$user) {
+            return redirect()->route('login');
+        }
+
+        // Check if user is a guest
+        if ($user->role === 'Guest') {
+            return redirect()->back()->with('error', 'You need to upgrade your membership to borrow books.');
+        }
+
         // Find the book
         $book = Book::findOrFail($bookId);
 
@@ -27,7 +39,6 @@ class BorrowController extends Controller
         }
 
         // Check if user has reached borrowing limit
-        $user = Auth::user();
         if (!$user->canBorrowMoreBooks()) {
             return redirect()->back()->with('error', 'You have reached the maximum borrowing limit.');
         }
@@ -78,22 +89,21 @@ class BorrowController extends Controller
         // Check if user had a reservation for this book
         $reservation = Reservation::where('user_id', $user->user_id)
             ->where('book_id', $bookId)
-            ->where('status', 'active') // Changed from 'pending' to 'active'
+            ->where('status', 'active')
             ->first();
 
         if ($reservation) {
-            $reservation->update(['status' => 'fulfilled']); 
+            $reservation->update(['status' => 'fulfilled']);
         }
 
         // Redirect based on user role
-        $user = Auth::user();
         $redirectRoute = $user->role === 'Kid' ? 'kid.dashboard' : 'member.dashboard';
 
         return redirect()->route('books.index')->with([
             'success' => 'Book borrowed successfully! Due date: '
                 . $borrow->due_date->format('M d, Y')
                 . '. Please return on time to avoid fines.',
-            'redirect_to' => route($redirectRoute), // role-based redirect
+            'redirect_to' => route($redirectRoute),
         ]);
     }
 
@@ -102,7 +112,19 @@ class BorrowController extends Controller
      */
     public function renew($borrowId)
     {
-        $borrow = Borrow::where('user_id', Auth::id())
+        $user = Auth::user();
+
+        // Check if user is authenticated
+        if (!$user) {
+            return redirect()->route('login');
+        }
+
+        // Check if user is a guest
+        if ($user->role === 'Guest') {
+            return redirect()->back()->with('error', 'You need to upgrade your membership to renew books.');
+        }
+
+        $borrow = Borrow::where('user_id', $user->user_id)
             ->findOrFail($borrowId);
 
         // Check if already renewed maximum times (e.g., 2 times)

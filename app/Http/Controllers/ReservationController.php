@@ -11,12 +11,24 @@ class ReservationController extends Controller
 {
     public function create($bookId)
     {
+        $user = Auth::user();
+
+        // Check if user is authenticated
+        if (!$user) {
+            return redirect()->route('login');
+        }
+
+        // Check if user is a guest
+        if ($user->role === 'Guest') {
+            return redirect()->back()->with('error', 'You need to upgrade your membership to reserve books.');
+        }
+
         $book = Book::findOrFail($bookId);
 
         // Check if user already has an active reservation for this book
-        $existingReservation = Reservation::where('user_id', Auth::id())
+        $existingReservation = Reservation::where('user_id', $user->user_id)
             ->where('book_id', $bookId)
-            ->whereIn('status', ['active']) // Only check for active reservations
+            ->whereIn('status', ['active'])
             ->first();
 
         if ($existingReservation) {
@@ -25,7 +37,7 @@ class ReservationController extends Controller
 
         // Get the next priority number for this book (only count active reservations)
         $lastReservation = Reservation::where('book_id', $bookId)
-            ->where('status', 'active') // Only count active reservations in the queue
+            ->where('status', 'active')
             ->orderBy('priority_number', 'desc')
             ->first();
 
@@ -33,10 +45,10 @@ class ReservationController extends Controller
 
         // Create reservation with correct status
         $reservation = Reservation::create([
-            'user_id' => Auth::id(),
+            'user_id' => $user->user_id,
             'book_id' => $bookId,
             'reservation_date' => now(),
-            'status' => 'active', 
+            'status' => 'active',
             'expiry_date' => now()->addDays(3),
             'priority_number' => $priorityNumber,
             'notification_sent' => false

@@ -575,19 +575,25 @@
                                                         <a href="{{ route('books.show', $book->book_id) }}"
                                                             class="btn-view">View Details</a>
                                                         @auth
-                                                            @if ($book->availableInventories->count() > 0)
-                                                                <form action="{{ route('borrow.create', $book->book_id) }}"
-                                                                    method="POST">
-                                                                    @csrf
-                                                                    <button type="submit" class="btn-borrow">Borrow</button>
-                                                                </form>
+                                                            @if (Auth::user()->role === 'Guest')
+                                                                <span class="login-prompt">Upgrade membership to borrow</span>
                                                             @else
-                                                                <form
-                                                                    action="{{ route('reservations.create', $book->book_id) }}"
-                                                                    method="POST">
-                                                                    @csrf
-                                                                    <button type="submit" class="btn-reserve">Reserve</button>
-                                                                </form>
+                                                                @if ($book->availableInventories->count() > 0)
+                                                                    <form action="{{ route('borrow.create', $book->book_id) }}"
+                                                                        method="POST">
+                                                                        @csrf
+                                                                        <button type="submit"
+                                                                            class="btn-borrow">Borrow</button>
+                                                                    </form>
+                                                                @else
+                                                                    <form
+                                                                        action="{{ route('reservations.create', $book->book_id) }}"
+                                                                        method="POST">
+                                                                        @csrf
+                                                                        <button type="submit"
+                                                                            class="btn-reserve">Reserve</button>
+                                                                    </form>
+                                                                @endif
                                                             @endif
                                                         @else
                                                             <span class="login-prompt">Login to borrow</span>

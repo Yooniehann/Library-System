@@ -101,9 +101,11 @@
             0% {
                 box-shadow: 0 0 0 0 rgba(245, 158, 11, 0.7);
             }
+
             70% {
                 box-shadow: 0 0 0 10px rgba(245, 158, 11, 0);
             }
+
             100% {
                 box-shadow: 0 0 0 0 rgba(245, 158, 11, 0);
             }
@@ -117,9 +119,11 @@
             0% {
                 transform: translateY(0px);
             }
+
             50% {
                 transform: translateY(-10px);
             }
+
             100% {
                 transform: translateY(0px);
             }
@@ -143,7 +147,8 @@
                 <!-- Logo with animation -->
                 <div class="flex-shrink-0 flex items-center">
                     <a href="{{ route('home') }}" class="flex items-center logo-container">
-                        <div class="w-10 h-10 bg-yellow-300 rounded-full flex items-center justify-center mr-3 pulse-animation">
+                        <div
+                            class="w-10 h-10 bg-yellow-300 rounded-full flex items-center justify-center mr-3 pulse-animation">
                             <i class="fas fa-book-open text-black text-xl"></i>
                         </div>
                         <span class="logo-text text-2xl font-bold">
@@ -165,8 +170,20 @@
                         class="text-white hover:text-yellow-300 transition duration-300 font-medium">Home</a>
                     <a href="{{ route('books.index') }}"
                         class="text-white hover:text-yellow-300 transition duration-300 font-medium">Books</a>
-                    <a href="{{ route('borrowed.index') }}"
-                        class="text-white hover:text-yellow-300 transition duration-300 font-medium">My Books</a>
+                    @auth
+                        @if (Auth::user()->role !== 'Guest')
+                            <a href="{{ route('borrowed.index') }}"
+                                class="text-white hover:text-yellow-300 transition duration-300 font-medium">My Books</a>
+                        @else
+                            <a href="#"
+                                onclick="event.preventDefault(); alert('You need to upgrade your membership to access My Books.');"
+                                class="text-white hover:text-yellow-300 transition duration-300 font-medium opacity-50 cursor-not-allowed">My
+                                Books</a>
+                        @endif
+                    @else
+                        <a href="{{ route('borrowed.index') }}"
+                            class="text-white hover:text-yellow-300 transition duration-300 font-medium">My Books</a>
+                    @endauth
                     <a href="{{ route('about') }}"
                         class="text-white hover:text-yellow-300 transition duration-300 font-medium">About</a>
                     <a href="{{ route('contact') }}"
@@ -175,10 +192,13 @@
                     @auth
                         <div class="relative group" x-data="{ open: false }">
                             <button @click="open = !open" class="flex items-center space-x-2 focus:outline-none">
-                                <div
-                                    class="w-8 h-8 bg-yellow-300 rounded-full flex items-center justify-center text-black font-semibold">
-                                    {{ substr(Auth::user()->name, 0, 1) }}
-                                </div>
+                                <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24"
+                                    stroke="currentColor">
+                                    <rect x="3" y="3" width="8" height="8" rx="2" stroke-width="2" />
+                                    <rect x="13" y="3" width="8" height="5" rx="2" stroke-width="2" />
+                                    <rect x="13" y="10" width="8" height="11" rx="2" stroke-width="2" />
+                                    <rect x="3" y="13" width="8" height="8" rx="2" stroke-width="2" />
+                                </svg>
                                 <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                         d="M19 9l-7 7-7-7"></path>
@@ -187,8 +207,16 @@
 
                             <div x-show="open" @click.away="open = false" x-transition
                                 class="absolute right-0 mt-2 w-48 bg-black bg-opacity-90 rounded-lg shadow-lg py-1 z-50 border border-gray-700">
-                                <a href="{{ route('dashboard') }}"
-                                    class="block px-4 py-2 text-sm text-white hover:bg-gray-800 hover:text-yellow-300 transition">Dashboard</a>
+                                @if (Auth::user()->role === 'Guest')
+                                    <a href="#"
+                                        onclick="event.preventDefault(); alert('You need to purchase a membership plan to access the dashboard.');"
+                                        class="block px-4 py-2 text-sm text-white hover:bg-gray-800 hover:text-yellow-300 transition opacity-50 cursor-not-allowed">
+                                        Dashboard
+                                    </a>
+                                @else
+                                    <a href="{{ route('dashboard') }}"
+                                        class="block px-4 py-2 text-sm text-white hover:bg-gray-800 hover:text-yellow-300 transition">Dashboard</a>
+                                @endif
                                 <a href="{{ route('profile.edit') }}"
                                     class="block px-4 py-2 text-sm text-white hover:bg-gray-800 hover:text-yellow-300 transition">Profile</a>
                                 @can('admin')
@@ -239,8 +267,20 @@
                 <a href="{{ route('home') }}" class="block px-3 py-2 text-white hover:text-yellow-300">Home</a>
                 <a href="{{ route('books.index') }}"
                     class="block px-3 py-2 text-white hover:text-yellow-300">Books</a>
-                <a href="{{ route('borrowed.index') }}" class="block px-3 py-2 text-white hover:text-yellow-300">My
-                    Books</a>
+                @auth
+                    @if (Auth::user()->role !== 'Guest')
+                        <a href="{{ route('borrowed.index') }}"
+                            class="text-white hover:text-yellow-300 transition duration-300 font-medium">My Books</a>
+                    @else
+                        <a href="#"
+                            onclick="event.preventDefault(); alert('You need to upgrade your membership to access My Books.');"
+                            class="text-white hover:text-yellow-300 transition duration-300 font-medium opacity-50 cursor-not-allowed">My
+                            Books</a>
+                    @endif
+                @else
+                    <a href="{{ route('borrowed.index') }}"
+                        class="text-white hover:text-yellow-300 transition duration-300 font-medium">My Books</a>
+                @endauth
                 <a href="{{ route('about') }}" class="block px-3 py-2 text-white hover:text-yellow-300">About</a>
                 <a href="{{ route('contact') }}" class="block px-3 py-2 text-white hover:text-yellow-300">Contact</a>
 
@@ -254,8 +294,16 @@
                             <div class="text-base font-medium text-white">{{ Auth::user()->name }}</div>
                         </div>
                         <div class="mt-3 px-2 space-y-1">
-                            <a href="{{ route('dashboard') }}"
-                                class="block px-3 py-2 text-white hover:text-yellow-300">Dashboard</a>
+                            @if (Auth::user()->role === 'Guest')
+                                <a href="#"
+                                    onclick="event.preventDefault(); alert('You need to purchase a membership plan to access the dashboard.');"
+                                    class="block px-3 py-2 text-white hover:text-yellow-300 opacity-50 cursor-not-allowed">
+                                    Dashboard
+                                </a>
+                            @else
+                                <a href="{{ route('dashboard') }}"
+                                    class="block px-3 py-2 text-white hover:text-yellow-300">Dashboard</a>
+                            @endif
                             <a href="{{ route('profile.edit') }}"
                                 class="block px-3 py-2 text-white hover:text-yellow-300">Profile</a>
                             @can('admin')
@@ -332,9 +380,23 @@
                         <li><a href="{{ route('books.index') }}"
                                 class="text-gray-400 hover:text-yellow-300 transition duration-300 flex items-center footer-link">
                                 <i class="fas fa-chevron-right text-xs mr-2 text-yellow-300"></i> Book Catalog</a></li>
-                        <li><a href="{{ route('borrowed.index') }}"
-                                class="text-gray-400 hover:text-yellow-300 transition duration-300 flex items-center footer-link">
-                                <i class="fas fa-chevron-right text-xs mr-2 text-yellow-300"></i> My Books</a></li>
+                        <li>@auth
+                                @if (Auth::user()->role !== 'Guest')
+                                    <a href="{{ route('borrowed.index') }}"
+                                        class="text-white hover:text-yellow-300 transition duration-300 font-medium">My
+                                        Books</a>
+                                @else
+                                    <a href="#"
+                                        onclick="event.preventDefault(); alert('You need to upgrade your membership to access My Books.');"
+                                        class="text-white hover:text-yellow-300 transition duration-300 font-medium opacity-50 cursor-not-allowed">My
+                                        Books</a>
+                                @endif
+                            @else
+                                <a href="{{ route('borrowed.index') }}"
+                                    class="text-white hover:text-yellow-300 transition duration-300 font-medium">My
+                                    Books</a>
+                            @endauth
+                        </li>
                         <li><a href="{{ route('about') }}"
                                 class="text-gray-400 hover:text-yellow-300 transition duration-300 flex items-center footer-link">
                                 <i class="fas fa-chevron-right text-xs mr-2 text-yellow-300"></i> About Us</a></li>
@@ -483,5 +545,8 @@
 
     @yield('scripts')
     @stack('scripts')
+
+    <script src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
 </body>
+
 </html>

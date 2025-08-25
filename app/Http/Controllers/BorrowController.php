@@ -124,23 +124,64 @@ class BorrowController extends Controller
  
         return redirect()->back()->with('success', 'Book renewed successfully! New due date: ' . $borrow->due_date->format('M d, Y'));
     }
+
     /**
-     * Display a listing of the borrowed books for the authenticated user.
+     * Display a listing of the user's borrowed books.
      */
-    public function index()
+    public function index(Request $request)
     {
+        // Get the authenticated user
         $user = auth()->user();
 
-        // Eager load the necessary relationships
-        $borrows = $user->borrows()
-                        ->with([
-                            'inventory.book', 
-                            'inventory.book.author', // Load book and its author
-                            'inventory.book.publisher' // Load publisher if needed
-                        ]) 
-                        ->orderBy('borrow_date', 'desc')
-                        ->get();
+        // Start building the query
+        $query = $user->borrows()
+                    ->with(['inventory.book', 'inventory.book.author']);
 
-        return view('borrowed.index', compact('borrows'));
+        // Handle search
+        if ($request->has('search') && !empty($request->search)) {
+            $searchTerm = $request->search;
+            
+            $query->where(function($q) use ($searchTerm) {
+                // Search by borrow ID
+                $q->where('borrow_id', 'LIKE', "%{$searchTerm}%")
+                // Search by book title
+                ->orWhereHas('inventory.book', function($bookQuery) use ($searchTerm) {
+                    $bookQuery->where('title', 'LIKE', "%{$searchTerm}%");
+                })
+                // Search by author name
+                ->orWhereHas('inventory.book.author', function($authorQuery) use ($searchTerm) {
+                    $authorQuery->where('fullname', 'LIKE', "%{$searchTerm}%");
+                })
+                // Search by status
+                ->orWhere('status', 'LIKE', "%{$searchTerm}%");
+            });
+        }
+
+        // Order and get results
+        $borrows = $query->orderBy('borrow_date', 'desc')->get();
+        $searchTerm = $request->search;
+
+        return view('dashboard.member.borrowed', compact('borrows', 'searchTerm'));
+    }
+
+    /**
+     * Display details of a specific borrowed book.
+     */
+    public function show($id)
+    {
+        $user = auth()->user();
+        
+        // Get the specific borrow record for this user with all related data
+        $borrow = $user->borrows()
+                    ->with([
+                        'inventory.book', 
+                        'inventory.book.author',
+                        'inventory.book.publisher',
+                        'inventory.book.category',
+                        'staff'
+                    ])
+                    ->findOrFail($id);
+
+        return view('dashboard.member.borrowed-details', compact('borrow'));
     }
 }

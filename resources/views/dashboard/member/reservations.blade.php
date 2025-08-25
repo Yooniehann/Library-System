@@ -32,10 +32,10 @@
                             <i class="fas fa-tachometer-alt mr-3"></i>
                             Dashboard
                         </a>
-                        <a href="#"
+                        <a href="{{ route('books.index') }}"
                             class="flex items-center px-4 py-3 text-sm font-medium text-gray-300 hover:text-white hover:bg-slate-700 rounded-lg">
-                            <i class="fas fa-search mr-3"></i>
-                            Search Books
+                            <i class="fa-solid fa-house mr-3"></i>
+                            Home
                         </a>
                         <a href="{{ route('borrowed.index') }}" class="flex items-center px-4 py-3 text-sm font-medium text-gray-300 hover:text-white hover:bg-slate-700 rounded-lg">
                             <i class="fas fa-book-open mr-3"></i>
@@ -50,10 +50,10 @@
                             <i class="fas fa-money-bill-wave mr-3"></i>
                             Fines & Payments
                         </a>
-                        <a href="#" class="flex items-center px-4 py-3 text-sm font-medium text-gray-300 hover:text-white hover:bg-slate-700 rounded-lg">
+                        {{-- <a href="#" class="flex items-center px-4 py-3 text-sm font-medium text-gray-300 hover:text-white hover:bg-slate-700 rounded-lg">
                             <i class="fas fa-history mr-3"></i>
                             Reading History
-                        </a>
+                        </a> --}}
                         <a href="{{ route('profile.edit') }}" class="flex items-center px-4 py-3 text-sm font-medium text-gray-300 hover:text-white hover:bg-slate-700 rounded-lg">
                             <i class="fas fa-user-cog mr-3"></i>
                             Profile Settings

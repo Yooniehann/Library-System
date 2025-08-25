@@ -162,103 +162,142 @@
             align-items: stretch;
         }
 
-        /* Membership Carousel Styles */
-        .membership-carousel {
-            position: relative;
-            padding: 0 50px;
-            margin: 0 auto;
-            max-width: 1200px;
-        }
+    /* Membership Carousel Styles */
+    .membership-carousel {
+        position: relative;
+        padding: 0 50px;
+        margin: 0 auto;
+        max-width: 1200px;
+    }
 
-        .membership-cards-container {
-            display: flex;
-            overflow: hidden;
-            scroll-behavior: smooth;
-            padding: 20px 0;
-            scroll-snap-type: x mandatory;
-        }
+    .membership-cards-container {
+        display: flex;
+        overflow-x: auto;
+        scroll-behavior: smooth;
+        padding: 20px 0;
+        scroll-snap-type: x mandatory;
+        -webkit-overflow-scrolling: touch; /* Smooth scrolling on iOS */
+        scrollbar-width: none; /* Hide scrollbar Firefox */
+        -ms-overflow-style: none; /* Hide scrollbar IE/Edge */
+    }
 
+    .membership-cards-container::-webkit-scrollbar {
+        display: none; /* Hide scrollbar Chrome/Safari */
+    }
+
+    .membership-card {
+        background: white;
+        border-radius: 10px;
+        overflow: hidden;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+        transition: all 0.3s ease;
+        flex: 0 0 calc(100% - 2rem); /* Full width on mobile */
+        margin: 0 1rem;
+        transform: scale(0.95);
+        opacity: 0.9;
+        scroll-snap-align: center;
+        position: relative;
+        min-width: 280px; /* Minimum width for cards */
+    }
+
+    /* Medium screens */
+    @media (min-width: 768px) {
         .membership-card {
-            background: white;
-            border-radius: 10px;
-            overflow: hidden;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
-            transition: all 0.3s ease;
-            flex: 0 0 calc(33.333% - 2rem);
-            margin: 0 1rem;
-            transform: scale(0.9);
-            opacity: 0.8;
-            scroll-snap-align: center;
-            position: relative;
+            flex: 0 0 calc(50% - 2rem); /* 2 cards per row on tablets */
         }
+    }
 
-        .membership-card.active {
-            transform: scale(1.05);
-            opacity: 1;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+    /* Large screens */
+    @media (min-width: 1024px) {
+        .membership-card {
+            flex: 0 0 calc(33.333% - 2rem); /* 3 cards per row on desktop */
         }
+    }
 
-        .membership-card:hover {
-            transform: scale(1.05) !important;
-            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.25);
-        }
+    .membership-card.active {
+        transform: scale(1);
+        opacity: 1;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        z-index: 2;
+    }
 
-        .membership-header {
-            background-color: #EEBA30;
-            padding: 1.5rem;
-            text-align: center;
-            position: relative;
-            overflow: hidden;
-        }
+    .membership-card:hover {
+        transform: scale(1.02) !important;
+        box-shadow: 0 15px 35px rgba(0, 0, 0, 0.25);
+    }
 
-        .membership-popular {
-            width: 200px;
-            background-color: #D3A625;
-            color: black;
-            font-size: 0.9rem;
-            position: absolute;
-            top: 20px;
-            right: -50px;
-            transform: rotate(30deg);
-            text-align: center;
-            padding: 0.25rem 0;
-            font-weight: 600;
-        }
+    .membership-header {
+        background-color: #EEBA30;
+        padding: 1.5rem;
+        text-align: center;
+        position: relative;
+        overflow: hidden;
+    }
 
+    .membership-popular {
+        width: 200px;
+        background-color: #D3A625;
+        color: black;
+        font-size: 0.9rem;
+        position: absolute;
+        top: 20px;
+        right: -50px;
+        transform: rotate(30deg);
+        text-align: center;
+        padding: 0.25rem 0;
+        font-weight: 600;
+    }
+
+    .carousel-nav {
+        position: absolute;
+        top: 50%;
+        transform: translateY(-50%);
+        width: 40px;
+        height: 40px;
+        background: #EEBA30;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        z-index: 10;
+        border: none;
+        color: black;
+        font-weight: bold;
+        font-size: 1.2rem;
+    }
+
+    .carousel-nav:hover {
+        background: #D3A625;
+    }
+
+    .carousel-prev {
+        left: 10px;
+    }
+
+    .carousel-next {
+        right: 10px;
+    }
+
+    .membership-features {
+        min-height: 180px;
+    }
+
+    /* Hide navigation buttons on mobile */
+    @media (max-width: 767px) {
         .carousel-nav {
-            position: absolute;
-            top: 50%;
-            transform: translateY(-50%);
-            width: 40px;
-            height: 40px;
-            background: #EEBA30;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            z-index: 10;
-            border: none;
-            color: black;
-            font-weight: bold;
-            font-size: 1.2rem;
+            /* display: none; */
         }
-
-        .carousel-nav:hover {
-            background: #D3A625;
+        
+        .membership-carousel {
+            padding: 0 20px;
         }
-
-        .carousel-prev {
-            left: 0;
+        
+        .membership-card {
+            margin: 0 0.5rem;
+            flex: 0 0 calc(100% - 1rem);
         }
-
-        .carousel-next {
-            right: 0;
-        }
-
-        .membership-features {
-            min-height: 180px;
-        }
+    }
     </style>
 @endpush
 

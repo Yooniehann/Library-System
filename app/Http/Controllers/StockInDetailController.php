@@ -26,7 +26,7 @@ class StockInDetailController extends Controller
             'book_id' => 'required|exists:books,book_id',
             'received_quantity' => 'required|integer|min:1',
             'price_per_unit' => 'required|numeric|min:0',
-            'condition' => 'required|in:New,Good,Fair,Damaged',
+            'condition' => 'required|in:New,Good,Fair,Poor',
             'remarks' => 'nullable|string|max:255'
         ]);
 

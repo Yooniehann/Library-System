@@ -54,7 +54,7 @@
                         <option value="New" {{ old('condition') == 'New' ? 'selected' : '' }}>New</option>
                         <option value="Good" {{ old('condition') == 'Good' ? 'selected' : '' }}>Good</option>
                         <option value="Fair" {{ old('condition') == 'Fair' ? 'selected' : '' }}>Fair</option>
-                        <option value="Damaged" {{ old('condition') == 'Damaged' ? 'selected' : '' }}>Damaged</option>
+                        <option value="Poor" {{ old('condition') == 'Poor' ? 'selected' : '' }}>Poor</option>
                     </select>
                     @error('condition')
                         <p class="text-red-500 text-xs mt-1">{{ $message }}</p>

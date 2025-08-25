@@ -55,7 +55,7 @@
                         <option value="New" {{ old('condition', $detail->condition) == 'New' ? 'selected' : '' }}>New</option>
                         <option value="Good" {{ old('condition', $detail->condition) == 'Good' ? 'selected' : '' }}>Good</option>
                         <option value="Fair" {{ old('condition', $detail->condition) == 'Fair' ? 'selected' : '' }}>Fair</option>
-                        <option value="Damaged" {{ old('condition', $detail->condition) == 'Damaged' ? 'selected' : '' }}>Damaged</option>
+                        <option value="Poor" {{ old('condition', $detail->condition) == 'Poor' ? 'selected' : '' }}>Poor</option>
                     </select>
                     @error('condition')
                         <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
@@ -78,7 +78,7 @@
                     Cancel
                 </a>
                 <button type="submit" 
-                        class="bg-primary-orange hover:bg-dark-orange text-black font-bold py-2 px-4 rounded">
+                        class="bg-[#EEBA30] hover:bg-[#D3A625] text-black font-bold py-2 px-4 rounded">
                     Update Book
                 </button>
             </div>

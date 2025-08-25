@@ -139,6 +139,24 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     // Borrowing history - Only for members
     Route::get('/borrowed', [BorrowController::class, 'index'])
+        ->middleware('role:Member,Kid')
+        ->name('borrowed.index');
+    
+    // Borrow details route
+    Route::get('/borrowed/{id}', [BorrowController::class, 'show'])
+        ->middleware('role:Member,Kid')
+        ->name('borrowed.show');
+
+        
+    // Reservations
+    Route::get('/reservations', [ReservationController::class, 'index'])
+        ->middleware('role:Member,Kid')
+        ->name('reservations.index');
+    
+    // Reservation cancel route
+    Route::post('/reservations/{id}/cancel', [ReservationController::class, 'cancel'])
+        ->middleware('role:Member,Kid')
+        ->name('reservations.cancel');
         ->name('borrowed.index')
         ->middleware('role:Member,Kid');
 });

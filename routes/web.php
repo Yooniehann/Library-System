@@ -41,20 +41,8 @@ Route::view('/memberplan', 'static.memberplan')->name('memberplan');
 // Book page in home
 Route::get('/books', [CatalogController::class, 'books'])->name('books.index');
 
-// Borrow routes
-Route::post('/borrow/{book}', [BorrowController::class, 'create'])->name('borrow.create')->middleware('auth');
-
-Route::post('/borrow/{borrow}/renew', [BorrowController::class, 'renew'])->name('borrow.renew')->middleware('auth');
-
-// Reservation routes
-Route::post('/reserve/{book}', [ReservationController::class, 'create'])->name('reservations.create')->middleware('auth');
-
 // Book details route
 Route::get('/books/{book}', [BookController::class, 'show'])->name('books.show');
-
-
-// Return routes
-Route::post('/return/{borrow}', [BookReturnController::class, 'returnBook'])->name('book.return')->middleware('auth');
 
 /*
 |--------------------------------------------------------------------------
@@ -74,8 +62,17 @@ Route::middleware(['auth', 'verified'])->group(function () {
         $user = Auth::user();
 
         if ($user->role === 'Guest') {
-            return redirect()->route('membership.select', MembershipType::first()->id)
-                ->with('info', 'Please select a membership plan to continue');
+            // Get the first membership type ID
+            $firstMembershipType = MembershipType::first();
+
+            if ($firstMembershipType) {
+                return redirect()->route('membership.select', $firstMembershipType->id)
+                    ->with('info', 'Please select a membership plan to continue');
+            } else {
+                // Fallback if no membership types exist
+                return redirect()->route('home')
+                    ->with('error', 'No membership plans available. Please contact administrator.');
+            }
         }
 
         return match ($user->role) {
@@ -120,7 +117,27 @@ Route::middleware(['auth', 'verified'])->group(function () {
         return redirect('/')->with('info', 'This is a test message');
     });
 
-    // Borrowing
+    // Borrow routes - Only for members (not guests)
+    Route::post('/borrow/{book}', [BorrowController::class, 'create'])
+        ->name('borrow.create')
+        ->middleware('role:Member,Kid');
+
+    // Borrow renewal route - Only for members (not guests)
+    Route::post('/borrow/{borrow}/renew', [BorrowController::class, 'renew'])
+        ->name('borrow.renew')
+        ->middleware('role:Member,Kid');
+
+    // Reservation routes - Only for members (not guests)
+    Route::post('/reserve/{book}', [ReservationController::class, 'create'])
+        ->name('reservations.create')
+        ->middleware('role:Member,Kid');
+
+    // Return routes
+    Route::post('/return/{borrow}', [BookReturnController::class, 'returnBook'])
+        ->name('book.return')
+        ->middleware('role:Member,Kid');
+
+    // Borrowing history - Only for members
     Route::get('/borrowed', [BorrowController::class, 'index'])
         ->middleware('role:Member,Kid')
         ->name('borrowed.index');
@@ -140,6 +157,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::post('/reservations/{id}/cancel', [ReservationController::class, 'cancel'])
         ->middleware('role:Member,Kid')
         ->name('reservations.cancel');
+        ->name('borrowed.index')
+        ->middleware('role:Member,Kid');
 });
 
 /*
@@ -233,7 +252,7 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'verified', 'role:Ad
 });
 
 // Member routes
-Route::middleware(['auth', 'verified', 'is.member', 'check.membership'])->prefix('member')->name('member.')->group(function () {
+Route::middleware(['auth', 'verified', 'role:Member'])->prefix('member')->name('member.')->group(function () {
     Route::get('/dashboard', function () {
         return view('dashboard.member.index');
     })->name('dashboard');

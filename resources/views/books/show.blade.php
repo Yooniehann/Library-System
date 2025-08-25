@@ -271,20 +271,27 @@
                                 </a>
 
                                 @auth
-                                    @if ($book->inventories->where('status', 'available')->count() > 0)
-                                        <form action="{{ route('borrow.create', $book->book_id) }}" method="POST">
-                                            @csrf
-                                            <button type="submit" class="btn-borrow">
-                                                <i class="fas fa-book me-2"></i>Borrow This Book
-                                            </button>
-                                        </form>
+                                    @if (Auth::user()->role === 'Guest')
+                                        <a href="{{ route('membership.select', App\Models\MembershipType::first()->id) }}"
+                                            class="btn-borrow">
+                                            <i class="fas fa-crown me-2"></i>Upgrade to Borrow
+                                        </a>
                                     @else
-                                        <form action="{{ route('reservations.create', $book->book_id) }}" method="POST">
-                                            @csrf
-                                            <button type="submit" class="btn-reserve">
-                                                <i class="fas fa-clock me-2"></i>Reserve This Book
-                                            </button>
-                                        </form>
+                                        @if ($book->inventories->where('status', 'available')->count() > 0)
+                                            <form action="{{ route('borrow.create', $book->book_id) }}" method="POST">
+                                                @csrf
+                                                <button type="submit" class="btn-borrow">
+                                                    <i class="fas fa-book me-2"></i>Borrow This Book
+                                                </button>
+                                            </form>
+                                        @else
+                                            <form action="{{ route('reservations.create', $book->book_id) }}" method="POST">
+                                                @csrf
+                                                <button type="submit" class="btn-reserve">
+                                                    <i class="fas fa-clock me-2"></i>Reserve This Book
+                                                </button>
+                                            </form>
+                                        @endif
                                     @endif
                                 @else
                                     <p class="text-muted">Please log in to borrow or reserve this book.</p>

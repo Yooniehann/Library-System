@@ -33,7 +33,10 @@
     </div>
 
     <div class="p-4 h-[calc(100%-120px)] overflow-y-auto no-scrollbar">
+        
+
         <h3 class="text-xs uppercase text-gray-400 font-semibold mb-2" x-show="sidebarExpanded">DASHBOARD</h3>
+
         <ul class="space-y-2">
             <!-- Manage Books with dropdown -->
             <li x-data="{ open: false }">

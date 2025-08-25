@@ -10,19 +10,19 @@ class Inventory extends Model
     use HasFactory;
 
     protected $primaryKey = 'inventory_id';
+    protected $fillable = ['book_id', 'stockin_detail_id', 'copy_number', 'condition', 'acquisition_date', 'status'];
+    protected $casts = ['acquisition_date' => 'date'];
 
-    protected $fillable = [
-        'book_id',
-        'stockin_detail_id',
-        'copy_number',
-        'condition',
-        'acquisition_date',
-        'status'
-    ];
-
-    protected $casts = [
-        'acquisition_date' => 'date'
-    ];
+    protected static function boot()
+    {
+        parent::boot();
+        static::creating(function ($inventory) {
+            // Meaningful format: Book ID + Incremental number + Timestamp
+            $count = static::where('book_id', $inventory->book_id)->count() + 1;
+            $inventory->copy_number = 'BK' . $inventory->book_id . '-' . $count . '-' . substr(time(), -4);
+            // Example: BK1-1-8630 (9-11 characters)
+        });
+    }
 
     public function book()
     {
@@ -37,5 +37,17 @@ class Inventory extends Model
     public function borrows()
     {
         return $this->hasMany(Borrow::class, 'inventory_id');
+    }
+
+    public function currentBorrow()
+    {
+        return $this->hasOne(Borrow::class, 'inventory_id')
+            ->where('status', 'active');
+    }
+
+    // Check if inventory is available
+    public function getIsAvailableAttribute()
+    {
+        return $this->status === 'available' && !$this->currentBorrow;
     }
 }

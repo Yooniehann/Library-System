@@ -35,4 +35,16 @@ class Fine extends Model
     {
         return $this->belongsTo(Payment::class, 'payment_id');
     }
+
+    public function user()
+    {
+        return $this->hasOneThrough(
+            User::class,
+            Borrow::class,
+            'borrow_id', // Foreign key on borrows table
+            'user_id',   // Foreign key on users table
+            'borrow_id', // Local key on fines table
+            'user_id'    // Local key on borrows table
+        );
+    }
 }

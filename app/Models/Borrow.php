@@ -2,8 +2,9 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
+use App\Models\BookReturn;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Borrow extends Model
 {
@@ -49,5 +50,23 @@ class Borrow extends Model
     public function bookReturn()
     {
         return $this->hasOne(BookReturn::class, 'borrow_id');
+    }
+
+    public function reservations()
+    {
+        return $this->hasMany(Reservation::class, 'book_id', 'inventory.book_id');
+    }
+
+    // Get the book through inventory
+    public function book()
+    {
+        return $this->hasOneThrough(
+            Book::class,
+            Inventory::class,
+            'inventory_id', // Foreign key on inventories table
+            'book_id',      // Foreign key on books table
+            'inventory_id', // Local key on borrows table
+            'book_id'       // Local key on inventories table
+        );
     }
 }

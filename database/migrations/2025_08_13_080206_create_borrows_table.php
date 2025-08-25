@@ -20,6 +20,7 @@ return new class extends Migration
                 ->constrained('inventories', 'inventory_id')
                 ->onDelete('cascade');
             $table->foreignId('staff_id')
+                ->nullable()
                 ->constrained('staff', 'staff_id')
                 ->onDelete('cascade');
             $table->dateTime('borrow_date')->default(now());

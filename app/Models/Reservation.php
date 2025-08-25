@@ -36,4 +36,9 @@ class Reservation extends Model
     {
         return $this->belongsTo(Book::class, 'book_id');
     }
+
+    public function borrow()
+    {
+        return $this->hasOne(Borrow::class, 'inventory_id', 'book.inventories.inventory_id');
+    }
 }

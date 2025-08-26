@@ -89,6 +89,12 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::patch('/profile', 'update')->name('update');
         Route::delete('/profile', 'destroy')->name('destroy');
     });
+    // Profile routes from me
+//     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
+//     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
+//     Route::patch('/profile/password', [ProfileController::class, 'updatePassword'])->name('profile.password.update');
+//     Route::patch('/profile/preferences', [ProfileController::class, 'updatePreferences'])->name('profile.preferences.update');
+// });
 
     // Membership routes
     Route::prefix('membership')->group(function () {

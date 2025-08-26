@@ -48,7 +48,7 @@
 
 <body class="bg-slate-900 text-gray-200 font-sans">
     <div class="flex h-screen overflow-hidden">
-        <!-- Sidebar - Copy from  dashboard -->
+        <!-- Sidebar - Copy from dashboard -->
         <div class="hidden md:flex md:flex-shrink-0">
             <div class="flex flex-col w-64 bg-black border-r border-slate-700">
                 <div class="flex items-center justify-center h-16 px-4 bg-black">
@@ -81,11 +81,10 @@
                             <i class="fas fa-money-bill-wave mr-3"></i>
                             Fines & Payments
                         </a>
-                        {{-- <a href="#"
-                            class="flex items-center px-4 py-3 text-sm font-medium text-gray-300 hover:text-white hover:bg-slate-700 rounded-lg">
-                            <i class="fas fa-history mr-3"></i>
-                            Reading History
-                        </a> --}}
+                        <a href="#" class="flex items-center px-4 py-3 text-sm font-medium text-gray-300 hover:text-white hover:bg-slate-700 rounded-lg">
+                            <i class="fa-solid fa-bell mr-3"></i>
+                            Notification
+                        </a>
                         <a href="{{ route('profile.edit') }}"
                             class="flex items-center px-4 py-3 text-sm font-medium text-gray-300 hover:text-white hover:bg-slate-700 rounded-lg">
                             <i class="fas fa-user-cog mr-3"></i>
@@ -105,6 +104,17 @@
                 </div>
             </div>
         </div>
+
+        <!-- Main Content -->
+        <div class="flex flex-col flex-1 overflow-hidden">
+            <!-- Top Navigation (Mobile) - Same as reservations page -->
+            <div class="md:hidden flex items-center justify-between px-4 py-3 bg-black border-b border-slate-700">
+                <button class="text-primary-orange focus:outline-none" onclick="toggleMobileSidebar()">
+                    <i class="fas fa-bars"></i>
+                </button>
+                <span class="text-primary-orange text-lg font-bold">Member Dashboard</span>
+                <div class="w-6"></div> <!-- Spacer for balance -->
+            </div>
 
             <!-- Main Content Area -->
             <main class="flex-1 overflow-y-auto p-4 md:p-6">
@@ -269,17 +279,16 @@
                 @endif
                 <!-- Dynamic Content Ends Here -->
             </main>
+        </div>
     </div>
 
-    <!-- Mobile sidebar overlay -->
+    <!-- Mobile sidebar overlay - Same as reservations page -->
     <div class="fixed inset-0 z-40 md:hidden hidden" id="mobile-sidebar">
         <div class="fixed inset-0 bg-gray-900 bg-opacity-75"></div>
         <div class="fixed inset-y-0 left-0 flex max-w-xs w-full">
             <div class="relative flex-1 flex flex-col w-64 bg-black">
                 <div class="absolute top-0 right-0 -mr-14 p-1">
-                    <button
-                        class="flex items-center justify-center h-12 w-12 rounded-full focus:outline-none focus:bg-gray-600"
-                        onclick="toggleMobileSidebar()">
+                    <button class="flex items-center justify-center h-12 w-12 rounded-full focus:outline-none focus:bg-gray-600" onclick="toggleMobileSidebar()">
                         <i class="fas fa-times text-white"></i>
                     </button>
                 </div>
@@ -293,10 +302,10 @@
                             <i class="fas fa-tachometer-alt mr-4"></i>
                             Dashboard
                         </a>
-                        <a href="#"
+                        <a href="{{ route('books.index') }}"
                             class="flex items-center px-2 py-2 text-base font-medium text-gray-300 hover:text-white hover:bg-slate-700 rounded-lg">
-                            <i class="fas fa-search mr-4"></i>
-                            Search Books
+                            <i class="fa-solid fa-house mr-4"></i>
+                            Home
                         </a>
                         <!-- ACTIVE LINK for mobile -->
                         <a href="{{ route('borrowed.index') }}"
@@ -304,10 +313,18 @@
                             <i class="fas fa-book-open mr-4"></i>
                             My Borrowed Books
                         </a>
-                        <a href="#"
-                            class="flex items-center px-2 py-2 text-base font-medium text-gray-300 hover:text-white hover:bg-slate-700 rounded-lg">
+                        <a href="{{ route('reservations.index') }}" class="flex items-center px-2 py-2 text-base font-medium text-gray-300 hover:text-white hover:bg-slate-700 rounded-lg">
                             <i class="fas fa-bookmark mr-4"></i>
                             My Reservations
+                        </a>
+                        <a href="#"
+                            class="flex items-center px-2 py-2 text-base font-medium text-gray-300 hover:text-white hover:bg-slate-700 rounded-lg">
+                            <i class="fas fa-money-bill-wave mr-4"></i>
+                            Fines & Payments
+                        </a>
+                        <a href="#" class="flex items-center px-2 py-2 text-base font-medium text-gray-300 hover:text-white hover:bg-slate-700 rounded-lg">
+                            <i class="fa-solid fa-bell mr-4"></i>
+                            Notification
                         </a>
                         <a href="{{ route('profile.edit') }}"
                             class="flex items-center px-2 py-2 text-base font-medium text-gray-300 hover:text-white hover:bg-slate-700 rounded-lg">
@@ -335,86 +352,10 @@
         </div>
     </div>
 
-    <!-- Mobile sidebar overlay -->
-    <div class="fixed inset-0 z-40 md:hidden hidden" id="mobile-sidebar">
-        <div class="fixed inset-0 bg-gray-900 bg-opacity-75"></div>
-        <div class="fixed inset-y-0 left-0 flex max-w-xs w-full">
-            <div class="relative flex-1 flex flex-col w-64 bg-black">
-                <div class="absolute top-0 right-0 -mr-14 p-1">
-                    <button class="flex items-center justify-center h-12 w-12 rounded-full focus:outline-none focus:bg-gray-600">
-                        <i class="fas fa-times text-white"></i>
-                    </button>
-                </div>
-                <div class="flex-1 h-0 pt-5 pb-4 overflow-y-auto">
-                    <div class="flex-shrink-0 flex items-center px-4">
-                        <span class="text-primary-orange text-xl font-bold">Member Dashboard</span>
-                    </div>
-                    <nav class="mt-5 px-2 space-y-1">
-                        <a href="#" class="flex items-center px-2 py-2 text-base font-medium text-white bg-dark-orange rounded-lg">
-                            <i class="fas fa-tachometer-alt mr-4"></i>
-                            Dashboard
-                        </a>
-                        <a href="#" class="flex items-center px-2 py-2 text-base font-medium text-gray-300 hover:text-white hover:bg-slate-700 rounded-lg">
-                            <i class="fas fa-search mr-4"></i>
-                            Search Books
-                        </a>
-                        <a href="{{ route('borrowed.index') }}" class="flex items-center px-2 py-2 text-base font-medium text-gray-300 hover:text-white hover:bg-slate-700 rounded-lg">
-                            <i class="fas fa-book-open mr-4"></i>
-                            My Borrowed Books
-                        </a>
-                        <a href="#" class="flex items-center px-2 py-2 text-base font-medium text-gray-300 hover:text-white hover:bg-slate-700 rounded-lg">
-                            <i class="fas fa-bookmark mr-4"></i>
-                            My Reservations
-                        </a>
-                        <a href="#" class="flex items-center px-2 py-2 text-base font-medium text-gray-300 hover:text-white hover:bg-slate-700 rounded-lg">
-                            <i class="fas fa-money-bill-wave mr-4"></i>
-                            Fines & Payments
-                        </a>
-                        <a href="#" class="flex items-center px-2 py-2 text-base font-medium text-gray-300 hover:text-white hover:bg-slate-700 rounded-lg">
-                            <i class="fas fa-history mr-4"></i>
-                            Reading History
-                        </a>
-                        <a href="#" class="flex items-center px-2 py-2 text-base font-medium text-gray-300 hover:text-white hover:bg-slate-700 rounded-lg">
-                            <i class="fas fa-user-cog mr-4"></i>
-                            Profile Settings
-                        </a>
-                    </nav>
-                </div>
-                <div class="flex-shrink-0 flex border-t border-slate-700 p-4">
-                    <form action="{{ route('logout') }}" method="POST">
-                        @csrf
-                        <button type="submit" class="flex-shrink-0 w-full group block">
-                            <div class="flex items-center">
-                                <div>
-                                    <i class="fas fa-sign-out-alt text-gray-300 group-hover:text-white mr-3"></i>
-                                </div>
-                                <div class="ml-3">
-                                    <p class="text-sm font-medium text-gray-300 group-hover:text-white">Logout</p>
-                                </div>
-                            </div>
-                        </button>
-                    </form>
-                </div>
-            </div>
-        </div>
-    </div> 
-
     <script>
-        // Simple mobile sidebar toggle
-        document.addEventListener('DOMContentLoaded', function() {
-            const mobileSidebar = document.getElementById('mobile-sidebar');
-            const sidebarToggle = document.querySelector('.md\\:hidden button');
-            
-            sidebarToggle.addEventListener('click', function() {
-                mobileSidebar.classList.toggle('hidden');
-            });
-            
-            // Close button inside mobile sidebar
-            const closeButton = document.querySelector('#mobile-sidebar button');
-            closeButton.addEventListener('click', function() {
-                mobileSidebar.classList.add('hidden');
-            });
-        });
+        function toggleMobileSidebar() {
+            document.getElementById('mobile-sidebar').classList.toggle('hidden');
+        }
     </script>
 </body>
 

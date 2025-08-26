@@ -50,10 +50,10 @@
                             <i class="fas fa-money-bill-wave mr-3"></i>
                             Fines & Payments
                         </a>
-                        {{-- <a href="#" class="flex items-center px-4 py-3 text-sm font-medium text-gray-300 hover:text-white hover:bg-slate-700 rounded-lg">
-                            <i class="fas fa-history mr-3"></i>
-                            Reading History
-                        </a> --}}
+                        <a href="#" class="flex items-center px-4 py-3 text-sm font-medium text-gray-300 hover:text-white hover:bg-slate-700 rounded-lg">
+                            <i class="fa-solid fa-bell mr-3"></i>
+                            Notification
+                        </a>
                         <a href="{{ route('profile.edit') }}" class="flex items-center px-4 py-3 text-sm font-medium text-gray-300 hover:text-white hover:bg-slate-700 rounded-lg">
                             <i class="fas fa-user-cog mr-3"></i>
                             Profile Settings
@@ -79,7 +79,7 @@
                 <button class="text-primary-orange focus:outline-none" onclick="toggleMobileSidebar()">
                     <i class="fas fa-bars"></i>
                 </button>
-                <span class="text-primary-orange text-lg font-bold">My Reservations</span>
+                <span class="text-primary-orange text-lg font-bold">Member Dashboard</span>
                 <div class="w-6"></div>
             </div>
 
@@ -290,9 +290,10 @@
                             <i class="fas fa-money-bill-wave mr-4"></i>
                             Fines & Payments
                         </a>
-                        <a href="#" class="flex items-center px-2 py-2 text-base font-medium text-gray-300 hover:text-white hover:bg-slate-700 rounded-lg">
-                            <i class="fas fa-history mr-4"></i>
-                            Reading History
+                        <a href="#"
+                            class="flex items-center px-2 py-2 text-base font-medium text-gray-300 hover:text-white hover:bg-slate-700 rounded-lg">
+                            <i class="fa-solid fa-bell mr-4"></i>
+                            Notification
                         </a>
                         <a href="#" class="flex items-center px-2 py-2 text-base font-medium text-gray-300 hover:text-white hover:bg-slate-700 rounded-lg">
                             <i class="fas fa-user-cog mr-4"></i>

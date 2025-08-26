@@ -275,4 +275,3 @@ Route::middleware(['auth', 'verified', 'role:Kid'])->prefix('kid')->name('kid.')
     })->name('dashboard');
 });
 
-

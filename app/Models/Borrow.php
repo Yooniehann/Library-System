@@ -42,6 +42,46 @@ class Borrow extends Model
         return $this->belongsTo(Staff::class, 'staff_id');
     }
 
+    /**
+     * Get the return record for this borrow.
+     */
+    public function returnRecord()
+    {
+        return $this->hasOne(BookReturn::class, 'borrow_id');
+    }
+
+    /**
+     * Check if the book is overdue.
+     */
+    public function getIsOverdueAttribute(): bool
+    {
+        return $this->due_date->isPast() && $this->status === 'active';
+    }
+
+    /**
+     * Calculate overdue days.
+     */
+    public function getOverdueDaysAttribute(): int
+    {
+        if (!$this->due_date->isPast()) {
+            return 0;
+        }
+
+        return $this->due_date->diffInDays(now());
+    }
+
+    /**
+     * Calculate fine amount.
+     */
+    public function getFineAmountAttribute(): float
+    {
+        if (!$this->due_date->isPast()) {
+            return 0;
+        }
+
+        return $this->overdue_days * 0.50;
+    }
+
     public function fine()
     {
         return $this->hasOne(Fine::class, 'borrow_id');

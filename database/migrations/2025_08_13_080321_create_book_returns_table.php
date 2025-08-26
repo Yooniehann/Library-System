@@ -18,6 +18,7 @@ return new class extends Migration
                 ->onDelete('cascade');
             $table->foreignId('staff_id')
                 ->constrained('staff', 'staff_id')
+                ->nullable()
                 ->onDelete('cascade');
             $table->dateTime('return_date')->default(now());
             $table->enum('condition_on_return', ['excellent', 'good', 'fair', 'poor', 'damaged']);

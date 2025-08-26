@@ -274,3 +274,4 @@ Route::middleware(['auth', 'verified', 'role:Kid'])->prefix('kid')->name('kid.')
         return view('dashboard.kid.index');
     })->name('dashboard');
 });
+

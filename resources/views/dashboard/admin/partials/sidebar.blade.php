@@ -33,7 +33,7 @@
     </div>
 
     <div class="p-4 h-[calc(100%-120px)] overflow-y-auto no-scrollbar">
-        
+
 
         <h3 class="text-xs uppercase text-gray-400 font-semibold mb-2" x-show="sidebarExpanded">DASHBOARD</h3>
 
@@ -97,8 +97,7 @@
                 <div @click="open = !open"
                     class="sidebar-item flex items-center justify-between p-2 rounded cursor-pointer">
                     <div class="flex items-center space-x-2">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" viewBox="0 0 24 24"
-                            fill="currentColor">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" viewBox="0 0 24 24" fill="currentColor">
                             <!-- Hat -->
                             <path d="M2 10h20l-2-4H4l-2 4z" />
                             <!-- Face -->
@@ -232,7 +231,8 @@
 
             <!-- Other menu items -->
             <li>
-                <a href="#" class="sidebar-item flex items-center space-x-2 p-2 rounded">
+                <a href="{{ route('admin.issued-books.index') }}"
+                    class="sidebar-item flex items-center space-x-2 p-2 rounded">
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24"
                         stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"

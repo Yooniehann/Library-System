@@ -18,6 +18,7 @@ use App\Http\Controllers\{
     CatalogController,
     ReservationController,
 };
+use App\Http\Controllers\Admin\IssuedBooksController;
 use App\Http\Controllers\Admin\SearchController;
 
 /*
@@ -141,24 +142,22 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/borrowed', [BorrowController::class, 'index'])
         ->middleware('role:Member,Kid')
         ->name('borrowed.index');
-    
+
     // Borrow details route
     Route::get('/borrowed/{id}', [BorrowController::class, 'show'])
         ->middleware('role:Member,Kid')
         ->name('borrowed.show');
 
-        
+
     // Reservations
     Route::get('/reservations', [ReservationController::class, 'index'])
         ->middleware('role:Member,Kid')
         ->name('reservations.index');
-    
+
     // Reservation cancel route
     Route::post('/reservations/{id}/cancel', [ReservationController::class, 'cancel'])
         ->middleware('role:Member,Kid')
         ->name('reservations.cancel');
-        ->name('borrowed.index')
-        ->middleware('role:Member,Kid');
 });
 
 /*
@@ -246,6 +245,16 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'verified', 'role:Ad
             Route::put('/{detail}', [StockInDetailController::class, 'update'])->name('update');
             Route::delete('/{detail}', [StockInDetailController::class, 'destroy'])->name('destroy');
         });
+    });
+
+    // Admin Issued Books Routes
+    Route::prefix('issued-books')->name('issued-books.')->group(function () {
+        Route::get('/', [IssuedBooksController::class, 'index'])->name('index');
+        Route::get('/{id}', [IssuedBooksController::class, 'show'])->name('show');
+        Route::post('/{id}/return', [IssuedBooksController::class, 'markReturned'])->name('return');
+        Route::post('/{id}/renew', [IssuedBooksController::class, 'renew'])->name('renew');
+        Route::post('/{id}/overdue', [IssuedBooksController::class, 'markOverdue'])->name('overdue');
+        Route::get('/stats/overview', [IssuedBooksController::class, 'getStats'])->name('stats');
     });
 
     // ... other admin routes can be added here ...

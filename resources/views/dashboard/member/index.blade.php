@@ -44,7 +44,7 @@
                             <i class="fas fa-bookmark mr-3"></i>
                             My Reservations
                         </a>
-                        <a href="#" class="flex items-center px-4 py-3 text-sm font-medium text-gray-300 hover:text-white hover:bg-slate-700 rounded-lg">
+                        <a href="{{ route('member.fines.index')}}" class="flex items-center px-4 py-3 text-sm font-medium text-gray-300 hover:text-white hover:bg-slate-700 rounded-lg">
                             <i class="fas fa-money-bill-wave mr-3"></i>
                             Fines & Payments
                         </a>
@@ -92,7 +92,7 @@
                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
                     <div class="bg-slate-800 rounded-lg shadow p-4 ">
                         <div class="flex items-center">
-                            <div class="p-3 rounded-full bg-primary-orange bg-opacity-20 text-white">
+                            <div class="p-3 rounded-full bg-green-900 bg-opacity-30 text-green-400">
                                 <i class="fas fa-book"></i>
                             </div>
                             <div class="ml-4">
@@ -292,8 +292,8 @@
                             Dashboard
                         </a>
                         <a href="#" class="flex items-center px-2 py-2 text-base font-medium text-gray-300 hover:text-white hover:bg-slate-700 rounded-lg">
-                            <i class="fas fa-search mr-4"></i>
-                            Search Books
+                            <i class="fa-solid fa-house mr-4"></i>
+                            Home
                         </a>
                         <a href="{{ route('borrowed.index') }}" class="flex items-center px-2 py-2 text-base font-medium text-gray-300 hover:text-white hover:bg-slate-700 rounded-lg">
                             <i class="fas fa-book-open mr-4"></i>
@@ -303,7 +303,7 @@
                             <i class="fas fa-bookmark mr-4"></i>
                             My Reservations
                         </a>
-                        <a href="#" class="flex items-center px-2 py-2 text-base font-medium text-gray-300 hover:text-white hover:bg-slate-700 rounded-lg">
+                        <a href="member.fines.index" class="flex items-center px-2 py-2 text-base font-medium text-gray-300 hover:text-white hover:bg-slate-700 rounded-lg">
                             <i class="fas fa-money-bill-wave mr-4"></i>
                             Fines & Payments
                         </a>

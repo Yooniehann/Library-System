@@ -20,6 +20,7 @@ use App\Http\Controllers\{
 };
 use App\Http\Controllers\Admin\IssuedBooksController;
 use App\Http\Controllers\Admin\SearchController;
+use App\Http\Controllers\Admin\SimulationController;
 
 /*
 |--------------------------------------------------------------------------
@@ -150,18 +151,6 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
 
     // Reservations
-    // Route::get('/reservations', [ReservationController::class, 'index'])
-    //     ->middleware('role:Member,Kid')
-    //     ->name('reservations.index');
-    
-    // // Reservation cancel route
-    // Route::post('/reservations/{id}/cancel', [ReservationController::class, 'cancel'])
-    //     ->middleware('role:Member,Kid')
-    //     ->name('reservations.cancel')
-    //     ->name('borrowed.index')
-    //     ->middleware('role:Member,Kid');
-
-    // Reservations
     Route::get('/reservations', [ReservationController::class, 'index'])
         ->middleware('role:Member,Kid')
         ->name('reservations.index');
@@ -269,6 +258,28 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'verified', 'role:Ad
         Route::get('/stats/overview', [IssuedBooksController::class, 'getStats'])->name('stats');
     });
 
+    // Admin Returned Books Routes
+    Route::prefix('returned-books')->name('returned-books.')->group(function () {
+        Route::get('/', [IssuedBooksController::class, 'returnedIndex'])->name('index');
+        Route::get('/{id}', [IssuedBooksController::class, 'returnedShow'])->name('show');
+    });
+
+    // Admin Simulation Routes
+    Route::prefix('simulation')->name('simulation.')->group(function () {
+        Route::get('/', [SimulationController::class, 'index'])->name('index');
+        Route::post('/', [SimulationController::class, 'update'])->name('update');
+        Route::post('/disable', [SimulationController::class, 'disable'])->name('disable');
+    });
+
+    // Admin Overdue Books Routes
+    Route::prefix('overdue-books')->name('overdue-books.')->group(function () {
+        Route::get('/', [IssuedBooksController::class, 'overdueIndex'])->name('index');
+        Route::get('/{id}', [IssuedBooksController::class, 'overdueShow'])->name('show');
+    });
+
+    // Manual overdue update route
+    Route::post('/issued-books/update-overdue', [IssuedBooksController::class, 'updateOverdueStatus'])->name('issued-books.update-overdue');
+
     // ... other admin routes can be added here ...
 });
 
@@ -285,4 +296,3 @@ Route::middleware(['auth', 'verified', 'role:Kid'])->prefix('kid')->name('kid.')
         return view('dashboard.kid.index');
     })->name('dashboard');
 });
-

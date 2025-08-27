@@ -24,6 +24,7 @@ return new class extends Migration
             $table->enum('condition_on_return', ['excellent', 'good', 'fair', 'poor', 'damaged']);
             $table->unsignedInteger('late_days')->default(0);
             $table->decimal('fine_amount', 8, 2)->default(0.00);
+            $table->text('notes')->nullable();
             $table->timestamps();
         });
     }

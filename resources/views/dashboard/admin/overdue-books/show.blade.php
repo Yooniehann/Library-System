@@ -1,29 +1,17 @@
 @extends('dashboard.admin.index')
 
-@section('title', 'Issued Book Details')
+@section('title', 'Overdue Book Details')
 
 @section('content')
 <div class="container mx-auto px-4 py-6">
     <!-- Header -->
     <div class="flex justify-between items-center mb-6">
-        <h1 class="text-2xl font-bold text-white">Issued Book Details</h1>
-        <a href="{{ route('admin.issued-books.index') }}"
+        <h1 class="text-2xl font-bold text-white">Overdue Book Details</h1>
+        <a href="{{ route('admin.overdue-books.index') }}"
            class="bg-gray-600 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded-lg">
             <i class="fas fa-arrow-left mr-2"></i> Back to List
         </a>
     </div>
-
-    @if(session('success'))
-        <div class="bg-green-500 text-white p-4 rounded mb-6">
-            {{ session('success') }}
-        </div>
-    @endif
-
-    @if(session('error'))
-        <div class="bg-red-500 text-white p-4 rounded mb-6">
-            {{ session('error') }}
-        </div>
-    @endif
 
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
         <!-- Left Column - Book and Borrowing Details -->
@@ -81,7 +69,7 @@
                         </div>
                         <div>
                             <label class="text-gray-400 text-sm">Due Date</label>
-                            <p class="{{ $borrow->due_date->isPast() ? 'text-red-400' : 'text-green-400' }} font-medium">
+                            <p class="text-red-400 font-medium">
                                 {{ $borrow->due_date->format('M d, Y h:i A') }}
                             </p>
                         </div>
@@ -91,13 +79,7 @@
                         <div>
                             <label class="text-gray-400 text-sm">Status</label>
                             <p>
-                                @if($borrow->status == 'active')
-                                    <span class="px-3 py-1 text-sm font-semibold bg-green-500/20 text-green-400 rounded-full">Active</span>
-                                @elseif($borrow->status == 'overdue')
-                                    <span class="px-3 py-1 text-sm font-semibold bg-red-500/20 text-red-400 rounded-full">Overdue</span>
-                                @else
-                                    <span class="px-3 py-1 text-sm font-semibold bg-gray-500/20 text-gray-400 rounded-full">{{ ucfirst($borrow->status) }}</span>
-                                @endif
+                                <span class="px-3 py-1 text-sm font-semibold bg-red-500/20 text-red-400 rounded-full">Overdue</span>
                             </p>
                         </div>
                         <div>
@@ -112,20 +94,18 @@
                 </div>
 
                 <!-- Overdue Information -->
-                @if($overdueDays > 0)
                 <div class="mt-6 p-4 bg-red-500/10 border border-red-500/30 rounded-lg">
                     <div class="flex items-center">
                         <i class="fas fa-exclamation-triangle text-red-400 text-xl mr-3"></i>
                         <div>
                             <h4 class="text-red-400 font-semibold">Overdue Notice</h4>
                             <p class="text-red-300">
-                                This book is {{ $overdueDays }} day{{ $overdueDays > 1 ? 's' : '' }} overdue.
+                                This book is {{ $displayDaysOverdue }} day{{ $displayDaysOverdue != 1 ? 's' : '' }} overdue.
                                 Fine amount: <span class="font-bold">${{ number_format($fineAmount, 2) }}</span>
                             </p>
                         </div>
                     </div>
                 </div>
-                @endif
             </div>
         </div>
 
@@ -170,98 +150,61 @@
             <div class="bg-slate-800 rounded-lg shadow p-6">
                 <h2 class="text-lg font-semibold text-white mb-4 border-b border-gray-700 pb-2">Quick Actions</h2>
 
-                @if($borrow->status != 'returned')
                 <div class="space-y-3">
-                    <!-- Return Book Button - Fixed -->
-                    <button type="button"
-                            class="w-full bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded-lg transition-colors"
-                            onclick="openReturnModal()">
-                        <i class="fas fa-undo mr-2"></i> Mark as Returned
-                    </button>
+                    <a href="{{ route('admin.issued-books.show', $borrow->borrow_id) }}"
+                       class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg transition-colors inline-block text-center">
+                        <i class="fas fa-cog mr-2"></i> Manage Borrow
+                    </a>
 
-                    @if($borrow->status == 'active' && $borrow->renewal_count < 3)
+                    @if($borrow->renewal_count < 3 && $borrow->status !== 'returned')
                     <form action="{{ route('admin.issued-books.renew', $borrow->borrow_id) }}" method="POST">
                         @csrf
                         <button type="submit"
-                                class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg transition-colors">
+                                class="w-full bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded-lg transition-colors">
                             <i class="fas fa-redo mr-2"></i> Renew Book
                         </button>
                     </form>
                     @endif
 
-                    @if($borrow->status != 'overdue' && $borrow->due_date->isPast())
-                    <form action="{{ route('admin.issued-books.overdue', $borrow->borrow_id) }}" method="POST">
-                        @csrf
-                        <button type="submit"
-                                class="w-full bg-yellow-600 hover:bg-yellow-700 text-white font-bold py-2 px-4 rounded-lg transition-colors">
-                            <i class="fas fa-exclamation-triangle mr-2"></i> Mark as Overdue
-                        </button>
-                    </form>
-                    @endif
+                    <button type="button" onclick="openReturnModal()"
+                            class="w-full bg-yellow-600 hover:bg-yellow-700 text-white font-bold py-2 px-4 rounded-lg transition-colors">
+                        <i class="fas fa-undo mr-2"></i> Mark as Returned
+                    </button>
                 </div>
-                @else
-                <div class="bg-blue-500/10 border border-blue-500/30 rounded-lg p-4">
-                    <div class="flex items-center">
-                        <i class="fas fa-info-circle text-blue-400 mr-3"></i>
-                        <p class="text-blue-300">This book has already been returned.</p>
-                    </div>
-                </div>
-                @endif
             </div>
         </div>
     </div>
 </div>
 
-<!-- Return Modal -->
-<div id="returnModal" class="fixed inset-0 bg-black bg-opacity-50 items-center flex justify-center z-50 hidden">
-    <div class="bg-slate-800 border border-gray-700 rounded-lg w-11/12 md:w-1/2 p-6">
-        <div class="border-b border-gray-700 pb-4 mb-4">
-            <h3 class="text-xl font-semibold text-white">Mark Book as Returned</h3>
-        </div>
+<!-- Return Book Modal -->
+<div id="returnModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
+    <div class="bg-slate-800 rounded-lg p-6 w-full max-w-md">
+        <h3 class="text-lg font-semibold text-white mb-4">Return Book</h3>
+
         <form action="{{ route('admin.issued-books.return', $borrow->borrow_id) }}" method="POST">
             @csrf
+
             <div class="mb-4">
-                <label for="condition" class="block text-gray-400 text-sm mb-2">Book Condition</label>
-                <select class="bg-slate-700 text-white border border-gray-600 rounded-lg w-full py-2 px-4 focus:outline-none focus:ring-2 focus:ring-yellow-400"
-                        id="condition"
-                        name="condition"
-                        required>
-                    <option value="excellent">Excellent - Like new</option>
-                    <option value="good" selected>Good - Minor wear</option>
-                    <option value="fair">Fair - Noticeable wear</option>
-                    <option value="poor">Poor - Significant damage</option>
-                    <option value="damaged">Damaged - Requires repair</option>
+                <label class="block text-gray-400 text-sm mb-2">Condition on Return</label>
+                <select name="condition" class="w-full bg-slate-700 border border-gray-600 text-white rounded-lg py-2 px-4 focus:outline-none focus:ring-2 focus:ring-blue-500" required>
+                    <option value="excellent">Excellent</option>
+                    <option value="good">Good</option>
+                    <option value="fair">Fair</option>
+                    <option value="poor">Poor</option>
+                    <option value="damaged">Damaged</option>
                 </select>
             </div>
+
             <div class="mb-4">
-                <label for="notes" class="block text-gray-400 text-sm mb-2">Notes (Optional)</label>
-                <textarea class="bg-slate-700 text-white border border-gray-600 rounded-lg w-full py-2 px-4 focus:outline-none focus:ring-2 focus:ring-yellow-400"
-                          id="notes"
-                          name="notes"
-                          rows="3"
-                          placeholder="Any additional notes about the return..."></textarea>
+                <label class="block text-gray-400 text-sm mb-2">Notes (Optional)</label>
+                <textarea name="notes" rows="3" class="w-full bg-slate-700 border border-gray-600 text-white rounded-lg py-2 px-4 focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Any additional notes..."></textarea>
             </div>
-            @if($overdueDays > 0)
-            <div class="bg-red-500/10 border border-red-500/30 rounded-lg p-4 mb-4">
-                <div class="flex items-center">
-                    <i class="fas fa-exclamation-triangle text-red-400 mr-3"></i>
-                    <div>
-                        <p class="text-red-300">
-                            This book is overdue by {{ $overdueDays }} days.
-                            Fine amount: <span class="font-bold">${{ number_format($fineAmount, 2) }}</span>
-                        </p>
-                    </div>
-                </div>
-            </div>
-            @endif
-            <div class="flex justify-end space-x-3 pt-4 border-t border-gray-700">
-                <button type="button"
-                        class="bg-gray-600 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded-lg transition-colors"
-                        onclick="closeReturnModal()">
+
+            <div class="flex justify-end space-x-3">
+                <button type="button" onclick="closeReturnModal()" class="bg-gray-600 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded-lg">
                     Cancel
                 </button>
-                <button type="submit"
-                        class="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded-lg transition-colors">
+                <button type="submit" class="bg-yellow-600 hover:bg-yellow-700 text-white font-bold py-2 px-4 rounded-lg">
                     Confirm Return
                 </button>
             </div>
@@ -269,30 +212,16 @@
     </div>
 </div>
 
+<!-- Font Awesome for icons -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+
 <script>
-    function openReturnModal() {
-        document.getElementById('returnModal').classList.remove('hidden');
-    }
+function openReturnModal() {
+    document.getElementById('returnModal').classList.remove('hidden');
+}
 
-    function closeReturnModal() {
-        document.getElementById('returnModal').classList.add('hidden');
-    }
-
-    // Close modal when clicking outside of it
-    document.getElementById('returnModal').addEventListener('click', function(e) {
-        if (e.target.id === 'returnModal') {
-            closeReturnModal();
-        }
-    });
-
-    // Close modal with Escape key
-    document.addEventListener('keydown', function(e) {
-        if (e.key === 'Escape') {
-            closeReturnModal();
-        }
-    });
+function closeReturnModal() {
+    document.getElementById('returnModal').classList.add('hidden');
+}
 </script>
-
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-
 @endsection

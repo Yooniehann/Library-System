@@ -20,6 +20,27 @@
         </div>
     @endif
 
+    @if(session('info'))
+        <div class="bg-blue-500 text-white p-4 rounded mb-4">
+            {{ session('info') }}
+        </div>
+    @endif
+
+    <!-- Manual Overdue Update Button -->
+    <form action="{{ route('admin.issued-books.update-overdue') }}" method="POST" class="mb-6 bg-slate-800 p-4 rounded-lg">
+        @csrf
+        <div class="flex items-center space-x-4">
+            <button type="submit"
+                    class="bg-yellow-600 hover:bg-yellow-700 text-white font-medium py-2 px-4 rounded-lg transition-colors">
+                <i class="fas fa-sync-alt mr-2"></i> Check for Overdue Books
+            </button>
+            <p class="text-gray-400 text-sm">
+                Manually update book status to overdue if due date has passed.
+                Current system date: {{ \App\Helpers\DateHelper::now()->format('M d, Y h:i A') }}
+            </p>
+        </div>
+    </form>
+
     <!-- Statistics Cards -->
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
         <!-- Total Issued Card -->
@@ -135,6 +156,10 @@
                 </thead>
                 <tbody class="bg-slate-800 divide-y divide-gray-700">
                     @foreach($borrows as $borrow)
+                    @php
+                        $currentDate = \App\Helpers\DateHelper::now();
+                        $isOverdueByDate = $borrow->due_date < $currentDate;
+                    @endphp
                     <tr>
                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-300">#{{ $borrow->borrow_id }}</td>
                         <td class="px-6 py-4 whitespace-nowrap">
@@ -154,9 +179,13 @@
                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-300">{{ $borrow->inventory->book->author->fullname }}</td>
                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-300">{{ $borrow->borrow_date->format('M d, Y') }}</td>
                         <td class="px-6 py-4 whitespace-nowrap text-sm">
-                            <span class="{{ $borrow->due_date->isPast() ? 'text-red-400' : 'text-green-400' }}">
+                            <span class="{{ $isOverdueByDate ? 'text-red-400' : 'text-green-400' }}">
                                 {{ $borrow->due_date->format('M d, Y') }}
+                                @if($isOverdueByDate && $borrow->status != 'overdue')
+                                <span class="text-xs text-yellow-400 ml-1">(Overdue by date)</span>
+                                @endif
                             </span>
+
                         </td>
                         <td class="px-6 py-4 whitespace-nowrap">
                             @if($borrow->status == 'active')
@@ -184,7 +213,7 @@
                                 </form>
                                 @endif
 
-                                @if($borrow->status != 'overdue' && $borrow->due_date->isPast())
+                                @if($borrow->status != 'overdue' && $isOverdueByDate)
                                 <form action="{{ route('admin.issued-books.overdue', $borrow->borrow_id) }}" method="POST">
                                     @csrf
                                     <button type="submit" class="text-yellow-400 hover:text-yellow-500" title="Mark Overdue">
@@ -221,6 +250,10 @@
     </div>
     @endif
 </div>
+
+<!-- Font Awesome for icons -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+
 @endsection
 
 @section('scripts')

@@ -10,7 +10,7 @@ use App\Models\MembershipType;
 use Illuminate\Http\Request;
 use App\Helpers\DateHelper;
 
-class PaymentController extends Controller
+class AdminPaymentController extends Controller
 {
     /**
      * Display a listing of payments.

@@ -24,23 +24,7 @@
             </div>
         </div>
 
-        <!-- Search bar -->
-        <div class="flex-1 max-w-md mx-4">
-            <form action="{{ route('admin.search') }}" method="GET">
-                <div class="relative">
-                    <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-gray-400" fill="none"
-                            viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-                        </svg>
-                    </div>
-                    <input type="text" name="query"
-                        class="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md leading-5 bg-white placeholder-gray-500 focus:outline-none focus:ring-yellow-300 focus:border-yellow-300 sm:text-sm"
-                        placeholder="Search books, authors, or members..." value="{{ request('query') }}">
-                </div>
-            </form>
-        </div>
+
 
         <!-- User profile and date -->
         <div class="flex items-center space-x-4">
@@ -68,8 +52,6 @@
                         <a href="#"
                             class="block px-4 py-2 text-sm text-white hover:bg-yellow-400 hover:text-black">Your
                             Profile</a>
-                        <a href="#"
-                            class="block px-4 py-2 text-sm text-white hover:bg-yellow-400 hover:text-black">Settings</a>
                         <form action="{{ route('logout') }}" method="POST" class="bg-black">
                             @csrf
                             <button type="submit"

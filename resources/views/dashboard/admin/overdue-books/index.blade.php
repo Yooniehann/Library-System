@@ -84,7 +84,7 @@
                             <th class="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Days
                                 Overdue</th>
                             <th class="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Fine
-                                Amount</th>
+                                Amount<small><br>(per day)</small></th>
                             <th class="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">
                                 Actions</th>
                         </tr>

@@ -13,6 +13,18 @@
         </a>
     </div>
 
+    <!-- Add this near the top of the file, after the header -->
+    @if($hasUnpaidFines)
+    <div class="bg-red-500 text-white p-4 rounded mb-6">
+        <div class="flex items-center">
+            <i class="fas fa-exclamation-triangle mr-3"></i>
+            <div>
+                <strong>Unpaid Fines!</strong> This book has unpaid fines. Please process payment before returning.
+            </div>
+        </div>
+    </div>
+    @endif
+
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
         <!-- Left Column - Book and Borrowing Details -->
         <div class="lg:col-span-2 space-y-6">
@@ -166,9 +178,12 @@
                     </form>
                     @endif
 
-                    <button type="button" onclick="openReturnModal()"
-                            class="w-full bg-yellow-600 hover:bg-yellow-700 text-white font-bold py-2 px-4 rounded-lg transition-colors">
-                        <i class="fas fa-undo mr-2"></i> Mark as Returned
+                    <!-- Update the return button to conditionally disable it -->
+                    <button type="button" onclick="{{ $hasUnpaidFines ? '' : 'openReturnModal()' }}"
+                            class="w-full bg-yellow-600 hover:bg-yellow-700 text-white font-bold py-2 px-4 rounded-lg transition-colors {{ $hasUnpaidFines ? 'opacity-50 cursor-not-allowed' : '' }}"
+                            {{ $hasUnpaidFines ? 'disabled' : '' }}>
+                        <i class="fas fa-undo mr-2"></i>
+                        {{ $hasUnpaidFines ? 'Pay Fines First' : 'Mark as Returned' }}
                     </button>
                 </div>
             </div>

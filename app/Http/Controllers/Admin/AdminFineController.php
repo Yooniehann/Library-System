@@ -8,7 +8,7 @@ use App\Models\Borrow;
 use Illuminate\Http\Request;
 use App\Helpers\DateHelper;
 
-class FineController extends Controller
+class AdminFineController extends Controller
 {
     /**
      * Display a listing of fines.

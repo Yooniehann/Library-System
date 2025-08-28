@@ -305,6 +305,12 @@
                 </a>
             </li>
             <li>
+                <a href="{{ route('admin.notifications.index') }}" class="sidebar-item flex items-center space-x-2 p-2 rounded">
+                    <i class="fas fa-bell"></i>
+                    <span x-show="sidebarExpanded">Notifications</span>
+                </a>
+            </li>
+            <li>
                 <a href="#" class="sidebar-item flex items-center space-x-2 p-2 rounded">
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24"
                         stroke="currentColor">

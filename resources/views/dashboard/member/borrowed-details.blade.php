@@ -44,7 +44,7 @@
                    class="flex items-center px-4 py-3 text-sm font-medium text-gray-300 hover:text-white hover:bg-slate-700 rounded-lg">
                     <i class="fas fa-bookmark mr-3"></i> My Reservations
                 </a>
-                <a href="#"
+                <a href="{{ route('member.fines.index')}}"
                    class="flex items-center px-4 py-3 text-sm font-medium text-gray-300 hover:text-white hover:bg-slate-700 rounded-lg">
                     <i class="fas fa-money-bill-wave mr-3"></i> Fines & Payments
                 </a>
@@ -142,23 +142,36 @@
                             <div class="space-y-3">
                                 <div>
                                     <span class="text-gray-500">Status:</span>
-                                    @if($borrow->status == 'active')
-                                        @if($borrow->due_date->isPast())
-                                            <span class="ml-2 px-3 py-1 text-xs font-semibold rounded-full bg-red-900 text-red-300">Overdue</span>
-                                        @else
-                                            <span class="ml-2 px-3 py-1 text-xs font-semibold rounded-full bg-green-900 text-green-300">Active</span>
-                                        @endif
-                                    @else
-                                        <span class="ml-2 px-3 py-1 text-xs font-semibold rounded-full bg-gray-600 text-gray-300">{{ ucfirst($borrow->status) }}</span>
-                                    @endif
+                                    @php
+                                                $status = strtolower($borrow->status ?? '');
+                                                $isOverdueByDate = $borrow->due_date && $borrow->due_date->isPast();
+                                            @endphp
+
+                                            @if($isOverdueByDate || $status === 'overdue')
+                                                <span class="px-3 py-1 text-xs font-semibold rounded-full bg-red-600 text-red-50">Overdue</span>
+
+                                            @elseif($status === 'active')
+                                                <span class="px-3 py-1 text-xs font-semibold rounded-full bg-green-700 text-green-100">Active</span>
+                                                <div class="text-xs text-gray-400 mt-1">
+                                                    {{ round(now()->diffInDays($borrow->due_date)) }} days remaining
+                                                </div>
+
+                                            @elseif($status === 'returned')
+                                                <span class="px-3 py-1 text-xs font-semibold rounded-full bg-gray-700 text-gray-300">Returned</span>
+
+                                            @else
+                                                <span class="px-3 py-1 text-xs font-semibold rounded-full bg-gray-600 text-gray-300">
+                                                    {{ ucfirst($borrow->status) }}
+                                                </span>
+                                            @endif
                                 </div>
                                 <div><span class="text-gray-500">Renewals Used:</span> <span class="text-white ml-2">{{ $borrow->renewal_count }} / 2</span></div>
                                 <div><span class="text-gray-500">Processed by:</span> <span class="text-white ml-2">{{ $borrow->staff->name ?? 'System' }}</span></div>
                             </div>
                         </div>
 
-                        <!-- Action buttons (only when still active) -->
-                        @if($borrow->status == 'active')
+                        <!-- Action buttons (not when returned) -->
+                        @if($borrow->status !== 'returned')
                             <div class="mt-6 pt-4 border-t border-slate-700">
                                 <h4 class="text-md font-semibold text-white mb-3">Quick Actions</h4>
                                 <div class="flex flex-wrap gap-3">

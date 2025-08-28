@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Notifications\DatabaseNotification;
 
+
 class Notification extends DatabaseNotification
 {
     use HasFactory;
@@ -13,11 +14,13 @@ class Notification extends DatabaseNotification
     protected $primaryKey = 'notification_id';
 
     protected $casts = [
-        'sent_date' => 'datetime'
+        'sent_date' => 'datetime',
     ];
 
     public function user()
     {
         return $this->belongsTo(User::class, 'user_id');
     }
+
+
 }

@@ -17,6 +17,8 @@ use App\Http\Controllers\{
     StockInDetailController,
     CatalogController,
     ReservationController,
+    FineController,
+    PaymentController
 };
 use App\Http\Controllers\Admin\FineController;
 use App\Http\Controllers\Admin\IssuedBooksController;
@@ -93,6 +95,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::patch('/profile', 'update')->name('update');
         Route::delete('/profile', 'destroy')->name('destroy');
     });
+
 
     // Membership routes
     Route::prefix('membership')->group(function () {
@@ -305,6 +308,17 @@ Route::middleware(['auth', 'verified', 'role:Member'])->prefix('member')->name('
     Route::get('/dashboard', function () {
         return view('dashboard.member.index');
     })->name('dashboard');
+
+    // Fines routes
+        Route::get('/fines', [FineController::class, 'index'])->name('fines.index');
+        Route::get('/fines/{fine}', [FineController::class, 'show'])->name('fines.show');
+        
+        // Payments routes
+        Route::get('/payments', [PaymentController::class, 'index'])->name('payments.index');
+        Route::get('/payments/create/{fine?}', [PaymentController::class, 'create'])->name('payments.create');
+        Route::post('/payments', [PaymentController::class, 'store'])->name('payments.store');
+        Route::get('/payments/{payment}', [PaymentController::class, 'show'])->name('payments.show');
+
 });
 
 // Kid routes

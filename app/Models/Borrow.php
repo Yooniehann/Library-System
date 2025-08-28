@@ -82,10 +82,11 @@ class Borrow extends Model
         return $this->overdue_days * 0.50;
     }
 
-    public function fine()
+    public function fines()
     {
-        return $this->hasOne(Fine::class, 'borrow_id');
+        return $this->hasMany(Fine::class, 'borrow_id');
     }
+
 
     public function bookReturn()
     {

@@ -10,7 +10,6 @@ class Payment extends Model
     use HasFactory;
 
     protected $primaryKey = 'payment_id';
-
     protected $fillable = [
         'user_id',
         'fine_id',
@@ -24,11 +23,7 @@ class Payment extends Model
         'status'
     ];
 
-    protected $casts = [
-        'amount' => 'decimal:2',
-        'payment_date' => 'datetime'
-    ];
-
+    // Relationships
     public function user()
     {
         return $this->belongsTo(User::class, 'user_id');
@@ -42,5 +37,26 @@ class Payment extends Model
     public function membershipType()
     {
         return $this->belongsTo(MembershipType::class, 'membership_type_id');
+    }
+
+    // Scopes
+    public function scopeCompleted($query)
+    {
+        return $query->where('status', 'completed');
+    }
+
+    public function scopePending($query)
+    {
+        return $query->where('status', 'pending');
+    }
+
+    public function scopeFines($query)
+    {
+        return $query->where('payment_type', 'fine');
+    }
+
+    public function scopeMembershipFees($query)
+    {
+        return $query->where('payment_type', 'membership_fee');
     }
 }

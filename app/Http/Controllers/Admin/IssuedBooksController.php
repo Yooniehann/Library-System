@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Models\Borrow;
 use App\Models\BookReturn;
 use App\Models\Staff;
+use App\Models\Fine;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
@@ -19,7 +20,7 @@ class IssuedBooksController extends Controller
     public function index(Request $request)
     {
         // Start building the query
-        $query = Borrow::with(['user', 'inventory.book', 'inventory.book.author', 'staff'])
+        $query = Borrow::with(['user', 'inventory.book', 'inventory.book.author', 'staff', 'fines'])
             ->whereIn('status', ['active', 'overdue']);
 
         // Handle search
@@ -31,7 +32,7 @@ class IssuedBooksController extends Controller
                 $q->where('borrow_id', 'LIKE', "%{$searchTerm}%")
                     // Search by user name - FIXED: changed 'name' to 'fullname'
                     ->orWhereHas('user', function ($userQuery) use ($searchTerm) {
-                        $userQuery->where('fullname', 'LIKE', "%{$searchTerm}%") // Changed from 'name' to 'fullname'
+                        $userQuery->where('fullname', 'LIKE', "%{$searchTerm}%")
                             ->orWhere('email', 'LIKE', "%{$searchTerm}%");
                     })
                     // Search by book title
@@ -70,11 +71,22 @@ class IssuedBooksController extends Controller
             'total_issued' => Borrow::whereIn('status', ['active', 'overdue'])->count(),
             'active' => Borrow::where('status', 'active')->count(),
             'overdue' => Borrow::where('status', 'overdue')->count(),
-            'total_fines' => Borrow::where('status', 'overdue')
+            'total_fines' => Borrow::whereIn('status', ['active', 'overdue'])
+                ->with('fines')
                 ->get()
                 ->sum(function ($borrow) use ($currentDate) {
-                    $daysOverdue = $currentDate->diffInDays($borrow->due_date, false) * -1;
-                    return max(0, $daysOverdue) * 0.50;
+                    // Only calculate fines for overdue books with unpaid fines
+                    if ($borrow->status === 'overdue') {
+                        $unpaidFines = $borrow->fines->where('status', 'unpaid');
+                        return $unpaidFines->sum(function ($fine) use ($currentDate, $borrow) {
+                            if ($fine->fine_type === 'overdue') {
+                                $daysOverdue = max(0, ceil($currentDate->diffInHours($borrow->due_date, false) / 24 * -1));
+                                return $daysOverdue * $fine->amount_per_day;
+                            }
+                            return $fine->amount_per_day;
+                        });
+                    }
+                    return 0;
                 })
         ];
 
@@ -92,12 +104,14 @@ class IssuedBooksController extends Controller
             'inventory.book.author',
             'inventory.book.publisher',
             'inventory.book.category',
-            'staff'
+            'staff',
+            'fines'
         ])->findOrFail($id);
 
         // Calculate overdue days and fine if applicable
         $overdueDays = 0;
         $fineAmount = 0;
+        $hasUnpaidFines = $borrow->fines->where('status', 'unpaid')->count() > 0;
 
         // Only calculate if book is not returned
         if ($borrow->status !== 'returned') {
@@ -105,11 +119,11 @@ class IssuedBooksController extends Controller
                 $overdueDays = DateHelper::diffInDays($borrow->due_date);
                 // Convert to whole number for display
                 $overdueDays = max(0, ceil($overdueDays));
-                $fineAmount = max(0, $overdueDays) * 0.50;
+                $fineAmount = max(0, $overdueDays) * 1.00; // Changed from 0.50 to 1.00
             }
         }
 
-        return view('dashboard.admin.issued-books.show', compact('borrow', 'overdueDays', 'fineAmount'));
+        return view('dashboard.admin.issued-books.show', compact('borrow', 'overdueDays', 'fineAmount', 'hasUnpaidFines'));
     }
 
     /**
@@ -118,15 +132,21 @@ class IssuedBooksController extends Controller
     public function markReturned(Request $request, $id)
     {
         $request->validate([
-            'condition' => 'required|in:excellent,good,fair,poor,damaged',
+            'condition' => 'required|in:excellent,good,fair,poor,damaged,lost',
             'notes' => 'nullable|string|max:500'
         ]);
 
-        $borrow = Borrow::findOrFail($id);
+        $borrow = Borrow::with('fines')->findOrFail($id);
 
         // Check if already returned
         if ($borrow->status === 'returned') {
             return redirect()->back()->with('error', 'This book has already been returned.');
+        }
+
+        // Check if there are unpaid fines
+        $unpaidFines = $borrow->fines->where('status', 'unpaid');
+        if ($unpaidFines->count() > 0) {
+            return redirect()->back()->with('error', 'Cannot return book. There are unpaid fines. Please process payment first.');
         }
 
         // Calculate fine if overdue - Updated to use DateHelper
@@ -135,7 +155,7 @@ class IssuedBooksController extends Controller
 
         if (DateHelper::isPast($borrow->due_date)) {
             $lateDays = DateHelper::diffInDays($borrow->due_date);
-            $fineAmount = max(0, $lateDays) * 0.50; // $0.50 per day
+            $fineAmount = max(0, $lateDays) * 1.00; // $1.00 per day
         }
 
         // Get system staff or use null if not available
@@ -162,11 +182,15 @@ class IssuedBooksController extends Controller
             'notes' => $request->notes
         ]);
 
+        // Create fines automatically based on condition
+        $this->createFinesForReturn($borrow, $request->condition, $request->notes, $fineAmount, $lateDays);
+
         // Update borrow status
         $borrow->update(['status' => 'returned']);
 
-        // Update inventory status
-        $borrow->inventory->update(['status' => 'available']);
+        // Update inventory status based on condition
+        $inventoryStatus = in_array($request->condition, ['lost', 'damaged']) ? 'maintenance' : 'available';
+        $borrow->inventory->update(['status' => $inventoryStatus]);
 
         $message = 'Book marked as returned successfully!';
         if ($fineAmount > 0) {
@@ -174,6 +198,60 @@ class IssuedBooksController extends Controller
         }
 
         return redirect()->route('admin.issued-books.index')->with('success', $message);
+    }
+
+    /**
+     * Create fines automatically when a book is returned
+     */
+    private function createFinesForReturn($borrow, $condition, $notes, $overdueFineAmount, $lateDays)
+    {
+        // Create overdue fine if applicable
+        if ($overdueFineAmount > 0) {
+            // Calculate whole days overdue
+            $wholeDaysOverdue = max(0, ceil($lateDays));
+
+            // Check if ANY overdue fine already exists for this borrow
+            $existingFine = Fine::where('borrow_id', $borrow->borrow_id)
+                ->where('fine_type', 'overdue')
+                ->first();
+
+            if (!$existingFine) {
+                Fine::create([
+                    'borrow_id' => $borrow->borrow_id,
+                    'fine_type' => 'overdue',
+                    'amount_per_day' => 1.00,
+                    'description' => "Overdue fine for '{$borrow->inventory->book->title}'. " .
+                        ($wholeDaysOverdue == 1 ? "1 day overdue." : "{$wholeDaysOverdue} days overdue."),
+                    'fine_date' => DateHelper::now(),
+                    'status' => 'unpaid',
+                ]);
+            }
+        }
+
+        // Create damage/lost fine if applicable
+        if (in_array($condition, ['poor', 'damaged', 'lost'])) {
+            $fineType = $condition === 'lost' ? 'lost' : 'damage';
+            $fineAmount = $condition === 'lost' ? 50.00 : 20.00;
+            $description = $condition === 'lost'
+                ? "Lost book: {$borrow->inventory->book->title}"
+                : "Damaged book: {$borrow->inventory->book->title}. Notes: {$notes}";
+
+            // Check if fine of this type already exists
+            $existingFine = Fine::where('borrow_id', $borrow->borrow_id)
+                ->where('fine_type', $fineType)
+                ->first();
+
+            if (!$existingFine) {
+                Fine::create([
+                    'borrow_id' => $borrow->borrow_id,
+                    'fine_type' => $fineType,
+                    'amount_per_day' => $fineAmount,
+                    'description' => $description,
+                    'fine_date' => DateHelper::now(),
+                    'status' => 'unpaid',
+                ]);
+            }
+        }
     }
 
     /**
@@ -230,11 +308,22 @@ class IssuedBooksController extends Controller
             'total_issued' => Borrow::whereIn('status', ['active', 'overdue'])->count(),
             'active' => Borrow::where('status', 'active')->count(),
             'overdue' => Borrow::where('status', 'overdue')->count(),
-            'total_fines' => Borrow::where('status', 'overdue')
+            'total_fines' => Borrow::whereIn('status', ['active', 'overdue'])
+                ->with('fines')
                 ->get()
                 ->sum(function ($borrow) use ($currentDate) {
-                    $daysOverdue = $currentDate->diffInDays($borrow->due_date, false) * -1;
-                    return max(0, $daysOverdue) * 0.50;
+                    // Only calculate fines for overdue books with unpaid fines
+                    if ($borrow->status === 'overdue') {
+                        $unpaidFines = $borrow->fines->where('status', 'unpaid');
+                        return $unpaidFines->sum(function ($fine) use ($currentDate, $borrow) {
+                            if ($fine->fine_type === 'overdue') {
+                                $daysOverdue = max(0, ceil($currentDate->diffInHours($borrow->due_date, false) / 24 * -1));
+                                return $daysOverdue * $fine->amount_per_day;
+                            }
+                            return $fine->amount_per_day;
+                        });
+                    }
+                    return 0;
                 })
         ];
 
@@ -329,7 +418,7 @@ class IssuedBooksController extends Controller
         $currentDate = DateHelper::now();
 
         // Start building the query - show books that are overdue by date AND not returned
-        $query = Borrow::with(['user', 'inventory.book', 'inventory.book.author', 'staff'])
+        $query = Borrow::with(['user', 'inventory.book', 'inventory.book.author', 'staff', 'fines'])
             ->where('due_date', '<', $currentDate)
             ->where('status', '!=', 'returned'); // Exclude returned books
 
@@ -380,10 +469,16 @@ class IssuedBooksController extends Controller
         $searchTerm = $request->search;
         $dateRange = $request->due_date_range;
 
-        // Calculate total fines
+        // Calculate total fines (only for unpaid fines)
         $totalFines = $overdueBooks->sum(function ($borrow) use ($currentDate) {
-            $daysOverdue = $currentDate->diffInDays($borrow->due_date, false) * -1;
-            return max(0, $daysOverdue) * 0.50;
+            $unpaidFines = $borrow->fines->where('status', 'unpaid');
+            return $unpaidFines->sum(function ($fine) use ($currentDate, $borrow) {
+                if ($fine->fine_type === 'overdue') {
+                    $daysOverdue = max(0, ceil($currentDate->diffInHours($borrow->due_date, false) / 24 * -1));
+                    return $daysOverdue * $fine->amount_per_day;
+                }
+                return $fine->amount_per_day;
+            });
         });
 
         return view('dashboard.admin.overdue-books.index', compact(
@@ -407,17 +502,29 @@ class IssuedBooksController extends Controller
             'inventory.book.author',
             'inventory.book.publisher',
             'inventory.book.category',
-            'staff'
+            'staff',
+            'fines'
         ])->where('due_date', '<', $currentDate)
             ->where('status', '!=', 'returned') // Exclude returned books
             ->findOrFail($id);
 
         // Calculate whole days overdue
-        $overdueDays = $currentDate->diffInDays($borrow->due_date, false) * -1;
-        $displayDaysOverdue = max(0, ceil($overdueDays)); // Ensure positive whole number
-        $fineAmount = max(0, $displayDaysOverdue) * 0.50;
+        $overdueDays = max(0, ceil($currentDate->diffInHours($borrow->due_date, false) / 24 * -1));
+        $displayDaysOverdue = $overdueDays; // Already whole number
 
-        return view('dashboard.admin.overdue-books.show', compact('borrow', 'displayDaysOverdue', 'fineAmount'));
+        // Calculate fine amount based on unpaid fines
+        $unpaidFines = $borrow->fines->where('status', 'unpaid');
+        $fineAmount = $unpaidFines->sum(function ($fine) use ($currentDate, $borrow) {
+            if ($fine->fine_type === 'overdue') {
+                $daysOverdue = max(0, ceil($currentDate->diffInHours($borrow->due_date, false) / 24 * -1));
+                return $daysOverdue * $fine->amount_per_day;
+            }
+            return $fine->amount_per_day;
+        });
+
+        $hasUnpaidFines = $unpaidFines->count() > 0;
+
+        return view('dashboard.admin.overdue-books.show', compact('borrow', 'displayDaysOverdue', 'fineAmount', 'hasUnpaidFines'));
     }
 
     // overdue

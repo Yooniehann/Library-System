@@ -17,11 +17,11 @@ use App\Http\Controllers\{
     StockInDetailController,
     CatalogController,
     ReservationController,
-    FineController,
-    PaymentController,
     NotificationController
 };
+use App\Http\Controllers\Admin\FineController;
 use App\Http\Controllers\Admin\IssuedBooksController;
+use App\Http\Controllers\Admin\PaymentController;
 use App\Http\Controllers\Admin\SearchController;
 use App\Http\Controllers\Admin\SimulationController;
 
@@ -292,6 +292,21 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'verified', 'role:Ad
         Route::post('/', [NotificationController::class, 'store'])->name('store');
         Route::delete('/{id}', [NotificationController::class, 'destroy'])->name('destroy');
     });
+
+    // Fines Routes
+    Route::prefix('fines')->name('fines.')->group(function () {
+        Route::get('/', [FineController::class, 'index'])->name('index');
+        Route::get('/{id}', [FineController::class, 'show'])->name('show');
+        Route::post('/{id}/waive', [FineController::class, 'waive'])->name('waive');
+    });
+
+    // Direct fine payment processing
+    Route::post('/fines/{fineId}/process-payment', [PaymentController::class, 'processFinePayment'])
+        ->name('payments.process-fine');
+
+    // Show fine payment form
+    Route::get('/fines/{fineId}/payment', [PaymentController::class, 'showProcessFine'])
+        ->name('payments.show-process-fine');
 
     // ... other admin routes can be added here ...
 });

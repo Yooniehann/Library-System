@@ -24,7 +24,7 @@ class BookReturnController extends Controller
         $fineAmount = 0;
         if ($borrow->due_date->isPast()) {
             $daysOverdue = $borrow->due_date->diffInDays(now());
-            $fineAmount = $daysOverdue * 0.50; // $0.50 per day overdue
+            $fineAmount = $daysOverdue * 1.00; // $0.50 per day overdue
         }
 
         // Create return record
@@ -34,7 +34,11 @@ class BookReturnController extends Controller
             'return_date' => now(),
             'condition' => 'good', // Default condition
             'fine_amount' => $fineAmount,
+<<<<<<< HEAD
+           // 'notes' => 'Returned by user'
+=======
             // 'notes' => 'Returned by user'
+>>>>>>> 76a310bf383cdeedbec1527bc5504a1adb7fca6d
         ]);
 
         // Update borrow status
@@ -48,7 +52,7 @@ class BookReturnController extends Controller
             Fine::create([
                 'borrow_id' => $borrow->borrow_id,
                 'fine_type' => 'overdue',
-                'amount_per_day' => 0.50,
+                'amount_per_day' => 1.00,
                 'description' => 'Overdue fine for ' . $daysOverdue . ' days',
                 'fine_date' => now(),
                 'status' => 'unpaid'

@@ -22,11 +22,24 @@ use App\Http\Controllers\{
     PaymentController,
     DashboardController
 };
+use App\Http\Controllers\Admin\AdminDashboardController;
 use App\Http\Controllers\Admin\AdminFineController;
 use App\Http\Controllers\Admin\IssuedBooksController;
 use App\Http\Controllers\Admin\AdminPaymentController;
 use App\Http\Controllers\Admin\SearchController;
 use App\Http\Controllers\Admin\SimulationController;
+
+//kids
+use App\Http\Controllers\Kid\BorrowedController;
+use App\Http\Controllers\Kid\KidDashboardController;
+use App\Http\Controllers\Kid\KidReservationController;
+use App\Http\Controllers\Kid\KidFineController;
+use App\Http\Controllers\Kid\AchievementController;
+use App\Http\Controllers\Kid\KidNotificationController;
+use App\Http\Controllers\Kid\KidContactController;
+use App\Http\Controllers\Kid\KidProfileController;
+use App\Http\Controllers\Kid\KidProcessPayController;
+use App\Http\Controllers\Kid\KidBookReturnController;
 
 /*
 |--------------------------------------------------------------------------
@@ -151,6 +164,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
         ->middleware('role:Member,Kid')
         ->name('borrowed.index');
 
+
     // Borrow details route
     Route::get('/borrowed/{id}', [BorrowController::class, 'show'])
         ->middleware('role:Member,Kid')
@@ -161,6 +175,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/reservations', [ReservationController::class, 'index'])
         ->middleware('role:Member,Kid')
         ->name('reservations.index');
+
 
     // Reservation cancel route
     Route::post('/reservations/{id}/cancel', [ReservationController::class, 'cancel'])
@@ -184,10 +199,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
 // Admin routes - Consolidated all admin routes into one group
 Route::prefix('admin')->name('admin.')->middleware(['auth', 'verified', 'role:Admin'])->group(function () {
-    // Dashboard
-    Route::get('/dashboard', function () {
-        return view('dashboard.admin.index');
-    })->name('dashboard');
+    // Dashboard - Updated to use controller
+    Route::get('/dashboard', [AdminDashboardController::class, 'index'])->name('dashboard');
 
     // Search route
     Route::get('/search', [SearchController::class, 'search'])->name('search');
@@ -343,7 +356,40 @@ Route::middleware(['auth', 'verified', 'role:Member'])->prefix('member')->name('
 
 // Kid routes
 Route::middleware(['auth', 'verified', 'role:Kid'])->prefix('kid')->name('kid.')->group(function () {
-    Route::get('/dashboard', function () {
-        return view('dashboard.kid.index');
-    })->name('dashboard');
+
+    // Dashboard main page
+    Route::get('/dashboard', [KidDashboardController::class, 'index'])->name('dashboard');
+
+
+  // Borrowed books
+Route::get('/borrowed', [BorrowedController::class, 'index'])->name('kidborrowed.index');
+Route::post('/borrow/{book}/renew', [BorrowedController::class, 'renew'])->name('kidborrow.renew');
+
+// **New Return route**
+Route::post('/borrow/{borrow}/return', [KidBookReturnController::class, 'returnBook'])->name('kidborrow.return');
+    // Kid Reservations
+Route::get('/reservations', [KidReservationController::class, 'index'])->name('kidreservation.index');
+Route::post('/reserve/{book}', [KidReservationController::class, 'create'])->name('kidreservation.create');
+Route::post('/reservations/{id}/cancel', [KidReservationController::class, 'cancel'])->name('kidreservation.cancel');
+
+
+  // Fines & Payments
+  Route::get('/fines', [KidFineController::class, 'index'])->name('kidfinepay.index');
+Route::post('/fines/{fine}/pay', [KidFineController::class, 'pay'])->name('kidfines.pay');
+
+ // Process payment page
+    Route::get('/fines/{fine}/process', [KidProcessPayController::class, 'index'])->name('kidprocesspay.index');
+
+// Notifications
+    Route::get('/notifications', [KidNotificationController::class, 'index'])->name('kidnoti.index');
+    Route::post('/notifications/{id}/read', [KidNotificationController::class, 'markAsRead'])->name('kidnoti.markAsRead');
+
+  // Contact Librarian (fixed, not nested)
+    Route::get('/contact', [KidContactController::class, 'index'])->name('kidcontact.index');
+    Route::post('/contact/send', [KidContactController::class, 'send'])->name('kidcontact.send');
+
+
+    // Profile Settings
+Route::get('/profile', [KidProfileController::class, 'edit'])->name('kidprofile.index');
+Route::patch('/profile', [KidProfileController::class, 'update'])->name('kidprofile.update');
 });

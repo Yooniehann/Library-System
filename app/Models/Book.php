@@ -51,6 +51,11 @@ class Book extends Model
         return $this->hasMany(Inventory::class, 'book_id');
     }
 
+    public function inventory()
+    {
+        return $this->hasMany(Inventory::class, 'book_id');
+    }
+
     public function availableInventories()
     {
         return $this->hasMany(Inventory::class, 'book_id')

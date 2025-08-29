@@ -34,10 +34,21 @@
 
     <div class="p-4 h-[calc(100%-120px)] overflow-y-auto no-scrollbar">
 
-
-        <h3 class="text-xs uppercase text-gray-400 font-semibold mb-2" x-show="sidebarExpanded">DASHBOARD</h3>
-
         <ul class="space-y-2">
+            <li>
+                <a href="{{ route('dashboard') }}" class="sidebar-item flex items-center space-x-2 p-2 rounded">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                        stroke-width="1.5" class="w-6 h-6" aria-label="Dashboard Layout">
+                        <rect x="3" y="4" width="18" height="16" rx="2" />
+                        <path d="M9 4v16" />
+                        <path d="M9 10h12" />
+                    </svg>
+
+                    <span x-show="sidebarExpanded">Admin Dashboard</span>
+                </a>
+            </li>
+
+
             <!-- Manage Books with dropdown -->
             <li x-data="{ open: false }">
                 <div @click="open = !open"
@@ -66,38 +77,13 @@
                 </ul>
             </li>
 
-            <!-- Manage Inventories (Book Copies) with dropdown -->
-            {{-- <li x-data="{ open: false }">
-                <div @click="open = !open"
-                    class="sidebar-item flex items-center justify-between p-2 rounded cursor-pointer">
-                    <div class="flex items-center space-x-2">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24"
-                            stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" />
-                        </svg>
-                        <span x-show="sidebarExpanded">Manage Inventories</span>
-                    </div>
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 transition-transform duration-200"
-                        :class="{ 'transform rotate-90': open }" fill="none" viewBox="0 0 24 24"
-                        stroke="currentColor" x-show="sidebarExpanded">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
-                    </svg>
-                </div>
-                <ul x-show="open && sidebarExpanded" x-collapse class="pl-8 mt-1 space-y-1">
-                    <li><a href="#" class="dropdown-item block p-2 text-sm rounded">Add Book Copies</a></li>
-                    <li><a href="#" class="dropdown-item block p-2 text-sm rounded">View Inventory</a></li>
-                    <li><a href="#" class="dropdown-item block p-2 text-sm rounded">Update Copies</a></li>
-                    <li><a href="#" class="dropdown-item block p-2 text-sm rounded">Track Availability</a></li>
-                </ul>
-            </li> --}}
-
             <!-- Manage Suppliers with dropdown -->
             <li x-data="{ open: false }">
                 <div @click="open = !open"
                     class="sidebar-item flex items-center justify-between p-2 rounded cursor-pointer">
                     <div class="flex items-center space-x-2">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" viewBox="0 0 24 24" fill="currentColor">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" viewBox="0 0 24 24"
+                            fill="currentColor">
                             <!-- Hat -->
                             <path d="M2 10h20l-2-4H4l-2 4z" />
                             <!-- Face -->
@@ -287,7 +273,8 @@
                 </a>
             </li>
             <li>
-                <a href="{{ route('admin.notifications.index') }}" class="sidebar-item flex items-center space-x-2 p-2 rounded">
+                <a href="{{ route('admin.notifications.index') }}"
+                    class="sidebar-item flex items-center space-x-2 p-2 rounded">
                     <i class="fas fa-bell"></i>
                     <span x-show="sidebarExpanded">Notifications</span>
                 </a>

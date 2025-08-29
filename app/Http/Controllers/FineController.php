@@ -44,7 +44,7 @@ class FineController extends Controller
      */
     public function show($id)
     {
-        $fine = Fine::with(['borrow', 'borrow.inventory.book', 'payment'])
+        $fine = Fine::with(['borrow', 'borrow.inventory.book', 'borrow.bookReturn', 'payment'])
             ->whereHas('borrow', function($query) {
                 $query->where('user_id', Auth::id());
             })

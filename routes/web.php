@@ -349,7 +349,7 @@ Route::middleware(['auth', 'verified', 'role:Member'])->prefix('member')->name('
     Route::get('/payments/create/{fine?}', [PaymentController::class, 'create'])->name('payments.create');
     Route::post('/payments', [PaymentController::class, 'store'])->name('payments.store');
     Route::get('/payments/{payment}', [PaymentController::class, 'show'])->name('payments.show');
-
+    Route::get('/payments/{payment}/print', [PaymentController::class, 'print'])->name('payments.print');
 
     // Notifications routes - Member
     Route::get('notifications/', [NotificationController::class, 'memberIndex'])->name('notifications.index');

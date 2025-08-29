@@ -147,7 +147,7 @@
                             Information</h2>
                     </div>
 
-                    <div class="mb-4">
+                    <div class="mb-4 membership-field">
                         <label for="membership_type_id" class="block text-gray-300 text-sm font-bold mb-2">Membership
                             Type</label>
                         <select name="membership_type_id" id="membership_type_id"
@@ -165,7 +165,7 @@
                         @enderror
                     </div>
 
-                    <div class="mb-4">
+                    <div class="mb-4 membership-field">
                         <label for="membership_period" class="block text-gray-300 text-sm font-bold mb-2">Billing
                             Period</label>
                         <select name="membership_period" id="membership_period"
@@ -180,7 +180,7 @@
                         @enderror
                     </div>
 
-                    <div class="mb-4">
+                    <div class="mb-4 membership-field">
                         <label for="membership_duration" class="block text-gray-300 text-sm font-bold mb-2">Duration
                             (Months/Years)</label>
                         <input type="number" name="membership_duration" id="membership_duration" min="1"
@@ -192,7 +192,7 @@
                         @enderror
                     </div>
 
-                    <div class="mb-4">
+                    <div class="mb-4 membership-field">
                         <label for="membership_start_date" class="block text-gray-300 text-sm font-bold mb-2">Start
                             Date</label>
                         <input type="date" name="membership_start_date" id="membership_start_date"
@@ -203,7 +203,7 @@
                         @enderror
                     </div>
 
-                    <div class="mb-4">
+                    <div class="mb-4 membership-field">
                         <label for="membership_end_date" class="block text-gray-300 text-sm font-bold mb-2">End
                             Date</label>
                         <input type="date" name="membership_end_date" id="membership_end_date" readonly
@@ -214,7 +214,7 @@
                         @enderror
                     </div>
 
-                    <div class="mb-4">
+                    <div class="mb-4 membership-field">
                         <label class="block text-gray-300 text-sm font-bold mb-2">Membership Cost</label>
                         <div class="bg-slate-700 text-white border border-gray-600 rounded w-full py-2 px-3">
                             <span id="membership_cost_display">$0.00</span>
@@ -262,10 +262,53 @@
             background-position: right 0.75rem center;
             background-size: 1rem;
         }
+        
+        /* Style for hidden membership fields */
+        .membership-field {
+            display: none;
+        }
+        
+        .membership-field.visible {
+            display: block;
+        }
     </style>
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
+            const roleSelect = document.getElementById('role');
+            const membershipFields = document.querySelectorAll('.membership-field');
+            
+            // Function to toggle membership fields based on role
+            function toggleMembershipFields() {
+                if (roleSelect.value === 'Member') {
+                    membershipFields.forEach(field => {
+                        field.classList.add('visible');
+                    });
+                } else {
+                    membershipFields.forEach(field => {
+                        field.classList.remove('visible');
+                        // Clear values when hiding
+                        const inputs = field.querySelectorAll('input, select');
+                        inputs.forEach(input => {
+                            if (input.id !== 'membership_end_date') { // Don't clear calculated end date
+                                input.value = '';
+                            }
+                        });
+                    });
+                    // Reset cost display
+                    document.getElementById('membership_cost_display').textContent = '$0.00';
+                    document.getElementById('cost_calculation').textContent = '';
+                    document.getElementById('total_cost').value = '0';
+                }
+            }
+            
+            // Initial toggle based on current role value
+            toggleMembershipFields();
+            
+            // Add event listener for role change
+            roleSelect.addEventListener('change', toggleMembershipFields);
+            
+            // Existing functionality for date and cost calculations
             const durationInput = document.getElementById('membership_duration');
             const periodSelect = document.getElementById('membership_period');
             const startDateInput = document.getElementById('membership_start_date');

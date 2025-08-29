@@ -328,7 +328,8 @@ class IssuedBooksController extends Controller
     {
         // Start building the query
         $query = Borrow::with(['user', 'inventory.book', 'bookReturn'])
-            ->where('status', 'returned');
+            ->where('status', 'returned')
+            ->has('bookReturn');
 
         // Handle search term
         if ($request->has('search') && !empty($request->search)) {

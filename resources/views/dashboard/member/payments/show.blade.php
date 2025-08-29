@@ -6,6 +6,7 @@
     <title>Payment Details | Library System</title>
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="{{ asset('css/print.css') }}" media="print">
     <style>
         .bg-primary-orange { background-color: #EEBA30; }
         .bg-dark-orange { background-color: #D3A625; }
@@ -45,10 +46,14 @@
                             <i class="fas fa-bookmark mr-3"></i>
                             My Reservations
                         </a>
+                        <a href="{{ route('member.fines.index') }}" class="flex items-center px-4 py-3 text-sm font-medium text-gray-300 hover:text-white hover:bg-slate-700 rounded-lg">
+                            <i class="fas fa-money-bill-wave mr-3"></i>
+                            Fines
+                        </a>
                         <!-- ACTIVE LINK for this page -->
                         <a href="{{ route('member.payments.index')}}" class="flex items-center px-4 py-3 text-sm font-medium text-white bg-dark-orange rounded-lg">
                             <i class="fas fa-money-bill-wave mr-3"></i>
-                            Fines & Payments
+                            Payments
                         </a>
                         <a href="#" class="flex items-center px-4 py-3 text-sm font-medium text-gray-300 hover:text-white hover:bg-slate-700 rounded-lg">
                             <i class="fa-solid fa-bell mr-3"></i>
@@ -163,7 +168,7 @@
                             </div>
                             <div>
                                 <h3 class="text-md font-semibold text-white">{{ $payment->fine->borrow->inventory->book->title }}</h3>
-                                <p class="text-gray-400 text-sm">by {{ $payment->fine->borrow->inventory->book->author->name ?? 'Unknown Author' }}</p>
+                                <p class="text-gray-400 text-sm">by {{ $payment->fine->borrow->inventory->book->author->fullname ?? 'Unknown Author' }}</p>
                             </div>
                         </div>
                         
@@ -213,13 +218,13 @@
                     <h2 class="text-lg font-semibold text-white mb-4 border-b border-slate-700 pb-2">Receipt Actions</h2>
                     
                     <div class="flex flex-col sm:flex-row gap-4">
-                        <button onclick="window.print()" class="bg-primary-orange text-black px-6 py-3 rounded-lg hover:bg-dark-orange transition-colors text-center font-semibold">
+                        <a href="{{ route('member.payments.print', $payment->payment_id) }}" target="_blank" class="bg-primary-orange text-black px-6 py-3 rounded-lg hover:bg-dark-orange transition-colors text-center font-semibold">
                             <i class="fas fa-print mr-2"></i> Print Receipt
-                        </button>
-                        
-                        <a href="{{ route('member.payments.index') }}" class="bg-slate-700 text-white px-6 py-3 rounded-lg hover:bg-slate-600 transition-colors text-center">
-                            <i class="fas fa-list mr-2"></i> Back to Payments List
                         </a>
+                        
+                        {{-- <a href="{{ route('member.payments.index') }}" class="bg-slate-700 text-white px-6 py-3 rounded-lg hover:bg-slate-600 transition-colors text-center">
+                            <i class="fas fa-list mr-2"></i> Back to Payments List
+                        </a> --}}
                         
                         @if($payment->fine)
                         <a href="{{ route('member.fines.show', $payment->fine->fine_id) }}" class="bg-slate-700 text-white px-6 py-3 rounded-lg hover:bg-slate-600 transition-colors text-center">
@@ -264,10 +269,14 @@
                             <i class="fas fa-bookmark mr-4"></i>
                             My Reservations
                         </a>
+                        <a href="{{ route('member.fines.index') }}" class="flex items-center px-2 py-2 text-base font-medium text-gray-300 hover:text-white hover:bg-slate-700 rounded-lg">
+                            <i class="fas fa-money-bill-wave mr-4"></i>
+                            Fines
+                        </a>
                         <!-- ACTIVE LINK for this page -->
                         <a href="{{ route('member.payments.index')}}" class="flex items-center px-2 py-2 text-base font-medium text-white bg-dark-orange rounded-lg">
                             <i class="fas fa-money-bill-wave mr-4"></i>
-                            Fines & Payments
+                            Payments
                         </a>
                         <a href="#" class="flex items-center px-2 py-2 text-base font-medium text-gray-300 hover:text-white hover:bg-slate-700 rounded-lg">
                             <i class="fa-solid fa-bell mr-4"></i>

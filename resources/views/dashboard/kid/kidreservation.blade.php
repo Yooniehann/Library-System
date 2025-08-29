@@ -129,7 +129,7 @@ h1, h2 { color: #FFD369; }
                 </div>
                 <div>
                     <div class="text-lg font-semibold text-white">{{ $book->title }}</div>
-                    <div class="text-sm text-gray-400">by {{ $book->author->name ?? 'Unknown Author' }}</div>
+                    <div class="text-sm text-gray-400">by {{ $book->author->fullname ?? 'Unknown Author' }}</div>
                     <a href="{{ route('books.show', $book->book_id) }}" class="btn btn-view mt-2"><i class="fas fa-eye mr-1"></i> View</a>
                 </div>
                 <div>{{ $reservation->reservation_date->format('M d, Y') }}</div>

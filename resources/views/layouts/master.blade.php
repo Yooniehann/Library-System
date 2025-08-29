@@ -171,9 +171,20 @@
                     <a href="{{ route('books.index') }}"
                         class="text-white hover:text-yellow-300 transition duration-300 font-medium">Books</a>
                     @auth
-                        @if (Auth::user()->role !== 'Guest')
-                            <a href="{{ route('borrowed.index') }}"
-                                class="text-white hover:text-yellow-300 transition duration-300 font-medium">My Books</a>
+                        @if (Auth::user()->role !== 'Guest' && Auth::user()->role !== 'Admin')
+                            @if (Auth::user()->role === 'Member')
+                                <a href="{{ route('member.borrowed.index') }}"
+                                    class="text-white hover:text-yellow-300 transition duration-300 font-medium">My
+                                    Books</a>
+                            @elseif (Auth::user()->role === 'Kid')
+                                <a href="{{ route('kid.kidborrowed.index') }}"
+                                    class="text-white hover:text-yellow-300 transition duration-300 font-medium">My
+                                    Books</a>
+                            @else
+                                <a href="{{ route('borrowed.index') }}"
+                                    class="text-white hover:text-yellow-300 transition duration-300 font-medium">My
+                                    Books</a>
+                            @endif
                         @else
                             <a href="#"
                                 onclick="event.preventDefault(); alert('You need to upgrade your membership to access My Books.');"
@@ -268,18 +279,26 @@
                 <a href="{{ route('books.index') }}"
                     class="block px-3 py-2 text-white hover:text-yellow-300">Books</a>
                 @auth
-                    @if (Auth::user()->role !== 'Guest')
-                        <a href="{{ route('borrowed.index') }}"
-                            class="text-white hover:text-yellow-300 transition duration-300 font-medium">My Books</a>
+                    @if (Auth::user()->role !== 'Guest' && Auth::user()->role !== 'Admin')
+                        @if (Auth::user()->role === 'Member')
+                            <a href="{{ route('member.borrowed.index') }}"
+                                class="block px-3 py-2 text-white hover:text-yellow-300">My Books</a>
+                        @elseif (Auth::user()->role === 'Kid')
+                            <a href="{{ route('kid.kidborrowed.index') }}"
+                                class="block px-3 py-2 text-white hover:text-yellow-300">My Books</a>
+                        @else
+                            <a href="{{ route('borrowed.index') }}"
+                                class="block px-3 py-2 text-white hover:text-yellow-300">My Books</a>
+                        @endif
                     @else
                         <a href="#"
                             onclick="event.preventDefault(); alert('You need to upgrade your membership to access My Books.');"
-                            class="text-white hover:text-yellow-300 transition duration-300 font-medium opacity-50 cursor-not-allowed">My
+                            class="block px-3 py-2 text-white hover:text-yellow-300 opacity-50 cursor-not-allowed">My
                             Books</a>
                     @endif
                 @else
                     <a href="{{ route('borrowed.index') }}"
-                        class="text-white hover:text-yellow-300 transition duration-300 font-medium">My Books</a>
+                        class="block px-3 py-2 text-white hover:text-yellow-300">My Books</a>
                 @endauth
                 <a href="{{ route('about') }}" class="block px-3 py-2 text-white hover:text-yellow-300">About</a>
                 <a href="{{ route('contact') }}" class="block px-3 py-2 text-white hover:text-yellow-300">Contact</a>
@@ -380,21 +399,37 @@
                         <li><a href="{{ route('books.index') }}"
                                 class="text-gray-400 hover:text-yellow-300 transition duration-300 flex items-center footer-link">
                                 <i class="fas fa-chevron-right text-xs mr-2 text-yellow-300"></i> Book Catalog</a></li>
-                        <li>@auth
-                                @if (Auth::user()->role !== 'Guest')
-                                    <a href="{{ route('borrowed.index') }}"
-                                        class="text-white hover:text-yellow-300 transition duration-300 font-medium">My
-                                        Books</a>
+                        <li>
+                            @auth
+                                @if (Auth::user()->role !== 'Guest' && Auth::user()->role !== 'Admin')
+                                    @if (Auth::user()->role === 'Member')
+                                        <a href="{{ route('member.borrowed.index') }}"
+                                            class="text-gray-400 hover:text-yellow-300 transition duration-300 flex items-center footer-link">
+                                            <i class="fas fa-chevron-right text-xs mr-2 text-yellow-300"></i> My Books
+                                        </a>
+                                    @elseif (Auth::user()->role === 'Kid')
+                                        <a href="{{ route('kid.kidborrowed.index') }}"
+                                            class="text-gray-400 hover:text-yellow-300 transition duration-300 flex items-center footer-link">
+                                            <i class="fas fa-chevron-right text-xs mr-2 text-yellow-300"></i> My Books
+                                        </a>
+                                    @else
+                                        <a href="{{ route('borrowed.index') }}"
+                                            class="text-gray-400 hover:text-yellow-300 transition duration-300 flex items-center footer-link">
+                                            <i class="fas fa-chevron-right text-xs mr-2 text-yellow-300"></i> My Books
+                                        </a>
+                                    @endif
                                 @else
                                     <a href="#"
                                         onclick="event.preventDefault(); alert('You need to upgrade your membership to access My Books.');"
-                                        class="text-white hover:text-yellow-300 transition duration-300 font-medium opacity-50 cursor-not-allowed">My
-                                        Books</a>
+                                        class="text-gray-400 hover:text-yellow-300 transition duration-300 flex items-center footer-link opacity-50 cursor-not-allowed">
+                                        <i class="fas fa-chevron-right text-xs mr-2 text-yellow-300"></i> My Books
+                                    </a>
                                 @endif
                             @else
                                 <a href="{{ route('borrowed.index') }}"
-                                    class="text-white hover:text-yellow-300 transition duration-300 font-medium">My
-                                    Books</a>
+                                    class="text-gray-400 hover:text-yellow-300 transition duration-300 flex items-center footer-link">
+                                    <i class="fas fa-chevron-right text-xs mr-2 text-yellow-300"></i> My Books
+                                </a>
                             @endauth
                         </li>
                         <li><a href="{{ route('about') }}"

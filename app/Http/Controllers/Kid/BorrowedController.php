@@ -50,38 +50,43 @@ class BorrowedController extends Controller
         return redirect()->back()->with('success', 'Book renewed successfully!');
     }
 
-   // Return a borrowed book
-public function return(Borrow $borrow, Request $request)
-{
-    // Only allow return if the user owns it
-    if ($borrow->user_id !== Auth::id()) {
-        abort(403, 'Unauthorized action.');
-    }
+    // Return a borrowed book
+    public function return(Borrow $borrow, Request $request)
+    {
+        // Only allow return if the user owns it
+        if ($borrow->user_id !== Auth::id()) {
+            abort(403, 'Unauthorized action.');
+        }
 
-    // Only allow return if active, overdue, or has a paid fine
-    $hasPaidFine = $borrow->fines->firstWhere('status', 'paid') !== null;
-    if (!in_array($borrow->status, ['active', 'overdue']) && !$hasPaidFine) {
-        abort(403, 'Unauthorized action.');
-    }
+        // Only allow return if active, overdue, or has a paid fine
+        $hasPaidFine = $borrow->fines->firstWhere('status', 'paid') !== null;
+        if (!in_array($borrow->status, ['active', 'overdue']) && !$hasPaidFine) {
+            abort(403, 'Unauthorized action.');
+        }
 
-    // Mark borrow as returned
-    $borrow->status = 'returned';
-    $borrow->save();
-
-    // Always create BookReturn entry if it doesn't exist
-    if (!$borrow->bookReturn) {
-        BookReturn::create([
-            'borrow_id' => $borrow->borrow_id,
-            'staff_id' => null, // no staff since kid returned
-            'return_date' => Carbon::now(),
-            'condition_on_return' => $request->input('condition_on_return', 'Good'),
-            'late_days' => max(0, Carbon::now()->diffInDays($borrow->due_date)),
-            'fine_amount' => 0, // can calculate later if needed
-            'notes' => $request->input('notes', null),
+        // Validate the request
+        $request->validate([
+            'condition_on_return' => 'required|in:Good,Fair,Poor',
+            'notes' => 'nullable|string|max:500'
         ]);
+
+        // Mark borrow as returned
+        $borrow->status = 'returned';
+        $borrow->save();
+
+        // Always create BookReturn entry if it doesn't exist
+        if (!$borrow->bookReturn) {
+            BookReturn::create([
+                'borrow_id' => $borrow->borrow_id,
+                'staff_id' => null, // no staff since kid returned
+                'return_date' => Carbon::now(),
+                'condition_on_return' => $request->input('condition_on_return', 'Good'),
+                'late_days' => max(0, Carbon::now()->diffInDays($borrow->due_date)),
+                'fine_amount' => 0, // can calculate later if needed
+                'notes' => $request->input('notes', null),
+            ]);
+        }
+
+        return redirect()->back()->with('success', 'Book returned successfully!');
     }
-
-    return redirect()->back()->with('success', 'Book returned successfully!');
-}
-
 }

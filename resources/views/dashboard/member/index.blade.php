@@ -179,7 +179,7 @@
                                         </div>
                                         <div class="ml-4 flex-1">
                                             <h3 class="text-sm font-medium text-white">{{ $borrowing->inventory->book->title }}</h3>
-                                            <p class="text-sm text-gray-400">{{ $borrowing->inventory->book->author->name ?? 'Unknown Author' }}</p>
+                                            <p class="text-sm text-gray-400">{{ $borrowing->inventory->book->author->fullname ?? 'Unknown Author' }}</p>
                                             <p class="text-xs text-gray-500">Due: {{ $borrowing->due_date->format('M d, Y') }}</p>
                                         </div>
                                         <div class="ml-4">

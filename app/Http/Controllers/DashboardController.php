@@ -15,9 +15,9 @@ class DashboardController extends Controller
     {
         $user = Auth::user();
         
-        // Get borrowed books count
+        // Get borrowed books count - include both active AND overdue statuses
         $borrowedBooksCount = Borrow::where('user_id', $user->user_id)
-            ->where('status', 'active')
+            ->whereIn('status', ['active', 'overdue']) // CHANGED THIS LINE
             ->count();
             
         // Get overdue books count
@@ -39,10 +39,10 @@ class DashboardController extends Controller
             
         $finesDue = $unpaidFines->sum('total_amount');
         
-        // Get currently borrowed books
+        // Get currently borrowed books (both active and overdue)
         $currentBorrowings = Borrow::with(['inventory.book.author'])
             ->where('user_id', $user->user_id)
-            ->whereIn('status', ['active', 'overdue'])
+            ->whereIn('status', ['active', 'overdue']) // CHANGED THIS LINE TOO
             ->orderBy('due_date', 'asc')
             ->limit(5)
             ->get();

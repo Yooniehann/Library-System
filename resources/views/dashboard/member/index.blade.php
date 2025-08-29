@@ -207,7 +207,7 @@
                             </div>
                             @endif
                         </div>
-                    </div> 
+                    </div>
 
                     <!-- Notifications -->
                     <div>
@@ -250,7 +250,7 @@
                             </div>
                             @endif
                         </div>
-                    </div> 
+                    </div>
                 </div>
             </main>
         </div>
@@ -323,7 +323,7 @@
                 </div>
             </div>
         </div>
-    </div> 
+    </div>
 
     <script>
         function toggleMobileSidebar() {

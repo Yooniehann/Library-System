@@ -10,22 +10,35 @@ use Illuminate\Support\Facades\Auth;
 
 class KidReservationController extends Controller
 {
-    // Show all reservations for the logged-in kid
-    public function index()
+    // Show all reservations for the logged-in kid with search functionality
+    public function index(Request $request)
     {
-        $reservations = Reservation::where('user_id', Auth::id())
-                            ->with('book.author') // eager load book info and author
-                            ->get();
+        $userId = Auth::id();
+        $searchTerm = $request->get('search');
 
-        return view('dashboard.kid.kidreservation', compact('reservations'));
+        $reservations = Reservation::with(['book.author'])
+            ->where('user_id', $userId)
+            ->when($searchTerm, function($query, $searchTerm) {
+                $query->where('reservation_id', 'like', "%{$searchTerm}%")
+                      ->orWhere('status', 'like', "%{$searchTerm}%")
+                      ->orWhereHas('book', function($q) use ($searchTerm) {
+                          $q->where('title', 'like', "%{$searchTerm}%")
+                            ->orWhereHas('author', function($qa) use ($searchTerm) {
+                                $qa->where('fullname', 'like', "%{$searchTerm}%");
+                            });
+                      });
+            })
+            ->orderBy('reservation_date', 'desc')
+            ->get();
+
+        return view('dashboard.kid.kidreservation', compact('reservations', 'searchTerm'));
     }
 
     // Create a new reservation for a specific book
     public function create(Book $book)
     {
-        // Check if the book is already reserved by this user
         $exists = Reservation::where('user_id', Auth::id())
-                    ->where('book_id', $book->book_id) // use correct column
+                    ->where('book_id', $book->book_id)
                     ->first();
 
         if ($exists) {
@@ -35,8 +48,8 @@ class KidReservationController extends Controller
         Reservation::create([
             'user_id' => Auth::id(),
             'book_id' => $book->book_id,
-            'reservation_date' => now(), // correct column name
-            'status' => 'active',        // default status
+            'reservation_date' => now(),
+            'status' => 'active',
         ]);
 
         return redirect()->route('kid.kidreservation.index')->with('success', 'Book reserved successfully!');
@@ -45,7 +58,7 @@ class KidReservationController extends Controller
     // Cancel a reservation
     public function cancel($reservation_id)
     {
-        $reservation = Reservation::where('reservation_id', $reservation_id) // correct column
+        $reservation = Reservation::where('reservation_id', $reservation_id)
                             ->where('user_id', Auth::id())
                             ->firstOrFail();
 

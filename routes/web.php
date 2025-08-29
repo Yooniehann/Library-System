@@ -376,7 +376,9 @@ Route::middleware(['auth', 'verified', 'role:Kid'])->prefix('kid')->name('kid.')
 
   // Borrowed books
 Route::get('/borrowed', [BorrowedController::class, 'index'])->name('kidborrowed.index');
-Route::post('/borrow/{book}/renew', [BorrowedController::class, 'renew'])->name('kidborrow.renew');
+Route::post('/borrow/{borrow}/renew', [BorrowedController::class, 'renew'])->name('kidborrow.renew');
+Route::post('/borrow/{borrow}/return', [BorrowedController::class, 'return'])->name('kidborrow.return');
+
 
 // **New Return route**
 Route::post('/borrow/{borrow}/return', [KidBookReturnController::class, 'returnBook'])->name('kidborrow.return');

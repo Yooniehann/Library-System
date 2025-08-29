@@ -27,35 +27,41 @@ class KidBookReturnController extends Controller
             return redirect()->back()->with('error', 'This book has already been returned.');
         }
 
-        // Mark borrow as returned
-        $borrow->status = 'returned';
-        $borrow->save();
+        // Determine staff_id (who processes the return)
+        $staffId = Auth::id(); // Adjust if using a separate staff login
 
         // Calculate overdue fine
-        $lateDays = max(0, Carbon::now()->diffInDays($borrow->due_date));
+        $dueDate = Carbon::parse($borrow->due_date)->startOfDay();
+        $returnDate = Carbon::now()->startOfDay();
+
+        $lateDays = $returnDate->greaterThan($dueDate) ? $dueDate->diffInDays($returnDate) : 0;
         $fineAmount = $lateDays * 0.50; // $0.50 per day
 
         // Create BookReturn record
         BookReturn::create([
             'borrow_id' => $borrow->borrow_id,
-            'staff_id' => null, // admin will handle staff later
-            'return_date' => Carbon::now(),
+            'staff_id' => $staffId,
+            'return_date' => $returnDate,
             'condition_on_return' => $request->input('condition_on_return', 'good'),
             'late_days' => $lateDays,
             'fine_amount' => $fineAmount,
-            'notes' => $request->input('notes', null),
         ]);
 
-        // Create Fine record if overdue
+        // Update borrow status
+        $borrow->status = 'returned';
+        $borrow->save();
+
+        // Create Fine record only if overdue
         if ($fineAmount > 0) {
             Fine::create([
                 'borrow_id' => $borrow->borrow_id,
                 'fine_type' => 'overdue',
                 'amount_per_day' => 0.50,
                 'description' => 'Overdue fine for ' . $lateDays . ' day(s)',
-                'fine_date' => Carbon::now(),
+                'fine_date' => $returnDate,
                 'status' => 'unpaid',
             ]);
+
             return redirect()->back()->with('warning', 'Book returned with overdue fine of $' . number_format($fineAmount, 2));
         }
 

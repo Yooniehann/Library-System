@@ -229,28 +229,32 @@ input, button { font-family: 'Open Sans', sans-serif; }
                 @foreach($borrows as $borrow)
                     @php
                         $status = $borrow->status;
-                        // Determine if actions should be shown: active, overdue, or paid
-                        $canReturnOrRenew = in_array($status, ['active', 'overdue', 'paid']);
-                        // Check if overdue
-                        $isOverdue = $status === 'active' && $borrow->due_date->isPast();
+                        $borrowDate = optional($borrow->borrow_date);
+                        $dueDate = optional($borrow->due_date);
+                        $book = optional(optional($borrow->inventory)->book);
+                        $authorName = optional($book->author)->fullname ?? 'Unknown Author';
+
+                        // Only active borrows can be overdue
+                        $isOverdue = $status === 'active' && $dueDate && $dueDate->isPast();
+
+                        // Only active, overdue, or paid borrows can be renewed/returned
+                        $canReturnOrRenew = in_array($status, ['active', 'overdue', 'paid']) && $status !== 'returned';
                     @endphp
                     <tr class="border-b border-gray-700">
                         <td class="px-4 py-2">#{{ $borrow->borrow_id }}</td>
                         <td class="px-4 py-2">
                             <div class="flex items-center gap-3">
-                                <img src="{{ asset('storage/' . $borrow->inventory->book->cover_image) }}"
-                                     alt="{{ $borrow->inventory->book->title }}"
+                                <img src="{{ $book && $book->cover_image ? asset('storage/' . $book->cover_image) : asset('default-cover.png') }}"
+                                     alt="{{ $book->title ?? 'No Title' }}"
                                      class="w-12 h-16 object-cover rounded-md">
                                 <div>
-                                    <div class="text-white font-semibold">{{ $borrow->inventory->book->title }}</div>
-                                    <div class="text-gray-400 text-sm">
-                                        by {{ $borrow->inventory->book->author->fullname ?? 'Unknown Author' }}
-                                    </div>
+                                    <div class="text-white font-semibold">{{ $book->title ?? 'No Title' }}</div>
+                                    <div class="text-gray-400 text-sm">by {{ $authorName }}</div>
                                 </div>
                             </div>
                         </td>
-                        <td class="px-4 py-2 text-gray-300 text-sm">{{ $borrow->borrow_date->format('M d, Y') }}</td>
-                        <td class="px-4 py-2 text-gray-300 text-sm">{{ $borrow->due_date->format('M d, Y') }}</td>
+                        <td class="px-4 py-2 text-gray-300 text-sm">{{ $borrowDate ? $borrowDate->format('M d, Y') : '-' }}</td>
+                        <td class="px-4 py-2 text-gray-300 text-sm">{{ $dueDate ? $dueDate->format('M d, Y') : '-' }}</td>
                         <td class="px-4 py-2">
                             @if($status === 'active')
                                 @if($isOverdue)
@@ -267,7 +271,7 @@ input, button { font-family: 'Open Sans', sans-serif; }
                             @endif
                         </td>
                         <td class="px-4 py-2 flex flex-col gap-2">
-                            @if($canReturnOrRenew && $status !== 'returned')
+                            @if($canReturnOrRenew)
                                 {{-- Renew button --}}
                                 <form action="{{ route('kid.kidborrow.renew', $borrow->borrow_id) }}" method="POST">
                                     @csrf

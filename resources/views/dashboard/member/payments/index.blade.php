@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Payment History | Library System</title>
+    <title>My Payments | Library System</title>
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
@@ -32,7 +32,8 @@
                             <i class="fas fa-tachometer-alt mr-3"></i>
                             Dashboard
                         </a>
-                        <a href="{{ route('books.index') }}" class="flex items-center px-4 py-3 text-sm font-medium text-gray-300 hover:text-white hover:bg-slate-700 rounded-lg">
+                        <a href="{{ route('books.index') }}"
+                            class="flex items-center px-4 py-3 text-sm font-medium text-gray-300 hover:text-white hover:bg-slate-700 rounded-lg">
                             <i class="fa-solid fa-house mr-3"></i>
                             Home
                         </a>
@@ -44,12 +45,15 @@
                             <i class="fas fa-bookmark mr-3"></i>
                             My Reservations
                         </a>
-                        <!-- ACTIVE LINK for this page -->
-                        <a href="{{ route('member.payments.index') }}" class="flex items-center px-4 py-3 text-sm font-medium text-white bg-dark-orange rounded-lg">
+                        <a href="{{ route('member.fines.index')}}" class="flex items-center px-4 py-3 text-sm font-medium text-gray-300 hover:text-white hover:bg-slate-700 rounded-lg">
                             <i class="fas fa-money-bill-wave mr-3"></i>
-                            Fines & Payments
+                            Fines 
                         </a>
-                        <a href="#" class="flex items-center px-4 py-3 text-sm font-medium text-gray-300 hover:text-white hover:bg-slate-700 rounded-lg">
+                        <a href="{{ route('member.payments.index')}}" class="flex items-center px-4 py-3 text-sm font-medium text-white bg-dark-orange rounded-lg">
+                            <i class="fas fa-money-bill-wave mr-3"></i>
+                            Payments
+                        </a>
+                        <a href="member.notifications.index" class="flex items-center px-4 py-3 text-sm font-medium text-gray-300 hover:text-white hover:bg-slate-700 rounded-lg">
                             <i class="fa-solid fa-bell mr-3"></i>
                             Notification
                         </a>
@@ -85,63 +89,60 @@
             <!-- Main Content Area -->
             <main class="flex-1 overflow-y-auto p-4 md:p-6">
                 <div class="mb-6">
-                    <div class="flex items-center justify-between">
-                        <div>
-                            <h1 class="text-2xl font-bold text-white">Payment History</h1>
-                            <p class="text-gray-400">View all your payment transactions</p>
+                    <h1 class="text-2xl font-bold text-white">My Payments</h1>
+                    <p class="text-gray-400">View your payment history and receipts.</p>
+                </div>
+
+                <!-- Statistics Cards -->
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+                    <div class="bg-slate-800 rounded-lg shadow p-4">
+                        <div class="flex items-center">
+                            <div class="rounded-full bg-blue-900 p-3 mr-4">
+                                <i class="fas fa-receipt text-blue-300 text-xl"></i>
+                            </div>
+                            <div>
+                                <p class="text-gray-400 text-sm">Total Payments</p>
+                                <p class="text-white text-xl font-bold">{{ $stats['total'] }}</p>
+                            </div>
                         </div>
-                        <a href="{{ route('member.payments.create') }}" class="bg-primary-orange text-black px-4 py-2 rounded-lg hover:bg-dark-orange transition-colors">
-                            <i class="fas fa-plus mr-2"></i> New Payment
-                        </a>
+                    </div>
+                    
+                    <div class="bg-slate-800 rounded-lg shadow p-4">
+                        <div class="flex items-center">
+                            <div class="rounded-full bg-green-900 p-3 mr-4">
+                                <i class="fas fa-money-bill-wave text-green-300 text-xl"></i>
+                            </div>
+                            <div>
+                                <p class="text-gray-400 text-sm">Total Amount Paid</p>
+                                <p class="text-white text-xl font-bold">${{ number_format($stats['total_amount'], 2) }}</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="bg-slate-800 rounded-lg shadow p-4">
+                        <div class="flex items-center">
+                            <div class="rounded-full bg-purple-900 p-3 mr-4">
+                                <i class="fas fa-file-invoice-dollar text-purple-300 text-xl"></i>
+                            </div>
+                            <div>
+                                <p class="text-gray-400 text-sm">Fines Amount</p>
+                                <p class="text-white text-xl font-bold">${{ number_format($stats['fines_amount'], 2) }}</p>
+                            </div>
+                        </div>
                     </div>
                 </div>
 
-                <!-- Search Bar -->
-                <div class="bg-slate-800 rounded-lg shadow p-4 mb-6">
-                    <form action="{{ route('member.payments.index') }}" method="GET" class="flex gap-3">
-                        <div class="flex-1">
-                            <input type="text" 
-                                   name="search" 
-                                   value="{{ $searchTerm ?? '' }}" 
-                                   placeholder="Search by payment type, method, status, or book title..." 
-                                   class="w-full px-4 py-2 bg-slate-700 border border-slate-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-primary-orange">
-                        </div>
-                        <button type="submit" class="bg-primary-orange text-black px-6 py-2 rounded-lg hover:bg-dark-orange transition-colors">
-                            <i class="fas fa-search mr-2"></i> Search
-                        </button>
-                        @if(isset($searchTerm) && $searchTerm)
-                            <a href="{{ route('member.payments.index') }}" class="bg-gray-600 text-white px-4 py-2 rounded-lg hover:bg-gray-500 transition-colors flex items-center">
-                                <i class="fas fa-times mr-2"></i> Clear
-                            </a>
-                        @endif
-                    </form>
-                </div>
-
-                <!-- Payments Table -->
+                <!-- Dynamic Content Starts Here -->
                 @if($payments->isEmpty())
-                    @if(isset($searchTerm) && $searchTerm)
-                        <div class="bg-slate-800 rounded-lg shadow p-6 text-center">
-                            <i class="fas fa-search text-4xl text-gray-400 mb-4"></i>
-                            <h3 class="text-lg font-medium text-white mb-2">No results found</h3>
-                            <p class="text-gray-400">No payments match your search for "{{ $searchTerm }}".</p>
-                        </div>
-                    @else
-                        <div class="bg-slate-800 rounded-lg shadow p-6 text-center">
-                            <i class="fas fa-receipt text-4xl text-gray-400 mb-4"></i>
-                            <h3 class="text-lg font-medium text-white mb-2">No payments yet</h3>
-                            <p class="text-gray-400 mb-4">You haven't made any payments yet.</p>
-                            <a href="{{ route('member.payments.create') }}" class="bg-primary-orange text-black px-4 py-2 rounded-lg hover:bg-dark-orange transition-colors">
-                                Make Your First Payment
-                            </a>
-                        </div>
-                    @endif
+                    <div class="bg-slate-800 rounded-lg shadow p-6 text-center">
+                        <i class="fas fa-receipt text-4xl text-gray-400 mb-4"></i>
+                        <h3 class="text-lg font-medium text-white mb-2">No payments found</h3>
+                        <p class="text-gray-400">You haven't made any payments yet.</p>
+                    </div>
                 @else
                     <div class="bg-slate-800 rounded-lg shadow overflow-hidden">
-                        <div class="px-6 py-4 border-b border-slate-700 flex justify-between items-center">
+                        <div class="px-6 py-4 border-b border-slate-700">
                             <h2 class="text-lg font-semibold text-white">Your Payments ({{ $payments->total() }})</h2>
-                            @if(isset($searchTerm) && $searchTerm)
-                                <span class="text-sm text-gray-400">Search results for "{{ $searchTerm }}"</span>
-                            @endif
                         </div>
                         
                         <div class="overflow-x-auto">
@@ -150,7 +151,6 @@
                                     <tr>
                                         <th class="px-6 py-3 text-left text-xs font-medium text-yellow-300 uppercase tracking-wider">ID</th>
                                         <th class="px-6 py-3 text-left text-xs font-medium text-yellow-300 uppercase tracking-wider">Type</th>
-                                        <th class="px-6 py-3 text-left text-xs font-medium text-yellow-300 uppercase tracking-wider">Details</th>
                                         <th class="px-6 py-3 text-left text-xs font-medium text-yellow-300 uppercase tracking-wider">Amount</th>
                                         <th class="px-6 py-3 text-left text-xs font-medium text-yellow-300 uppercase tracking-wider">Method</th>
                                         <th class="px-6 py-3 text-left text-xs font-medium text-yellow-300 uppercase tracking-wider">Date</th>
@@ -169,55 +169,54 @@
                                         <!-- Type Column -->
                                         <td class="px-6 py-4 whitespace-nowrap">
                                             <span class="px-2 py-1 text-xs font-semibold rounded-full 
-                                                @if($payment->payment_type === 'fine') bg-yellow-900 text-yellow-300
-                                                @else bg-blue-900 text-blue-300 @endif">
+                                                {{ $payment->payment_type === 'fine' ? 'bg-blue-900 text-blue-300' : 'bg-gray-600 text-gray-300' }}">
                                                 {{ str_replace('_', ' ', ucfirst($payment->payment_type)) }}
                                             </span>
-                                        </td>
-                                        
-                                        <!-- Details Column -->
-                                        <td class="px-6 py-4">
-                                            @if($payment->payment_type === 'fine' && $payment->fine && $payment->fine->borrow && $payment->fine->borrow->book)
-                                                <div class="text-sm font-medium text-white">{{ $payment->fine->borrow->book->title }}</div>
-                                                <div class="text-xs text-gray-400">Fine: {{ ucfirst($payment->fine->fine_type) }}</div>
-                                            @elseif($payment->payment_type === 'membership_fee' && $payment->membershipType)
-                                                <div class="text-sm font-medium text-white">{{ $payment->membershipType->name }}</div>
-                                                <div class="text-xs text-gray-400">{{ ucfirst($payment->membershipType->duration) }} membership</div>
-                                            @else
-                                                <div class="text-sm text-gray-400">Details not available</div>
+                                            @if($payment->fine)
+                                            <div class="text-xs text-gray-400 mt-1">
+                                                Fine #{{ $payment->fine->fine_id }}
+                                            </div>
                                             @endif
                                         </td>
                                         
                                         <!-- Amount Column -->
-                                        <td class="px-6 py-4 whitespace-nowrap text-sm font-semibold text-white">
-                                            RM {{ number_format($payment->amount, 2) }}
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                                            <span class="text-green-400">${{ number_format($payment->amount, 2) }}</span>
                                         </td>
                                         
                                         <!-- Method Column -->
-                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-300 capitalize">
-                                            {{ $payment->payment_method }}
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-300">
+                                            {{ ucfirst($payment->payment_method) }}
                                         </td>
                                         
                                         <!-- Date Column -->
                                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-300">
-                                            {{ $payment->payment_date->format('M d, Y H:i') }}
+                                            {{ $payment->payment_date ? $payment->payment_date->format('M d, Y') : 'N/A' }}
                                         </td>
                                         
                                         <!-- Status Column -->
                                         <td class="px-6 py-4 whitespace-nowrap">
-                                            <span class="px-2 py-1 text-xs font-semibold rounded-full 
-                                                @if($payment->status === 'completed') bg-green-900 text-green-300
-                                                @elseif($payment->status === 'pending') bg-yellow-900 text-yellow-300
-                                                @elseif($payment->status === 'failed') bg-red-900 text-red-300
-                                                @else bg-gray-600 text-gray-300 @endif">
-                                                {{ ucfirst($payment->status) }}
-                                            </span>
+                                            @switch($payment->status)
+                                                @case('completed')
+                                                    <span class="px-2 py-1 text-xs font-semibold rounded-full bg-green-900 text-green-300">Completed</span>
+                                                    @break
+                                                @case('pending')
+                                                    <span class="px-2 py-1 text-xs font-semibold rounded-full bg-yellow-900 text-yellow-300">Pending</span>
+                                                    @break
+                                                @case('failed')
+                                                    <span class="px-2 py-1 text-xs font-semibold rounded-full bg-red-900 text-red-300">Failed</span>
+                                                    @break
+                                                @case('refunded')
+                                                    <span class="px-2 py-1 text-xs font-semibold rounded-full bg-gray-600 text-gray-300">Refunded</span>
+                                                    @break
+                                                @default
+                                                    <span class="px-2 py-1 text-xs font-semibold rounded-full bg-gray-600 text-gray-300">{{ ucfirst($payment->status) }}</span>
+                                            @endswitch
                                         </td>
                                         
                                         <!-- Actions Column -->
                                         <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                                            <a href="{{ route('member.payments.show', $payment->payment_id) }}" 
-                                               class="px-3 py-1 bg-slate-600 text-white rounded hover:bg-slate-500 transition-colors text-xs">
+                                            <a href="{{ route('member.payments.show', $payment->payment_id) }}" class="text-primary-orange hover:text-dark-orange">
                                                 <i class="fas fa-eye mr-1"></i> View
                                             </a>
                                         </td>
@@ -228,13 +227,12 @@
                         </div>
                         
                         <!-- Pagination -->
-                        @if($payments->hasPages())
-                        <div class="px-6 py-4 border-t border-slate-700 bg-slate-900">
+                        <div class="px-6 py-4 bg-slate-700 border-t border-slate-600">
                             {{ $payments->links() }}
                         </div>
-                        @endif
                     </div>
                 @endif
+                <!-- Dynamic Content Ends Here -->
             </main>
         </div>
     </div>
@@ -258,7 +256,8 @@
                             <i class="fas fa-tachometer-alt mr-4"></i>
                             Dashboard
                         </a>
-                        <a href="{{ route('books.index') }}" class="flex items-center px-2 py-2 text-base font-medium text-gray-300 hover:text-white hover:bg-slate-700 rounded-lg">
+                        <a href="{{ route('books.index') }}"
+                            class="flex items-center px-2 py-2 text-base font-medium text-gray-300 hover:text-white hover:bg-slate-700 rounded-lg">
                             <i class="fa-solid fa-house mr-4"></i>
                             Home
                         </a>
@@ -270,11 +269,16 @@
                             <i class="fas fa-bookmark mr-4"></i>
                             My Reservations
                         </a>
-                        <a href="{{ route('member.payments.index') }}" class="flex items-center px-2 py-2 text-base font-medium text-white bg-dark-orange rounded-lg">
+                        <!-- ACTIVE LINK for this page -->
+                        <a href="{{ route('member.fines.index')}}" class="flex items-center px-2 py-2 text-base font-medium text-gray-300 hover:text-white hover:bg-slate-700 rounded-lg">
                             <i class="fas fa-money-bill-wave mr-4"></i>
-                            Fines & Payments
+                            Fines
                         </a>
-                        <a href="#" class="flex items-center px-2 py-2 text-base font-medium text-gray-300 hover:text-white hover:bg-slate-700 rounded-lg">
+                        <a href="{{ route('member.payments.index')}}" class="flex items-center px-2 py-2 text-base font-medium text-white bg-dark-orange rounded-lg">
+                            <i class="fas fa-money-bill-wave mr-4"></i>
+                            Payments
+                        </a>
+                        <a href="{{ route('member.notifications.index')}}" class="flex items-center px-2 py-2 text-base font-medium text-gray-300 hover:text-white hover:bg-slate-700 rounded-lg">
                             <i class="fa-solid fa-bell mr-4"></i>
                             Notification
                         </a>

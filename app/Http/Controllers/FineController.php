@@ -2,56 +2,53 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Controllers\Controller;
 use App\Models\Fine;
-use App\Models\Borrow;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use App\Helpers\DateHelper;
 
 class FineController extends Controller
 {
     /**
-     * Display a listing of the fines for the authenticated user.
+     * Display a listing of the member's fines.
      */
-    public function index(Request $request)
+    public function index()
     {
-        $user = Auth::user();
-        $searchTerm = $request->input('search');
-        
-        $fines = Fine::with(['borrow', 'borrow.book', 'payment'])
-            ->whereHas('borrow', function($query) use ($user) {
-                $query->where('user_id', $user->user_id);
+        $fines = Fine::with(['borrow', 'borrow.inventory.book'])
+            ->whereHas('borrow', function($query) {
+                $query->where('user_id', Auth::id());
             })
-            ->when($searchTerm, function($query) use ($searchTerm) {
-                $query->where(function($q) use ($searchTerm) {
-                    $q->where('fine_type', 'like', "%{$searchTerm}%")
-                      ->orWhere('status', 'like', "%{$searchTerm}%")
-                      ->orWhere('description', 'like', "%{$searchTerm}%")
-                      ->orWhereHas('borrow.book', function($q) use ($searchTerm) {
-                          $q->where('title', 'like', "%{$searchTerm}%");
-                      });
-                });
-            })
-            ->orderBy('fine_date', 'desc')
+            ->orderBy('fine_id', 'desc')
             ->paginate(10);
 
-        $totalUnpaidFines = $user->unpaidFines()->sum('amount_per_day');
-        $totalPaidFines = $user->fines()->where('fines.status', 'paid')->sum('amount_per_day');
+        // Calculate totals
+        $totalFines = Fine::whereHas('borrow', function($query) {
+            $query->where('user_id', Auth::id());
+        })->get();
 
-        return view('dashboard.member.fines.index', compact('fines', 'totalUnpaidFines', 'totalPaidFines', 'searchTerm'));
+        $unpaidFines = $totalFines->where('status', 'unpaid');
+
+        $stats = [
+            'total' => $totalFines->count(),
+            'unpaid' => $unpaidFines->count(),
+            'total_amount' => $totalFines->sum('total_amount'),
+            'unpaid_amount' => $unpaidFines->sum('total_amount'),
+        ];
+
+        return view('dashboard.member.fines.index', compact('fines', 'stats'));
     }
 
     /**
      * Display the specified fine.
      */
-    public function show($fine_id)
+    public function show($id)
     {
-        $user = Auth::user();
-        $fine = Fine::with(['borrow', 'borrow.book', 'borrow.inventory', 'payment'])
-            ->where('fine_id', $fine_id)
-            ->whereHas('borrow', function($query) use ($user) {
-                $query->where('user_id', $user->user_id);
+        $fine = Fine::with(['borrow', 'borrow.inventory.book', 'payment'])
+            ->whereHas('borrow', function($query) {
+                $query->where('user_id', Auth::id());
             })
-            ->firstOrFail();
+            ->findOrFail($id);
 
         return view('dashboard.member.fines.show', compact('fine'));
     }

@@ -32,7 +32,8 @@
                             <i class="fas fa-tachometer-alt mr-3"></i>
                             Dashboard
                         </a>
-                        <a href="{{ route('books.index') }}" class="flex items-center px-4 py-3 text-sm font-medium text-gray-300 hover:text-white hover:bg-slate-700 rounded-lg">
+                        <a href="{{ route('books.index') }}"
+                            class="flex items-center px-4 py-3 text-sm font-medium text-gray-300 hover:text-white hover:bg-slate-700 rounded-lg">
                             <i class="fa-solid fa-house mr-3"></i>
                             Home
                         </a>
@@ -45,9 +46,13 @@
                             My Reservations
                         </a>
                         <!-- ACTIVE LINK for this page -->
-                        <a href="{{ route('member.fines.index') }}" class="flex items-center px-4 py-3 text-sm font-medium text-white bg-dark-orange rounded-lg">
+                        <a href="{{ route('member.fines.index')}}" class="flex items-center px-4 py-3 text-sm font-medium text-white bg-dark-orange rounded-lg">
                             <i class="fas fa-money-bill-wave mr-3"></i>
-                            Fines & Payments
+                            Fines 
+                        </a>
+                        <a href="{{ route('member.payments.index')}}" class="flex items-center px-4 py-3 text-sm font-medium text-gray-300 hover:text-white hover:bg-slate-700 rounded-lg">
+                            <i class="fas fa-money-bill-wave mr-3"></i>
+                            Payments
                         </a>
                         <a href="#" class="flex items-center px-4 py-3 text-sm font-medium text-gray-300 hover:text-white hover:bg-slate-700 rounded-lg">
                             <i class="fa-solid fa-bell mr-3"></i>
@@ -86,100 +91,71 @@
             <main class="flex-1 overflow-y-auto p-4 md:p-6">
                 <div class="mb-6">
                     <h1 class="text-2xl font-bold text-white">My Fines</h1>
-                    <p class="text-gray-400">View and manage all your fines and payments.</p>
+                    <p class="text-gray-400">View and manage all your outstanding fines.</p>
                 </div>
 
-                <!-- Stats Cards -->
-                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+                <!-- Statistics Cards -->
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
                     <div class="bg-slate-800 rounded-lg shadow p-4">
                         <div class="flex items-center">
-                            <div class="p-3 rounded-full bg-red-900 bg-opacity-30 text-red-400">
-                                <i class="fas fa-exclamation-circle"></i>
+                            <div class="rounded-full bg-blue-900 p-3 mr-4">
+                                <i class="fas fa-receipt text-blue-300 text-xl"></i>
                             </div>
-                            <div class="ml-4">
-                                <p class="text-sm font-medium text-gray-400">Total Unpaid Fines</p>
-                                <p class="text-2xl font-semibold text-white">$ {{ number_format($totalUnpaidFines, 2) }}</p>
+                            <div>
+                                <p class="text-gray-400 text-sm">Total Fines</p>
+                                <p class="text-white text-xl font-bold">{{ $stats['total'] }}</p>
                             </div>
                         </div>
                     </div>
+                    
                     <div class="bg-slate-800 rounded-lg shadow p-4">
                         <div class="flex items-center">
-                            <div class="p-3 rounded-full bg-green-900 bg-opacity-30 text-green-400">
-                                <i class="fas fa-check-circle"></i>
+                            <div class="rounded-full bg-red-900 p-3 mr-4">
+                                <i class="fas fa-exclamation-triangle text-red-300 text-xl"></i>
                             </div>
-                            <div class="ml-4">
-                                <p class="text-sm font-medium text-gray-400">Total Paid Fines</p>
-                                <p class="text-2xl font-semibold text-white">$ {{ number_format($totalPaidFines, 2) }}</p>
+                            <div>
+                                <p class="text-gray-400 text-sm">Unpaid Fines</p>
+                                <p class="text-white text-xl font-bold">{{ $stats['unpaid'] }}</p>
                             </div>
                         </div>
                     </div>
+                    
                     <div class="bg-slate-800 rounded-lg shadow p-4">
                         <div class="flex items-center">
-                            <div class="p-3 rounded-full bg-yellow-900 bg-opacity-30 text-yellow-400">
-                                <i class="fas fa-file-invoice-dollar"></i>
+                            <div class="rounded-full bg-purple-900 p-3 mr-4">
+                                <i class="fas fa-money-bill-wave text-purple-300 text-xl"></i>
                             </div>
-                            <div class="ml-4">
-                                <p class="text-sm font-medium text-gray-400">Total Fines</p>
-                                <p class="text-2xl font-semibold text-white">{{ $fines->total() }}</p>
+                            <div>
+                                <p class="text-gray-400 text-sm">Total Amount</p>
+                                <p class="text-white text-xl font-bold">${{ number_format($stats['total_amount'], 2) }}</p>
                             </div>
                         </div>
                     </div>
+                    
                     <div class="bg-slate-800 rounded-lg shadow p-4">
                         <div class="flex items-center">
-                            <div class="p-3 rounded-full bg-blue-900 bg-opacity-30 text-blue-400">
-                                <i class="fas fa-money-bill-wave"></i>
+                            <div class="rounded-full bg-amber-900 p-3 mr-4">
+                                <i class="fas fa-credit-card text-amber-300 text-xl"></i>
                             </div>
-                            <div class="ml-4">
-                                <p class="text-sm font-medium text-gray-400">Quick Action</p>
-                                <a href="{{ route('member.payments.create') }}" class="text-primary-orange hover:text-dark-orange text-sm">Pay Fines</a>
+                            <div>
+                                <p class="text-gray-400 text-sm">Unpaid Amount</p>
+                                <p class="text-white text-xl font-bold">${{ number_format($stats['unpaid_amount'], 2) }}</p>
                             </div>
                         </div>
                     </div>
                 </div>
 
-                <!-- Search Bar -->
-                <div class="bg-slate-800 rounded-lg shadow p-4 mb-6">
-                    <form action="{{ route('member.fines.index') }}" method="GET" class="flex gap-3">
-                        <div class="flex-1">
-                            <input type="text" 
-                                   name="search" 
-                                   value="{{ $searchTerm ?? '' }}" 
-                                   placeholder="Search by book title, fine type, status or description..." 
-                                   class="w-full px-4 py-2 bg-slate-700 border border-slate-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-primary-orange">
-                        </div>
-                        <button type="submit" class="bg-primary-orange text-black px-6 py-2 rounded-lg hover:bg-dark-orange transition-colors">
-                            <i class="fas fa-search mr-2"></i> Search
-                        </button>
-                        @if(isset($searchTerm) && $searchTerm)
-                            <a href="{{ route('member.fines.index') }}" class="bg-gray-600 text-white px-4 py-2 rounded-lg hover:bg-gray-500 transition-colors flex items-center">
-                                <i class="fas fa-times mr-2"></i> Clear
-                            </a>
-                        @endif
-                    </form>
-                </div>
-
-                <!-- Fines Table -->
+                <!-- Dynamic Content Starts Here -->
                 @if($fines->isEmpty())
-                    @if(isset($searchTerm) && $searchTerm)
-                        <div class="bg-slate-800 rounded-lg shadow p-6 text-center">
-                            <i class="fas fa-search text-4xl text-gray-400 mb-4"></i>
-                            <h3 class="text-lg font-medium text-white mb-2">No results found</h3>
-                            <p class="text-gray-400">No fines match your search for "{{ $searchTerm }}".</p>
-                        </div>
-                    @else
-                        <div class="bg-slate-800 rounded-lg shadow p-6 text-center">
-                            <i class="fas fa-money-bill-wave text-4xl text-gray-400 mb-4"></i>
-                            <h3 class="text-lg font-medium text-white mb-2">No fines yet</h3>
-                            <p class="text-gray-400">You don't have any fines at the moment.</p>
-                        </div>
-                    @endif
+                    <div class="bg-slate-800 rounded-lg shadow p-6 text-center">
+                        <i class="fas fa-check-circle text-4xl text-green-400 mb-4"></i>
+                        <h3 class="text-lg font-medium text-white mb-2">No fines found</h3>
+                        <p class="text-gray-400">You don't have any outstanding fines at the moment.</p>
+                    </div>
                 @else
                     <div class="bg-slate-800 rounded-lg shadow overflow-hidden">
-                        <div class="px-6 py-4 border-b border-slate-700 flex justify-between items-center">
+                        <div class="px-6 py-4 border-b border-slate-700">
                             <h2 class="text-lg font-semibold text-white">Your Fines ({{ $fines->total() }})</h2>
-                            @if(isset($searchTerm) && $searchTerm)
-                                <span class="text-sm text-gray-400">Search results for "{{ $searchTerm }}"</span>
-                            @endif
                         </div>
                         
                         <div class="overflow-x-auto">
@@ -188,7 +164,7 @@
                                     <tr>
                                         <th class="px-6 py-3 text-left text-xs font-medium text-yellow-300 uppercase tracking-wider">ID</th>
                                         <th class="px-6 py-3 text-left text-xs font-medium text-yellow-300 uppercase tracking-wider">Book</th>
-                                        <th class="px-6 py-3 text-left text-xs font-medium text-yellow-300 uppercase tracking-wider">Fine Type</th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-yellow-300 uppercase tracking-wider">Type</th>
                                         <th class="px-6 py-3 text-left text-xs font-medium text-yellow-300 uppercase tracking-wider">Amount</th>
                                         <th class="px-6 py-3 text-left text-xs font-medium text-yellow-300 uppercase tracking-wider">Date</th>
                                         <th class="px-6 py-3 text-left text-xs font-medium text-yellow-300 uppercase tracking-wider">Status</th>
@@ -197,10 +173,6 @@
                                 </thead>
                                 <tbody class="bg-slate-800 divide-y divide-slate-700">
                                     @foreach($fines as $fine)
-                                    @php
-                                        $book = $fine->borrow->book ?? null;
-                                        $coverImage = $book && $book->cover_image ? asset('storage/' . $book->cover_image) : 'https://via.placeholder.com/128x192/1e293b/ffffff?text=No+Cover';
-                                    @endphp
                                     <tr class="hover:bg-slate-700">
                                         <!-- ID Column -->
                                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-300 font-mono">
@@ -209,72 +181,69 @@
                                         
                                         <!-- Book Column -->
                                         <td class="px-6 py-4">
-                                            @if($book)
                                             <div class="flex items-center">
-                                                <div class="h-12 w-9 bg-slate-600 rounded overflow-hidden shadow-md flex items-center justify-center mr-3">
-                                                    @if($book->cover_image)
-                                                        <img src="{{ $coverImage }}" alt="{{ $book->title }} cover" class="h-full w-full object-cover">
+                                                <div class="h-10 w-10 bg-slate-600 rounded overflow-hidden shadow-md flex items-center justify-center mr-3">
+                                                    @if($fine->borrow->inventory->book->cover_image)
+                                                        <img src="{{ asset('storage/' . $fine->borrow->inventory->book->cover_image) }}" alt="Book cover" class="h-full w-full object-cover">
                                                     @else
                                                         <i class="fas fa-book text-gray-400"></i>
                                                     @endif
                                                 </div>
                                                 <div>
-                                                    <div class="text-sm font-medium text-white">{{ $book->title }}</div>
-                                                    <div class="text-xs text-gray-400">{{ $book->author->name ?? 'Unknown Author' }}</div>
+                                                    <div class="text-sm font-medium text-white">{{ Str::limit($fine->borrow->inventory->book->title, 30) }}</div>
+                                                    <div class="text-xs text-gray-400">by {{ $fine->borrow->inventory->book->author->fullname ?? 'Unknown' }}</div>
                                                 </div>
                                             </div>
-                                            @else
-                                            <div class="text-sm text-gray-400">Book not available</div>
-                                            @endif
                                         </td>
                                         
-                                        <!-- Fine Type Column -->
+                                        <!-- Type Column -->
                                         <td class="px-6 py-4 whitespace-nowrap">
                                             <span class="px-2 py-1 text-xs font-semibold rounded-full 
-                                                @if($fine->fine_type === 'overdue') bg-yellow-900 text-yellow-300
-                                                @elseif($fine->fine_type === 'lost') bg-red-900 text-red-300
-                                                @else bg-gray-600 text-gray-300 @endif">
+                                                {{ $fine->fine_type === 'overdue' ? 'bg-yellow-900 text-yellow-300' : 
+                                                   ($fine->fine_type === 'lost' ? 'bg-red-900 text-red-300' : 'bg-gray-600 text-gray-300') }}">
                                                 {{ ucfirst($fine->fine_type) }}
                                             </span>
-                                            @if($fine->description)
-                                            <div class="text-xs text-gray-400 mt-1">{{ Str::limit($fine->description, 30) }}</div>
-                                            @endif
                                         </td>
                                         
                                         <!-- Amount Column -->
-                                        <td class="px-6 py-4 whitespace-nowrap text-sm font-semibold text-white">
-                                            RM {{ number_format($fine->amount_per_day, 2) }}
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                                            <span class="text-red-400">${{ number_format($fine->total_amount, 2) }}</span>
+                                            <div class="text-xs text-gray-400">${{ number_format($fine->amount_per_day, 2) }}/day</div>
                                         </td>
                                         
                                         <!-- Date Column -->
                                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-300">
-                                            {{ $fine->fine_date->format('M d, Y') }}
+                                            {{-- {{ $fine->fine_date->format('M d, Y') }} --}}
+                                            {{ \Carbon\Carbon::parse($fine->fine_date)->format('M d, Y') }}
+                                            @if($fine->fine_type === 'overdue')
+                                                <div class="text-xs text-gray-400">{{ $fine->days_overdue }} days overdue</div>
+                                            @endif
                                         </td>
                                         
                                         <!-- Status Column -->
                                         <td class="px-6 py-4 whitespace-nowrap">
-                                            <span class="px-2 py-1 text-xs font-semibold rounded-full 
-                                                @if($fine->status === 'unpaid') bg-red-900 text-red-300
-                                                @elseif($fine->status === 'paid') bg-green-900 text-green-300
-                                                @else bg-blue-900 text-blue-300 @endif">
-                                                {{ ucfirst($fine->status) }}
-                                            </span>
+                                            @switch($fine->status)
+                                                @case('paid')
+                                                    <span class="px-2 py-1 text-xs font-semibold rounded-full bg-green-900 text-green-300">Paid</span>
+                                                    @break
+                                                @case('waived')
+                                                    <span class="px-2 py-1 text-xs font-semibold rounded-full bg-blue-900 text-blue-300">Waived</span>
+                                                    @break
+                                                @default
+                                                    <span class="px-2 py-1 text-xs font-semibold rounded-full bg-red-900 text-red-300">Unpaid</span>
+                                            @endswitch
                                         </td>
                                         
                                         <!-- Actions Column -->
                                         <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                                            <div class="flex space-x-2">
-                                                <a href="{{ route('member.fines.show', $fine->fine_id) }}" 
-                                                   class="px-3 py-1 bg-slate-600 text-white rounded hover:bg-slate-500 transition-colors text-xs">
-                                                    <i class="fas fa-eye mr-1"></i> View
-                                                </a>
-                                                @if($fine->status === 'unpaid')
-                                                <a href="{{ route('member.payments.create.fine', $fine->fine_id) }}" 
-                                                   class="px-3 py-1 bg-primary-orange text-black rounded hover:bg-dark-orange transition-colors text-xs">
+                                            <a href="{{ route('member.fines.show', $fine->fine_id) }}" class="text-primary-orange hover:text-dark-orange mr-3">
+                                                <i class="fas fa-eye mr-1"></i> View
+                                            </a>
+                                            @if($fine->status === 'unpaid')
+                                                <a href="{{ route('member.payments.create', $fine->fine_id) }}" class="text-green-400 hover:text-green-300">
                                                     <i class="fas fa-credit-card mr-1"></i> Pay
                                                 </a>
-                                                @endif
-                                            </div>
+                                            @endif
                                         </td>
                                     </tr>
                                     @endforeach
@@ -283,13 +252,12 @@
                         </div>
                         
                         <!-- Pagination -->
-                        @if($fines->hasPages())
-                        <div class="px-6 py-4 border-t border-slate-700 bg-slate-900">
+                        <div class="px-6 py-4 bg-slate-700 border-t border-slate-600">
                             {{ $fines->links() }}
                         </div>
-                        @endif
                     </div>
                 @endif
+                <!-- Dynamic Content Ends Here -->
             </main>
         </div>
     </div>
@@ -313,7 +281,8 @@
                             <i class="fas fa-tachometer-alt mr-4"></i>
                             Dashboard
                         </a>
-                        <a href="{{ route('books.index') }}" class="flex items-center px-2 py-2 text-base font-medium text-gray-300 hover:text-white hover:bg-slate-700 rounded-lg">
+                        <a href="{{ route('books.index') }}"
+                            class="flex items-center px-2 py-2 text-base font-medium text-gray-300 hover:text-white hover:bg-slate-700 rounded-lg">
                             <i class="fa-solid fa-house mr-4"></i>
                             Home
                         </a>
@@ -325,11 +294,16 @@
                             <i class="fas fa-bookmark mr-4"></i>
                             My Reservations
                         </a>
-                        <a href="{{ route('member.fines.index') }}" class="flex items-center px-2 py-2 text-base font-medium text-white bg-dark-orange rounded-lg">
+                        <!-- ACTIVE LINK for this page -->
+                        <a href="{{ route('member.fines.index')}}" class="flex items-center px-2 py-2 text-base font-medium text-white bg-dark-orange rounded-lg">
                             <i class="fas fa-money-bill-wave mr-4"></i>
-                            Fines & Payments
+                            Fines 
                         </a>
-                        <a href="#" class="flex items-center px-2 py-2 text-base font-medium text-gray-300 hover:text-white hover:bg-slate-700 rounded-lg">
+                        <a href="{{ route('member.fines.index')}}" class="flex items-center px-2 py-2 text-base font-medium text-gray-300 hover:text-white hover:bg-slate-700 rounded-lg">
+                            <i class="fas fa-money-bill-wave mr-4"></i>
+                            Payments
+                        </a>
+                        <a href="{{ route('member.notifications.index')}}" class="flex items-center px-2 py-2 text-base font-medium text-gray-300 hover:text-white hover:bg-slate-700 rounded-lg">
                             <i class="fa-solid fa-bell mr-4"></i>
                             Notification
                         </a>

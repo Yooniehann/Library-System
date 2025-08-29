@@ -2,152 +2,116 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Controllers\Controller;
 use App\Models\Payment;
 use App\Models\Fine;
-use App\Models\MembershipType;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use App\Helpers\DateHelper;
 
 class PaymentController extends Controller
 {
     /**
-     * Display a listing of the payments for the authenticated user.
+     * Display a listing of the member's payments.
      */
-    public function index(Request $request)
+    public function index()
     {
-        $user = Auth::user();
-        $searchTerm = $request->input('search');
-        
-        $payments = Payment::with(['fine', 'membershipType', 'fine.borrow.book'])
-            ->where('user_id', $user->user_id)
-            ->when($searchTerm, function($query) use ($searchTerm) {
-                $query->where(function($q) use ($searchTerm) {
-                    $q->where('payment_type', 'like', "%{$searchTerm}%")
-                      ->orWhere('status', 'like', "%{$searchTerm}%")
-                      ->orWhere('transaction_id', 'like', "%{$searchTerm}%")
-                      ->orWhere('payment_method', 'like', "%{$searchTerm}%")
-                      ->orWhereHas('fine.borrow.book', function($q) use ($searchTerm) {
-                          $q->where('title', 'like', "%{$searchTerm}%");
-                      })
-                      ->orWhereHas('membershipType', function($q) use ($searchTerm) {
-                          $q->where('name', 'like', "%{$searchTerm}%");
-                      });
-                });
-            })
+        $payments = Payment::with(['fine', 'fine.borrow.inventory.book', 'membershipType'])
+            ->where('user_id', Auth::id())
             ->orderBy('payment_date', 'desc')
             ->paginate(10);
 
-        return view('member.payments.index', compact('payments', 'searchTerm'));
+        $stats = [
+            'total' => Payment::where('user_id', Auth::id())->count(),
+            'total_amount' => Payment::where('user_id', Auth::id())->sum('amount'),
+            'fines_amount' => Payment::where('user_id', Auth::id())->fines()->sum('amount'),
+        ];
+
+        return view('dashboard.member.payments.index', compact('payments', 'stats'));
     }
 
     /**
      * Show the form for creating a new payment.
      */
-    public function create($fine_id = null)
+    public function create($fineId = null)
     {
-        $user = Auth::user();
-        
         $fine = null;
-        if ($fine_id) {
-            $fine = Fine::with(['borrow', 'borrow.book'])
-                ->where('fine_id', $fine_id)
-                ->whereHas('borrow', function($query) use ($user) {
-                    $query->where('user_id', $user->user_id);
-                })
-                ->where('status', 'unpaid')
-                ->first();
-            
-            if (!$fine) {
-                return redirect()->route('member.payments.create')
-                    ->with('error', 'Fine not found or already paid.');
-            }
-        }
-
-        $unpaidFines = $user->unpaidFines()
-            ->with(['borrow', 'borrow.book'])
+        $unpaidFines = Fine::with(['borrow.inventory.book'])
+            ->unpaid()
+            ->whereHas('borrow', function($query) {
+                $query->where('user_id', Auth::id());
+            })
             ->get();
 
-        $membershipTypes = MembershipType::where('status', 'active')->get();
+        if ($fineId) {
+            $fine = Fine::with(['borrow.inventory.book'])
+                ->whereHas('borrow', function($query) {
+                    $query->where('user_id', Auth::id());
+                })
+                ->findOrFail($fineId);
+        }
 
-        return view('member.payments.create', compact('unpaidFines', 'fine', 'membershipTypes'));
+        return view('dashboard.member.payments.create', compact('fine', 'unpaidFines'));
     }
 
     /**
-     * Store a newly created payment in storage.
+     * Store a newly created payment.
      */
     public function store(Request $request)
     {
-        $user = Auth::user();
-        
-        $validated = $request->validate([
-            'payment_type' => 'required|in:fine,membership_fee',
-            'fine_id' => 'required_if:payment_type,fine|nullable|exists:fines,fine_id',
-            'membership_type_id' => 'required_if:payment_type,membership_fee|nullable|exists:membership_types,membership_type_id',
-            'amount' => 'required|numeric|min:0.01',
+        $request->validate([
+            'fine_id' => 'required|exists:fines,fine_id',
             'payment_method' => 'required|in:cash,card,online',
-            'notes' => 'nullable|string|max:500',
+            'amount' => 'required|numeric|min:0.01',
         ]);
 
-        // Verify fine belongs to user if paying a fine
-        if ($validated['payment_type'] === 'fine' && $validated['fine_id']) {
-            $fine = Fine::where('fine_id', $validated['fine_id'])
-                ->whereHas('borrow', function($query) use ($user) {
-                    $query->where('user_id', $user->user_id);
-                })
-                ->where('status', 'unpaid')
-                ->first();
-            
-            if (!$fine) {
-                return back()->with('error', 'Fine not found or already paid.');
-            }
-        }
+        // Verify the fine belongs to the authenticated user
+        $fine = Fine::with('borrow')
+            ->whereHas('borrow', function($query) {
+                $query->where('user_id', Auth::id());
+            })
+            ->findOrFail($request->fine_id);
 
-        DB::beginTransaction();
+        // Validate amount doesn't exceed remaining fine amount
+        $remainingAmount = $fine->total_amount - ($fine->payment ? $fine->payment->amount : 0);
+        $request->validate([
+            'amount' => "numeric|min:0.01|max:{$remainingAmount}",
+        ]);
 
-        try {
+        DB::transaction(function () use ($request, $fine, $remainingAmount) {
+            // Create payment
             $payment = Payment::create([
-                'user_id' => $user->user_id,
-                'fine_id' => $validated['payment_type'] === 'fine' ? $validated['fine_id'] : null,
-                'membership_type_id' => $validated['payment_type'] === 'membership_fee' ? $validated['membership_type_id'] : null,
-                'amount' => $validated['amount'],
-                'payment_type' => $validated['payment_type'],
-                'payment_method' => $validated['payment_method'],
-                'notes' => $validated['notes'] ?? null,
+                'user_id' => Auth::id(),
+                'fine_id' => $request->fine_id,
+                'payment_type' => 'fine',
+                'amount' => $request->amount,
+                'payment_method' => $request->payment_method,
+                'payment_date' => DateHelper::now(),
+                'transaction_id' => $request->transaction_id,
+                'notes' => $request->notes,
                 'status' => 'completed',
-                'payment_date' => now(),
             ]);
 
-            // If paying a fine, update the fine status
-            if ($validated['payment_type'] === 'fine' && $validated['fine_id']) {
-                Fine::where('fine_id', $validated['fine_id'])->update([
-                    'status' => 'paid',
-                    'payment_id' => $payment->payment_id
-                ]);
+            // Update fine status if fully paid
+            if ($request->amount >= $remainingAmount) {
+                $fine->update(['status' => 'paid']);
             }
+            // For partial payments, status remains unpaid
+        });
 
-            DB::commit();
-
-            return redirect()->route('member.payments.show', $payment->payment_id)
-                ->with('success', 'Payment completed successfully!');
-
-        } catch (\Exception $e) {
-            DB::rollBack();
-            return back()->with('error', 'Payment failed: ' . $e->getMessage());
-        }
+        return redirect()->route('member.payments.index')
+            ->with('success', 'Payment processed successfully!');
     }
 
     /**
      * Display the specified payment.
      */
-    public function show($payment_id)
+    public function show($id)
     {
-        $user = Auth::user();
-        
-        $payment = Payment::with(['fine', 'fine.borrow', 'fine.borrow.book', 'membershipType'])
-            ->where('payment_id', $payment_id)
-            ->where('user_id', $user->user_id)
-            ->firstOrFail();
+        $payment = Payment::with(['fine', 'fine.borrow.inventory.book'])
+            ->where('user_id', Auth::id())
+            ->findOrFail($id);
 
         return view('dashboard.member.payments.show', compact('payment'));
     }

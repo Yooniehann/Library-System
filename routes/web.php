@@ -26,7 +26,7 @@ use App\Http\Controllers\Admin\IssuedBooksController;
 use App\Http\Controllers\Admin\AdminPaymentController;
 use App\Http\Controllers\Admin\SearchController;
 use App\Http\Controllers\Admin\SimulationController;
-
+use App\Http\Controllers\Admin\DashboardController;
 /*
 |--------------------------------------------------------------------------
 | Public Routes
@@ -183,10 +183,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
 // Admin routes - Consolidated all admin routes into one group
 Route::prefix('admin')->name('admin.')->middleware(['auth', 'verified', 'role:Admin'])->group(function () {
-    // Dashboard
-    Route::get('/dashboard', function () {
-        return view('dashboard.admin.index');
-    })->name('dashboard');
+    // Dashboard - Updated to use controller
+    Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
 
     // Search route
     Route::get('/search', [SearchController::class, 'search'])->name('search');

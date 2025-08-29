@@ -163,7 +163,7 @@
                             </div>
                             <div>
                                 <h3 class="text-md font-semibold text-white">{{ $payment->fine->borrow->inventory->book->title }}</h3>
-                                <p class="text-gray-400 text-sm">by {{ $payment->fine->borrow->inventory->book->author->name ?? 'Unknown Author' }}</p>
+                                <p class="text-gray-400 text-sm">by {{ $payment->fine->borrow->inventory->book->author->fullname ?? 'Unknown Author' }}</p>
                             </div>
                         </div>
                         

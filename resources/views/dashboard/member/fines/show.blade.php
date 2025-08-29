@@ -48,7 +48,11 @@
                         <!-- ACTIVE LINK for this page -->
                         <a href="{{ route('member.fines.index')}}" class="flex items-center px-4 py-3 text-sm font-medium text-white bg-dark-orange rounded-lg">
                             <i class="fas fa-money-bill-wave mr-3"></i>
-                            Fines & Payments
+                            Fines
+                        </a>
+                        <a href="{{ route('member.payments.index')}}" class="flex items-center px-4 py-3 text-sm font-medium text-gray-300 hover:text-white hover:bg-slate-700 rounded-lg">
+                            <i class="fas fa-money-bill-wave mr-3"></i>
+                            Payments
                         </a>
                         <a href="#" class="flex items-center px-4 py-3 text-sm font-medium text-gray-300 hover:text-white hover:bg-slate-700 rounded-lg">
                             <i class="fa-solid fa-bell mr-3"></i>
@@ -179,11 +183,15 @@
                             </div>
                             
                             <div class="flex justify-between">
-                                <span class="text-gray-400">Return Date:</span>
-                                <span class="text-white">
-                                    {{ $fine->borrow->return_date ? $fine->borrow->return_date->format('M d, Y') : 'Not returned' }}
-                                </span>
-                            </div>
+                            <span class="text-gray-400">Return Date:</span>
+                            <span class="text-white">
+                                @if($fine->borrow->bookReturn && $fine->borrow->bookReturn->return_date)
+                                    {{ $fine->borrow->bookReturn->return_date->format('M d, Y') }}
+                                @else
+                                    Not returned
+                                @endif
+                            </span>
+                        </div>
                         </div>
                     </div>
                 </div>
@@ -290,9 +298,13 @@
                         <!-- ACTIVE LINK for this page -->
                         <a href="{{ route('member.fines.index')}}" class="flex items-center px-2 py-2 text-base font-medium text-white bg-dark-orange rounded-lg">
                             <i class="fas fa-money-bill-wave mr-4"></i>
-                            Fines & Payments
+                            Fines 
                         </a>
-                        <a href="#" class="flex items-center px-2 py-2 text-base font-medium text-gray-300 hover:text-white hover:bg-slate-700 rounded-lg">
+                        <a href="{{ route('member.payments.index') }}" class="flex items-center px-2 py-2 text-base font-medium text-gray-300 hover:text-white hover:bg-slate-700 rounded-lg">
+                            <i class="fas fa-money-bill-wave mr-4"></i>
+                            Payments
+                        </a>
+                        <a href="{{ route('member.notifications.index') }}" class="flex items-center px-2 py-2 text-base font-medium text-gray-300 hover:text-white hover:bg-slate-700 rounded-lg">
                             <i class="fa-solid fa-bell mr-4"></i>
                             Notification
                         </a>

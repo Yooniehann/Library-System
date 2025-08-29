@@ -15,7 +15,7 @@ use App\Models\StockIn;
 use Illuminate\Support\Facades\DB;
 use Carbon\Carbon;
 
-class DashboardController extends Controller
+class AdminDashboardController extends Controller
 {
     public function index()
     {

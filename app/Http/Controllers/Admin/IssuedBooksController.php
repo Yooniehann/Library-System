@@ -75,18 +75,15 @@ class IssuedBooksController extends Controller
                 ->with('fines')
                 ->get()
                 ->sum(function ($borrow) use ($currentDate) {
-                    // Only calculate fines for overdue books with unpaid fines
-                    if ($borrow->status === 'overdue') {
-                        $unpaidFines = $borrow->fines->where('status', 'unpaid');
-                        return $unpaidFines->sum(function ($fine) use ($currentDate, $borrow) {
-                            if ($fine->fine_type === 'overdue') {
-                                $daysOverdue = max(0, ceil($currentDate->diffInHours($borrow->due_date, false) / 24 * -1));
-                                return $daysOverdue * $fine->amount_per_day;
-                            }
-                            return $fine->amount_per_day;
-                        });
-                    }
-                    return 0;
+                    // Only calculate fines for books with unpaid fines
+                    $unpaidFines = $borrow->fines->where('status', 'unpaid');
+                    return $unpaidFines->sum(function ($fine) use ($currentDate, $borrow) {
+                        if ($fine->fine_type === 'overdue') {
+                            $daysOverdue = max(0, ceil($currentDate->diffInHours($borrow->due_date, false) / 24 * -1));
+                            return $daysOverdue * $fine->amount_per_day;
+                        }
+                        return $fine->amount_per_day;
+                    });
                 })
         ];
 
@@ -312,18 +309,15 @@ class IssuedBooksController extends Controller
                 ->with('fines')
                 ->get()
                 ->sum(function ($borrow) use ($currentDate) {
-                    // Only calculate fines for overdue books with unpaid fines
-                    if ($borrow->status === 'overdue') {
-                        $unpaidFines = $borrow->fines->where('status', 'unpaid');
-                        return $unpaidFines->sum(function ($fine) use ($currentDate, $borrow) {
-                            if ($fine->fine_type === 'overdue') {
-                                $daysOverdue = max(0, ceil($currentDate->diffInHours($borrow->due_date, false) / 24 * -1));
-                                return $daysOverdue * $fine->amount_per_day;
-                            }
-                            return $fine->amount_per_day;
-                        });
-                    }
-                    return 0;
+                    // Only calculate fines for books with unpaid fines
+                    $unpaidFines = $borrow->fines->where('status', 'unpaid');
+                    return $unpaidFines->sum(function ($fine) use ($currentDate, $borrow) {
+                        if ($fine->fine_type === 'overdue') {
+                            $daysOverdue = max(0, ceil($currentDate->diffInHours($borrow->due_date, false) / 24 * -1));
+                            return $daysOverdue * $fine->amount_per_day;
+                        }
+                        return $fine->amount_per_day;
+                    });
                 })
         ];
 
@@ -417,10 +411,20 @@ class IssuedBooksController extends Controller
     {
         $currentDate = DateHelper::now();
 
-        // Start building the query - show books that are overdue by date AND not returned
+        // Start building the query - show books that are overdue by status OR by date with unpaid fines
         $query = Borrow::with(['user', 'inventory.book', 'inventory.book.author', 'staff', 'fines'])
-            ->where('due_date', '<', $currentDate)
-            ->where('status', '!=', 'returned'); // Exclude returned books
+            ->where(function ($q) use ($currentDate) {
+                // Books marked as overdue
+                $q->where('status', 'overdue')
+                    // OR books that are overdue by date AND have unpaid fines
+                    ->orWhere(function ($q2) use ($currentDate) {
+                        $q2->where('due_date', '<', $currentDate)
+                            ->where('status', '!=', 'returned')
+                            ->whereHas('fines', function ($q3) {
+                                $q3->where('status', 'unpaid');
+                            });
+                    });
+            });
 
         // Handle search
         if ($request->has('search') && !empty($request->search)) {
@@ -504,9 +508,16 @@ class IssuedBooksController extends Controller
             'inventory.book.category',
             'staff',
             'fines'
-        ])->where('due_date', '<', $currentDate)
-            ->where('status', '!=', 'returned') // Exclude returned books
-            ->findOrFail($id);
+        ])->where(function ($q) use ($currentDate) {
+            $q->where('status', 'overdue')
+                ->orWhere(function ($q2) use ($currentDate) {
+                    $q2->where('due_date', '<', $currentDate)
+                        ->where('status', '!=', 'returned')
+                        ->whereHas('fines', function ($q3) {
+                            $q3->where('status', 'unpaid');
+                        });
+                });
+        })->findOrFail($id);
 
         // Calculate whole days overdue
         $overdueDays = max(0, ceil($currentDate->diffInHours($borrow->due_date, false) / 24 * -1));

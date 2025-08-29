@@ -373,8 +373,8 @@
                         </li>
                     </ul>
                     <div class="flex flex-wrap gap-4">
-                        <a href="#" class="btn-primary">Become a Member</a>
-                        <a href="#" class="btn-outline">Take a Tour</a>
+                        <a href="#membership-plans" class="btn-primary">Become a Member</a>
+                        <a href="{{ route('about')}}" class="btn-outline">Take a Tour</a>
                     </div>
                 </div>
                 <div class="md:w-1/2">

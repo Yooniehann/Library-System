@@ -115,9 +115,8 @@ h1, h2 { color: #FFD369; }
 
 <!-- Main Content -->
 <div class="main-content" id="mainContent">
-    <div class="flex-header">
-        <button class="open-btn" id="openBtn" onclick="openNav()"><i class="fas fa-bars"></i></button>
-        <h1 class="text-2xl font-bold">Notifications</h1>
+    <div class="flex justify-between items-center mb-6">
+        <h1 class="text-2xl font-bold text-white">Notifications</h1>
     </div>
 
     @if($notifications->isEmpty())
@@ -131,39 +130,67 @@ h1, h2 { color: #FFD369; }
         </div>
     @else
         <div class="mt-6 space-y-4">
-        @foreach($notifications as $notification)
-            @php
-                switch($notification->notif_type) {
-                    case 'borrow_due':
-                        $typeClass = 'bg-yellow-500 text-black';
-                        $typeLabel = 'Due Soon';
-                        break;
-                    case 'fine':
-                        $typeClass = 'bg-red-500 text-white';
-                        $typeLabel = 'Unpaid Fine';
-                        break;
-                    case 'reservation':
-                        $typeClass = 'bg-green-500 text-white';
-                        $typeLabel = 'Ready for Pickup';
-                        break;
-                    default:
-                        $typeClass = 'bg-gray-500 text-white';
-                        $typeLabel = 'Notification';
-                }
-            @endphp
+            @foreach($notifications as $notification)
+                @php
+                    switch($notification->notification_type) {
+                        case 'due_reminder':
+                            $typeClass = 'bg-blue-900 text-blue-300';
+                            $typeLabel = 'Due Reminder';
+                            break;
+                        case 'overdue':
+                            $typeClass = 'bg-red-900 text-red-300';
+                            $typeLabel = 'Overdue';
+                            break;
+                        case 'fine':
+                            $typeClass = 'bg-yellow-900 text-yellow-300';
+                            $typeLabel = 'Fine';
+                            break;
+                        case 'reservation_ready':
+                            $typeClass = 'bg-green-900 text-green-300';
+                            $typeLabel = 'Reservation Ready';
+                            break;
+                        case 'general':
+                            $typeClass = 'bg-gray-600 text-gray-300';
+                            $typeLabel = 'General';
+                            break;
+                        default:
+                            $typeClass = 'bg-gray-600 text-gray-300';
+                            $typeLabel = ucfirst($notification->notification_type);
+                    }
+                @endphp
 
-            <div class="notification-card flex justify-between items-center bg-slate-800 rounded-lg shadow p-4">
-                <div>
-                    <div class="font-semibold text-white">{{ $typeLabel }}</div>
-                    <div class="text-gray-300 text-sm">{{ $notification->notif_message }}</div>
-                    <div class="text-gray-500 text-xs mt-1">{{ $notification->notif_date->format('M d, Y') }}</div>
+                <div class="notification-card flex justify-between items-center bg-slate-800 rounded-lg shadow p-4">
+                    <div>
+                        <div class="font-semibold text-white">{{ $notification->title }}</div>
+                        <div class="text-gray-300 text-sm mt-1">{{ $notification->message }}</div>
+                        <div class="text-gray-500 text-xs mt-1">{{ $notification->sent_date->format('M d, Y') }}</div>
+                    </div>
+                    <div class="flex flex-col items-end space-y-2">
+                        <span class="status-badge px-2 py-1 rounded {{ $typeClass }}">{{ $typeLabel }}</span>
+
+                        @if($notification->status !== 'read')
+                            <form action="{{ route('kid.kidnoti.markAsRead', $notification->notification_id) }}" method="POST">
+                                @csrf
+                                <button type="submit" class="text-sm bg-primary-orange px-3 py-1 rounded hover:bg-dark-orange transition-colors">
+                                    Mark as Read
+                                </button>
+                            </form>
+                        @else
+                            <span class="text-xs text-gray-400">Read</span>
+                        @endif
+                    </div>
                 </div>
-                <span class="status-badge px-2 py-1 rounded {{ $typeClass }}">{{ $typeLabel }}</span>
-            </div>
-        @endforeach
+            @endforeach
+        </div>
+
+        <!-- Pagination -->
+        <div class="mt-6">
+            {{ $notifications->links() }}
         </div>
     @endif
 </div>
+
+
 
 
 <form id="logoutForm" action="{{ route('logout') }}" method="POST" class="hidden">@csrf</form>

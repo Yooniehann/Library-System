@@ -203,33 +203,40 @@ input, button { font-family: 'Open Sans', sans-serif; }
 </div>
 
 
-    @if($borrows->isEmpty())
-        <div class="bg-slate-800 rounded-lg shadow p-6 text-center">
-            <i class="fas fa-book-open text-4xl text-gray-400 mb-4"></i>
-            <h3 class="text-lg font-medium text-white mb-2">No books borrowed yet</h3>
-            <p class="text-gray-400 mb-4">You haven't borrowed any books from our library.</p>
-            <a href="{{ url('/books') }}" class="bg-primary-orange text-black px-4 py-2 rounded-lg hover:bg-dark-orange transition-colors">
-                Browse Books
-            </a>
-        </div>
-    @else
-        <div class="table-container shadow">
-            <table>
-                <thead>
-                    <tr>
-                        <th>ID</th>
-                        <th>Book</th>
-                        <th>Borrow Date</th>
-                        <th>Due Date</th>
-                        <th>Status</th>
-                        <th>Actions</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach($borrows as $borrow)
-                    <tr>
-                        <td>#{{ $borrow->borrow_id }}</td>
-                        <td>
+@if($borrows->isEmpty())
+    <div class="bg-slate-800 rounded-lg shadow p-6 text-center">
+        <i class="fas fa-book-open text-4xl text-gray-400 mb-4"></i>
+        <h3 class="text-lg font-medium text-white mb-2">No books borrowed yet</h3>
+        <p class="text-gray-400 mb-4">You haven't borrowed any books from our library.</p>
+        <a href="{{ url('/books') }}" class="bg-primary-orange text-black px-4 py-2 rounded-lg hover:bg-dark-orange transition-colors">
+            Browse Books
+        </a>
+    </div>
+@else
+    <div class="table-container shadow">
+        <table class="min-w-full bg-gray-800 text-white">
+            <thead>
+                <tr>
+                    <th class="px-4 py-2">ID</th>
+                    <th class="px-4 py-2">Book</th>
+                    <th class="px-4 py-2">Borrow Date</th>
+                    <th class="px-4 py-2">Due Date</th>
+                    <th class="px-4 py-2">Status</th>
+                    <th class="px-4 py-2">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach($borrows as $borrow)
+                    @php
+                        $status = $borrow->status;
+                        // Determine if actions should be shown: active, overdue, or paid
+                        $canReturnOrRenew = in_array($status, ['active', 'overdue', 'paid']);
+                        // Check if overdue
+                        $isOverdue = $status === 'active' && $borrow->due_date->isPast();
+                    @endphp
+                    <tr class="border-b border-gray-700">
+                        <td class="px-4 py-2">#{{ $borrow->borrow_id }}</td>
+                        <td class="px-4 py-2">
                             <div class="flex items-center gap-3">
                                 <img src="{{ asset('storage/' . $borrow->inventory->book->cover_image) }}"
                                      alt="{{ $borrow->inventory->book->title }}"
@@ -242,37 +249,53 @@ input, button { font-family: 'Open Sans', sans-serif; }
                                 </div>
                             </div>
                         </td>
-                        <td class="text-gray-300 text-sm">{{ $borrow->borrow_date->format('M d, Y') }}</td>
-                        <td class="text-gray-300 text-sm">{{ $borrow->due_date->format('M d, Y') }}</td>
-                        <td>
-                            @if($borrow->status == 'active')
-                                @if($borrow->due_date->isPast())
-                                    <span class="status-badge bg-overdue">Overdue</span>
+                        <td class="px-4 py-2 text-gray-300 text-sm">{{ $borrow->borrow_date->format('M d, Y') }}</td>
+                        <td class="px-4 py-2 text-gray-300 text-sm">{{ $borrow->due_date->format('M d, Y') }}</td>
+                        <td class="px-4 py-2">
+                            @if($status === 'active')
+                                @if($isOverdue)
+                                    <span class="status-badge bg-red-600 text-white px-2 py-1 rounded">Overdue</span>
                                 @else
-                                    <span class="status-badge bg-active">Active</span>
+                                    <span class="status-badge bg-green-600 text-white px-2 py-1 rounded">Active</span>
                                 @endif
+                            @elseif($status === 'paid')
+                                <span class="status-badge bg-green-600 text-white px-2 py-1 rounded">Paid</span>
+                            @elseif($status === 'returned')
+                                <span class="status-badge bg-yellow-500 text-white px-2 py-1 rounded">Returned</span>
                             @else
-                                <span class="status-badge bg-other">{{ ucfirst($borrow->status) }}</span>
+                                <span class="status-badge bg-gray-400 text-white px-2 py-1 rounded">{{ ucfirst($status) }}</span>
                             @endif
                         </td>
-                        <td class="flex flex-col gap-2">
-                            @if($borrow->status == 'active')
-                                <form action="{{ route('kid.kidborrow.renew', $borrow->borrow_id) }}" method="POST">@csrf
-                                    <button type="submit" class="btn btn-renew"><i class="fas fa-sync-alt"></i> Renew</button>
+                        <td class="px-4 py-2 flex flex-col gap-2">
+                            @if($canReturnOrRenew && $status !== 'returned')
+                                {{-- Renew button --}}
+                                <form action="{{ route('kid.kidborrow.renew', $borrow->borrow_id) }}" method="POST">
+                                    @csrf
+                                    <button type="submit" class="btn btn-renew bg-blue-600 hover:bg-blue-700 text-white px-3 py-1 rounded flex items-center gap-1">
+                                        <i class="fas fa-sync-alt"></i> Renew
+                                    </button>
                                 </form>
-                                <form action="{{ route('kid.kidborrow.create', $borrow->borrow_id) }}" method="POST">@csrf
-                                    <button type="submit" class="btn btn-return"><i class="fas fa-undo"></i> Return</button>
+                                {{-- Return button --}}
+                                <form action="{{ route('kid.kidborrow.return', $borrow->borrow_id) }}" method="POST">
+                                    @csrf
+                                    <button type="submit" class="btn btn-return bg-green-600 hover:bg-green-700 text-white px-3 py-1 rounded flex items-center gap-1">
+                                        <i class="fas fa-undo"></i> Return
+                                    </button>
                                 </form>
                             @else
                                 <span class="text-gray-400 text-sm">No actions</span>
                             @endif
                         </td>
                     </tr>
-                    @endforeach
-                </tbody>
-            </table>
-        </div>
-    @endif
+                @endforeach
+            </tbody>
+        </table>
+    </div>
+@endif
+
+
+
+
 
 </div>
 

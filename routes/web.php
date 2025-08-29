@@ -37,6 +37,7 @@ use App\Http\Controllers\Kid\KidNotificationController;
 use App\Http\Controllers\Kid\KidContactController;
 use App\Http\Controllers\Kid\KidProfileController;
 use App\Http\Controllers\Kid\KidProcessPayController;
+use App\Http\Controllers\Kid\KidBookReturnController;
 
 /*
 |--------------------------------------------------------------------------
@@ -373,11 +374,13 @@ Route::middleware(['auth', 'verified', 'role:Kid'])->prefix('kid')->name('kid.')
     // Dashboard main page
     Route::get('/dashboard', [KidDashboardController::class, 'index'])->name('dashboard');
 
-    // Borrowed books
-    Route::get('/borrowed', [BorrowedController::class, 'index'])->name('kidborrowed.index');
-    Route::post('/borrow/{book}', [BorrowedController::class, 'create'])->name('kidborrow.create');
-    Route::post('/borrow/{borrow}/renew', [BorrowedController::class, 'renew'])->name('kidborrow.renew');
 
+  // Borrowed books
+Route::get('/borrowed', [BorrowedController::class, 'index'])->name('kidborrowed.index');
+Route::post('/borrow/{book}/renew', [BorrowedController::class, 'renew'])->name('kidborrow.renew');
+
+// **New Return route**
+Route::post('/borrow/{borrow}/return', [KidBookReturnController::class, 'returnBook'])->name('kidborrow.return');
     // Kid Reservations
 Route::get('/reservations', [KidReservationController::class, 'index'])->name('kidreservation.index');
 Route::post('/reserve/{book}', [KidReservationController::class, 'create'])->name('kidreservation.create');
@@ -391,8 +394,9 @@ Route::post('/fines/{fine}/pay', [KidFineController::class, 'pay'])->name('kidfi
  // Process payment page
     Route::get('/fines/{fine}/process', [KidProcessPayController::class, 'index'])->name('kidprocesspay.index');
 
-    // Notifications
-Route::get('/notifications', [KidNotificationController::class, 'index'])->name('kidnoti.index');
+// Notifications
+    Route::get('/notifications', [KidNotificationController::class, 'index'])->name('kidnoti.index');
+    Route::post('/notifications/{id}/read', [KidNotificationController::class, 'markAsRead'])->name('kidnoti.markAsRead');
 
   // Contact Librarian (fixed, not nested)
     Route::get('/contact', [KidContactController::class, 'index'])->name('kidcontact.index');

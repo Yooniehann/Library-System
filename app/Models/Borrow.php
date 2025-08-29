@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Models\BookReturn;
+use App\Helpers\DateHelper;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
@@ -42,10 +43,51 @@ class Borrow extends Model
         return $this->belongsTo(Staff::class, 'staff_id');
     }
 
-    public function fine()
+    /**
+     * Get the return record for this borrow.
+     */
+    public function returnRecord()
     {
-        return $this->hasOne(Fine::class, 'borrow_id');
+        return $this->hasOne(BookReturn::class, 'borrow_id');
     }
+
+    /**
+     * Check if the book is overdue.
+     */
+    public function getIsOverdueAttribute(): bool
+    {
+        return $this->due_date->isPast() && $this->status === 'active';
+    }
+
+    /**
+     * Calculate overdue days.
+     */
+    public function getOverdueDaysAttribute(): int
+    {
+        if (!$this->due_date->isPast()) {
+            return 0;
+        }
+
+        return $this->due_date->diffInDays(now());
+    }
+
+    /**
+     * Calculate fine amount.
+     */
+    public function getFineAmountAttribute(): float
+    {
+        if (!$this->due_date->isPast()) {
+            return 0;
+        }
+
+        return $this->overdue_days * 0.50;
+    }
+
+    public function fines()
+    {
+        return $this->hasMany(Fine::class, 'borrow_id');
+    }
+
 
     public function bookReturn()
     {
@@ -68,5 +110,32 @@ class Borrow extends Model
             'inventory_id', // Local key on borrows table
             'book_id'       // Local key on inventories table
         );
+    }
+
+    public function updateStatusBasedOnFines()
+    {
+        $currentDate = DateHelper::now();
+
+        // Check if book is returned
+        if ($this->status === 'returned') {
+            return;
+        }
+
+        // Check if there are any unpaid fines
+        $unpaidFines = $this->fines->where('status', 'unpaid');
+
+        if ($unpaidFines->count() > 0 && $this->status !== 'overdue') {
+            // Has unpaid fines but status is not overdue - mark as overdue
+            $this->update(['status' => 'overdue']);
+        } elseif ($unpaidFines->count() === 0 && $this->status === 'overdue') {
+            // No unpaid fines but status is overdue - check due date
+            if ($this->due_date < $currentDate) {
+                // Still overdue by date, keep status as overdue
+                $this->update(['status' => 'overdue']);
+            } else {
+                // Not overdue by date and no unpaid fines - set to active
+                $this->update(['status' => 'active']);
+            }
+        }
     }
 }

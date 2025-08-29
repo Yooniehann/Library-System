@@ -17,8 +17,14 @@ use App\Http\Controllers\{
     StockInDetailController,
     CatalogController,
     ReservationController,
+    FineController,
+    PaymentController
 };
+use App\Http\Controllers\Admin\AdminFineController;
+use App\Http\Controllers\Admin\IssuedBooksController;
+use App\Http\Controllers\Admin\AdminPaymentController;
 use App\Http\Controllers\Admin\SearchController;
+use App\Http\Controllers\Admin\SimulationController;
 
 use App\Http\Controllers\Kid\BorrowedController;
 use App\Http\Controllers\Kid\KidDashboardController;
@@ -99,6 +105,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::delete('/profile', 'destroy')->name('destroy');
     });
 
+
     // Membership routes
     Route::prefix('membership')->group(function () {
         // let controller decide whether user can select
@@ -151,6 +158,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
         ->middleware('role:Member,Kid')
         ->name('borrowed.index');
 
+
     // Borrow details route
     Route::get('/borrowed/{id}', [BorrowController::class, 'show'])
         ->middleware('role:Member,Kid')
@@ -173,6 +181,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/reservations', [ReservationController::class, 'index'])
         ->middleware('role:Member,Kid')
         ->name('reservations.index');
+
 
     // Reservation cancel route
     Route::post('/reservations/{id}/cancel', [ReservationController::class, 'cancel'])
@@ -267,6 +276,53 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'verified', 'role:Ad
         });
     });
 
+    // Admin Issued Books Routes
+    Route::prefix('issued-books')->name('issued-books.')->group(function () {
+        Route::get('/', [IssuedBooksController::class, 'index'])->name('index');
+        Route::get('/{id}', [IssuedBooksController::class, 'show'])->name('show');
+        Route::post('/{id}/return', [IssuedBooksController::class, 'markReturned'])->name('return');
+        Route::post('/{id}/renew', [IssuedBooksController::class, 'renew'])->name('renew');
+        Route::post('/{id}/overdue', [IssuedBooksController::class, 'markOverdue'])->name('overdue');
+        Route::get('/stats/overview', [IssuedBooksController::class, 'getStats'])->name('stats');
+    });
+
+    // Admin Returned Books Routes
+    Route::prefix('returned-books')->name('returned-books.')->group(function () {
+        Route::get('/', [IssuedBooksController::class, 'returnedIndex'])->name('index');
+        Route::get('/{id}', [IssuedBooksController::class, 'returnedShow'])->name('show');
+    });
+
+    // Admin Simulation Routes
+    Route::prefix('simulation')->name('simulation.')->group(function () {
+        Route::get('/', [SimulationController::class, 'index'])->name('index');
+        Route::post('/', [SimulationController::class, 'update'])->name('update');
+        Route::post('/disable', [SimulationController::class, 'disable'])->name('disable');
+    });
+
+    // Admin Overdue Books Routes
+    Route::prefix('overdue-books')->name('overdue-books.')->group(function () {
+        Route::get('/', [IssuedBooksController::class, 'overdueIndex'])->name('index');
+        Route::get('/{id}', [IssuedBooksController::class, 'overdueShow'])->name('show');
+    });
+
+    // Manual overdue update route
+    Route::post('/issued-books/update-overdue', [IssuedBooksController::class, 'updateOverdueStatus'])->name('issued-books.update-overdue');
+
+    // Fines Routes
+    Route::prefix('fines')->name('fines.')->group(function () {
+        Route::get('/', [AdminFineController::class, 'index'])->name('index');
+        Route::get('/{id}', [AdminFineController::class, 'show'])->name('show');
+        Route::post('/{id}/waive', [AdminFineController::class, 'waive'])->name('waive');
+    });
+
+    // Direct fine payment processing
+    Route::post('/fines/{fineId}/process-payment', [AdminPaymentController::class, 'processFinePayment'])
+        ->name('payments.process-fine');
+
+    // Show fine payment form
+    Route::get('/fines/{fineId}/payment', [AdminPaymentController::class, 'showProcessFine'])
+        ->name('payments.show-process-fine');
+
     // ... other admin routes can be added here ...
 });
 
@@ -275,6 +331,17 @@ Route::middleware(['auth', 'verified', 'role:Member'])->prefix('member')->name('
     Route::get('/dashboard', function () {
         return view('dashboard.member.index');
     })->name('dashboard');
+
+    // Fines routes
+        Route::get('/fines', [FineController::class, 'index'])->name('fines.index');
+        Route::get('/fines/{fine}', [FineController::class, 'show'])->name('fines.show');
+
+        // Payments routes
+        Route::get('/payments', [PaymentController::class, 'index'])->name('payments.index');
+        Route::get('/payments/create/{fine?}', [PaymentController::class, 'create'])->name('payments.create');
+        Route::post('/payments', [PaymentController::class, 'store'])->name('payments.store');
+        Route::get('/payments/{payment}', [PaymentController::class, 'show'])->name('payments.show');
+
 });
 
 // Kid routes

@@ -18,11 +18,13 @@ return new class extends Migration
                 ->onDelete('cascade');
             $table->foreignId('staff_id')
                 ->constrained('staff', 'staff_id')
+                ->nullable()
                 ->onDelete('cascade');
             $table->dateTime('return_date')->default(now());
             $table->enum('condition_on_return', ['excellent', 'good', 'fair', 'poor', 'damaged']);
             $table->unsignedInteger('late_days')->default(0);
             $table->decimal('fine_amount', 8, 2)->default(0.00);
+            $table->text('notes')->nullable();
             $table->timestamps();
         });
     }

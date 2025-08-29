@@ -17,7 +17,8 @@ class BookReturn extends Model
         'return_date',
         'condition_on_return',
         'late_days',
-        'fine_amount'
+        'fine_amount',
+        'notes'
     ];
 
     protected $casts = [

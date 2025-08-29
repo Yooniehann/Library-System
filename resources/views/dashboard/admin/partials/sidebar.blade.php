@@ -286,6 +286,12 @@
                     <span x-show="sidebarExpanded">Fines & Payments</span>
                 </a>
             </li>
+            <li>
+                <a href="{{ route('admin.notifications.index') }}" class="sidebar-item flex items-center space-x-2 p-2 rounded">
+                    <i class="fas fa-bell"></i>
+                    <span x-show="sidebarExpanded">Notifications</span>
+                </a>
+            </li>
         </ul>
     </div>
 

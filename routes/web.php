@@ -17,6 +17,7 @@ use App\Http\Controllers\{
     StockInDetailController,
     CatalogController,
     ReservationController,
+    NotificationController,
     FineController,
     PaymentController
 };
@@ -189,6 +190,14 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::post('/reservations/{id}/cancel', [ReservationController::class, 'cancel'])
         ->middleware('role:Member,Kid')
         ->name('reservations.cancel');
+
+        // Profile routes
+    Route::controller(ProfileController::class)->name('profile.')->group(function () {
+        Route::get('/profile', 'edit')->name('edit');
+        Route::patch('/profile', 'update')->name('update');
+        Route::patch('/profile/password', 'password')->name('password');
+        Route::delete('/profile', 'destroy')->name('destroy');
+    });
 });
 
 /*
@@ -310,6 +319,14 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'verified', 'role:Ad
     // Manual overdue update route
     Route::post('/issued-books/update-overdue', [IssuedBooksController::class, 'updateOverdueStatus'])->name('issued-books.update-overdue');
 
+    // Notifications routes - Admin
+    Route::prefix('notifications')->name('notifications.')->group(function () {
+        Route::get('/', [NotificationController::class, 'adminIndex'])->name('index');
+        Route::get('/create', [NotificationController::class, 'create'])->name('create');
+        Route::post('/', [NotificationController::class, 'store'])->name('store');
+        Route::delete('/{id}', [NotificationController::class, 'destroy'])->name('destroy');
+    });
+
     // Fines Routes
     Route::prefix('fines')->name('fines.')->group(function () {
         Route::get('/', [AdminFineController::class, 'index'])->name('index');
@@ -335,15 +352,19 @@ Route::middleware(['auth', 'verified', 'role:Member'])->prefix('member')->name('
     })->name('dashboard');
 
     // Fines routes
-        Route::get('/fines', [FineController::class, 'index'])->name('fines.index');
-        Route::get('/fines/{fine}', [FineController::class, 'show'])->name('fines.show');
+    Route::get('/fines', [FineController::class, 'index'])->name('fines.index');
+    Route::get('/fines/{fine}', [FineController::class, 'show'])->name('fines.show');
 
-        // Payments routes
-        Route::get('/payments', [PaymentController::class, 'index'])->name('payments.index');
-        Route::get('/payments/create/{fine?}', [PaymentController::class, 'create'])->name('payments.create');
-        Route::post('/payments', [PaymentController::class, 'store'])->name('payments.store');
-        Route::get('/payments/{payment}', [PaymentController::class, 'show'])->name('payments.show');
+    // Payments routes
+    Route::get('/payments', [PaymentController::class, 'index'])->name('payments.index');
+    Route::get('/payments/create/{fine?}', [PaymentController::class, 'create'])->name('payments.create');
+    Route::post('/payments', [PaymentController::class, 'store'])->name('payments.store');
+    Route::get('/payments/{payment}', [PaymentController::class, 'show'])->name('payments.show');
 
+
+    // Notifications routes - Member
+        Route::get('notifications/', [NotificationController::class, 'memberIndex'])->name('notifications.index');
+        Route::post('/notifications/{id}/read', [NotificationController::class, 'markAsRead'])->name('notifications.markAsRead');
 });
 
 // Kid routes

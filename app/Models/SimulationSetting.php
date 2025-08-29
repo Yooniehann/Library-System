@@ -30,4 +30,5 @@ class SimulationSetting extends Model
 
         return now();
     }
+    
 }

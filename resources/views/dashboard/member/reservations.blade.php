@@ -46,7 +46,7 @@
                             <i class="fas fa-bookmark mr-3"></i>
                             My Reservations
                         </a>
-                        <a href="#" class="flex items-center px-4 py-3 text-sm font-medium text-gray-300 hover:text-white hover:bg-slate-700 rounded-lg">
+                        <a href="{{ route('member.fines.index')}}" class="flex items-center px-4 py-3 text-sm font-medium text-gray-300 hover:text-white hover:bg-slate-700 rounded-lg">
                             <i class="fas fa-money-bill-wave mr-3"></i>
                             Fines & Payments
                         </a>
@@ -286,7 +286,7 @@
                             <i class="fas fa-bookmark mr-4"></i>
                             My Reservations
                         </a>
-                        <a href="#" class="flex items-center px-2 py-2 text-base font-medium text-gray-300 hover:text-white hover:bg-slate-700 rounded-lg">
+                        <a href="{{ route('member.fines.index')}}" class="flex items-center px-2 py-2 text-base font-medium text-gray-300 hover:text-white hover:bg-slate-700 rounded-lg">
                             <i class="fas fa-money-bill-wave mr-4"></i>
                             Fines & Payments
                         </a>

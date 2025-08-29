@@ -48,11 +48,11 @@
                             <i class="fas fa-money-bill-wave mr-3"></i>
                             Fines & Payments
                         </a>
-                        <a href="#" class="flex items-center px-4 py-3 text-sm font-medium text-gray-300 hover:text-white hover:bg-slate-700 rounded-lg">
+                        <a href="{{ route('member.notifications.index') }}" class="flex items-center px-4 py-3 text-sm font-medium text-gray-300 hover:text-white hover:bg-slate-700 rounded-lg">
                             <i class="fa-solid fa-bell mr-3"></i>
                             Notification
                         </a>
-                        <a href="#" class="flex items-center px-4 py-3 text-sm font-medium text-gray-300 hover:text-white hover:bg-slate-700 rounded-lg">
+                        <a href="{{ route('profile.edit') }}" class="flex items-center px-4 py-3 text-sm font-medium text-gray-300 hover:text-white hover:bg-slate-700 rounded-lg">
                             <i class="fas fa-user-cog mr-3"></i>
                             Profile Settings
                         </a>
@@ -216,7 +216,7 @@
                                 <a href="#" class="text-sm font-medium text-primary-orange hover:text-dark-orange">View all borrowed books →</a>
                             </div>
                         </div>
-                    </div> 
+                    </div>
 
                     <!-- Notifications -->
                     <div>
@@ -266,7 +266,7 @@
                                 <a href="#" class="text-sm font-medium text-primary-orange hover:text-dark-orange">View all notifications →</a>
                             </div>
                         </div>
-                    </div> 
+                    </div>
                 </div>
             </main>
         </div>
@@ -303,16 +303,16 @@
                             <i class="fas fa-bookmark mr-4"></i>
                             My Reservations
                         </a>
-                        <a href="member.fines.index" class="flex items-center px-2 py-2 text-base font-medium text-gray-300 hover:text-white hover:bg-slate-700 rounded-lg">
+                        <a href="{{ route('member.fines.index')}}" class="flex items-center px-2 py-2 text-base font-medium text-gray-300 hover:text-white hover:bg-slate-700 rounded-lg">
                             <i class="fas fa-money-bill-wave mr-4"></i>
                             Fines & Payments
                         </a>
-                        <a href="#"
+                        <a href="{{ route('member.notifications.index') }}"
                             class="flex items-center px-2 py-2 text-base font-medium text-gray-300 hover:text-white hover:bg-slate-700 rounded-lg">
                             <i class="fa-solid fa-bell mr-4"></i>
                             Notification
                         </a>
-                        <a href="#" class="flex items-center px-2 py-2 text-base font-medium text-gray-300 hover:text-white hover:bg-slate-700 rounded-lg">
+                        <a href="{{ route('profile.edit') }}" class="flex items-center px-2 py-2 text-base font-medium text-gray-300 hover:text-white hover:bg-slate-700 rounded-lg">
                             <i class="fas fa-user-cog mr-4"></i>
                             Profile Settings
                         </a>
@@ -335,18 +335,18 @@
                 </div>
             </div>
         </div>
-    </div> 
+    </div>
 
     <script>
         // Simple mobile sidebar toggle
         document.addEventListener('DOMContentLoaded', function() {
             const mobileSidebar = document.getElementById('mobile-sidebar');
             const sidebarToggle = document.querySelector('.md\\:hidden button');
-            
+
             sidebarToggle.addEventListener('click', function() {
                 mobileSidebar.classList.toggle('hidden');
             });
-            
+
             // Close button inside mobile sidebar
             const closeButton = document.querySelector('#mobile-sidebar button');
             closeButton.addEventListener('click', function() {

@@ -299,9 +299,6 @@ Route::post('/reservations/{id}/cancel', [KidReservationController::class, 'canc
 Route::post('/fines/{fine}/pay', [KidFineController::class, 'pay'])->name('kidfines.pay');
 
 
-    // Achievements
-    Route::get('/achievements', [AchievementController::class, 'index'])->name('achievements.index');
-
     // Notifications
 Route::get('/notifications', [KidNotificationController::class, 'index'])->name('kidnoti.index');
 
@@ -313,10 +310,4 @@ Route::get('/notifications', [KidNotificationController::class, 'index'])->name(
     // Profile Settings
 Route::get('/profile', [KidProfileController::class, 'edit'])->name('kidprofile.index');
 Route::patch('/profile', [KidProfileController::class, 'update'])->name('kidprofile.update');
-
-
 });
-<<<<<<< HEAD
-
-=======
->>>>>>> 4ef10d3 (added more blade.php and controllers and fix a few that needed to fix)

@@ -160,8 +160,6 @@ input, button { font-family: 'Open Sans', sans-serif; }
     <i class="fas fa-calendar-check mr-3"></i> Reservations
 </li>
 
-
-        <li onclick="location.href='{{ route('kid.achievements.index') }}'"><i class="fas fa-trophy"></i> Achievements</li>
         <li onclick="location.href='{{ route('kid.kidnoti.index') }}'"><i class="fas fa-bell"></i> Notifications</li>
         <li onclick="location.href='{{ route('kid.kidcontact.index') }}'"><i class="fas fa-envelope"></i> Contact Librarian</li>
         <li onclick="location.href='{{ route('kid.kidprofile.index') }}'">

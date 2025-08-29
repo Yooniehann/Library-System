@@ -79,7 +79,7 @@ h1, h2 { color: #FFD369; }
 </li>
 
 
-        <li onclick="location.href='{{ route('kid.achievements.index') }}'"><i class="fas fa-trophy"></i> Achievements</li>
+
         <li onclick="location.href='{{ route('kid.kidnoti.index') }}'"><i class="fas fa-bell"></i> Notifications</li>
         <li class="selected" onclick="location.href='{{ route('kid.kidcontact.index') }}'"><i class="fas fa-envelope"></i> Contact Librarian</li>
         <li onclick="location.href='{{ route('kid.kidprofile.index') }}'">

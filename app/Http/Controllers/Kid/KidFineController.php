@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\Kid; // <-- correct namespace
+namespace App\Http\Controllers\Kid;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
@@ -10,17 +10,16 @@ use Illuminate\Support\Facades\Auth;
 use Carbon\Carbon;
 
 class KidFineController extends Controller
-
 {
-    // Show fines & payments page
+    /**
+     * Display the list of fines & payments for the logged-in kid.
+     */
     public function index(Request $request)
     {
-        $userId = Auth::id(); // Logged-in kid ID
+        $userId = Auth::id();
 
         $query = Fine::with(['borrow.book', 'payment'])
-                     ->whereHas('borrow', function ($q) use ($userId) {
-                         $q->where('user_id', $userId);
-                     });
+                     ->whereHas('borrow', fn($q) => $q->where('user_id', $userId));
 
         // Optional search filter
         if ($request->filled('search')) {
@@ -28,10 +27,8 @@ class KidFineController extends Controller
             $query->where(function($q) use ($search) {
                 $q->where('fine_type', 'like', "%{$search}%")
                   ->orWhere('description', 'like', "%{$search}%")
-                  ->orWhereHas('borrow.book', function($q2) use ($search) {
-                      $q2->where('title', 'like', "%{$search}%");
-                  })
-                  ->orWhere('borrow_id', 'like', "%{$search}%");
+                  ->orWhere('borrow_id', 'like', "%{$search}%")
+                  ->orWhereHas('borrow.book', fn($q2) => $q2->where('title', 'like', "%{$search}%"));
             });
         }
 
@@ -40,32 +37,37 @@ class KidFineController extends Controller
         return view('dashboard.kid.kidfinepay', compact('fines'));
     }
 
-    // Mark fine as paid
+    /**
+     * Process the payment for a fine.
+     */
     public function pay(Fine $fine)
     {
         $userId = Auth::id();
 
-        // Check if this fine belongs to the logged-in kid
+        // Ensure this fine belongs to the logged-in kid
         if ($fine->borrow->user_id != $userId) {
             abort(403, 'Unauthorized action.');
         }
 
-        if ($fine->status == 'paid') {
-            return redirect()->back()->with('message', 'This fine is already paid.');
+        if ($fine->status === 'paid') {
+            return redirect()->back()->with('success', 'This fine is already paid.');
         }
 
         // Create a payment record
         $payment = Payment::create([
-            'user_id' => $userId,
-            'fine_id' => $fine->fine_id,
-            'amount' => $fine->amount_per_day, // You can adjust if needed
-            'payment_type' => 'Fine Payment',
-            'payment_method' => 'Online', // Or 'Cash' if you prefer
-            'payment_date' => Carbon::now(),
-            'status' => 'completed'
-        ]);
+    'user_id' => $userId,
+    'membership_type_id' => $fine->borrow->user->membership_type_id ?? null,
+    'fine_id' => $fine->fine_id,
+    'amount' => $fine->total_amount,
+    'payment_type' => 'Fine',   // shortened to fit DB
+    'payment_method' => 'Online',
+    'payment_date' => now(),
+    'transaction_id' => null,
+    'notes' => 'Payment for fine #' . $fine->fine_id,
+    'status' => 'completed',
+]);
 
-        // Update fine status
+        // Update fine status and link to payment
         $fine->status = 'paid';
         $fine->payment_id = $payment->payment_id;
         $fine->save();

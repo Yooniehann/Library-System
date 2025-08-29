@@ -118,7 +118,58 @@ h1,h2 { color:#FFD369; }
         </div>
     </section>
 </div>
+<form id="logoutForm" action="{{ route('logout') }}" method="POST" class="hidden">@csrf</form>
 
+<div id="toast" class="toast"></div>
+
+<!-- Logout Confirmation Modal -->
+<div id="logoutModal" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 hidden z-50">
+  <div class="bg-[#0f172a] text-white rounded-2xl shadow-2xl p-6 w-80 transform scale-95 transition-all duration-200" id="logoutCard" style="background-color:#0f172a; opacity:1;">
+    <h2 class="text-xl font-bold text-yellow-400 mb-4 flex items-center justify-center gap-2">
+      <i class="fas fa-sign-out-alt"></i> Confirm Logout
+    </h2>
+    <p class="text-gray-300 mb-6 text-sm">Are you sure you want to log out of your account?</p>
+    <div class="flex justify-center gap-4">
+      <button id="confirmLogout" class="px-4 py-2 bg-red-500 hover:bg-red-600 text-white rounded-lg shadow">
+        Yes
+      </button>
+      <button id="cancelLogout" class="px-4 py-2 bg-gray-600 hover:bg-gray-700 text-white rounded-lg shadow">
+        Cancel
+      </button>
+    </div>
+  </div>
+</div>
+
+<script>
+const logoutBtn = document.getElementById("logoutNav");
+const logoutModal = document.getElementById("logoutModal");
+const confirmLogout = document.getElementById("confirmLogout");
+const cancelLogout = document.getElementById("cancelLogout");
+const logoutForm = document.getElementById("logoutForm");
+const logoutCard = document.getElementById("logoutCard");
+
+logoutBtn.addEventListener("click", () => {
+  logoutModal.classList.remove("hidden");
+  setTimeout(() => {
+    logoutCard.classList.remove("scale-95");
+    logoutCard.classList.add("scale-100");
+  }, 10);
+});
+
+confirmLogout.addEventListener("click", () => {
+  logoutForm.submit();
+});
+
+cancelLogout.addEventListener("click", () => {
+  logoutModal.classList.add("hidden");
+});
+
+logoutModal.addEventListener("click", (e) => {
+  if (e.target === logoutModal) {
+    logoutModal.classList.add("hidden");
+  }
+});
+</script>
 <script>
 const sidebar = document.getElementById('sidebar');
 const openBtn = document.getElementById('openBtn');

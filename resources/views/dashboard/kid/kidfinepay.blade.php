@@ -111,47 +111,102 @@ body { background: #0f172a; color: #fff; font-family: 'Open Sans', sans-serif; }
         </form>
     </div>
 
-    <!-- Fines & Payments List -->
-    <div class="space-y-4">
-        @forelse($fines ?? [] as $fine)
-        <div class="fine-card">
-            <div class="fine-info">
-                <p class="text-white font-semibold">
-                    {{ $fine->borrow->book->title ?? 'Unknown Book' }}
-                    <span class="text-gray-400 text-sm">(#Borrow ID: {{ $fine->borrow_id }})</span>
-                </p>
-                <p class="text-gray-400 text-sm">Fine Type: {{ ucfirst($fine->fine_type) }}</p>
-                <p class="text-gray-400 text-sm">Description: {{ $fine->description }}</p>
-                <p class="text-gray-400 text-sm">Fine Date: {{ $fine->fine_date->format('d M Y') }}</p>
-                <p class="text-gray-400 text-sm">Amount per Day: ${{ number_format($fine->amount_per_day, 2) }}</p>
-            </div>
-            <div class="flex flex-col items-end gap-2">
-                <span class="status-badge {{ $fine->status == 'paid' ? 'bg-paid' : 'bg-unpaid' }}">
-                    {{ ucfirst($fine->status) }}
-                </span>
-                @if($fine->status != 'paid')
-                <form action="{{ route('kid.kidfines.pay', $fine->fine_id) }}" method="POST">
-                    @csrf
-                    <button type="submit" class="btn-pay"><i class="fas fa-credit-card mr-1"></i> Pay</button>
-                </form>
-                @else
-                <p class="text-green-300 text-sm">
-                    Paid on: {{ $fine->payment->payment_date->format('d M Y') ?? '-' }}
-                </p>
-                @endif
-            </div>
+  <!-- Fines & Payments List -->
+<div class="space-y-4">
+    @forelse($fines ?? [] as $fine)
+    <div class="fine-card bg-slate-800 rounded-lg p-4 flex justify-between items-start shadow">
+        <div class="fine-info">
+            <p class="text-white font-semibold">
+                {{ $fine->borrow->book->title ?? 'Unknown Book' }}
+                <span class="text-gray-400 text-sm">(#Borrow ID: {{ $fine->borrow_id }})</span>
+            </p>
+            <p class="text-gray-400 text-sm">Fine Type: {{ ucfirst($fine->fine_type) }}</p>
+            <p class="text-gray-400 text-sm">Description: {{ $fine->description }}</p>
+            <p class="text-gray-400 text-sm">Fine Date: {{ $fine->fine_date->format('d M Y') }}</p>
+            <p class="text-gray-400 text-sm">Amount per Day: ${{ number_format($fine->amount_per_day, 2) }}</p>
         </div>
-        @empty
-        <div class="bg-slate-800 rounded-lg shadow p-6 text-center">
-            <i class="fas fa-check-circle text-4xl text-gray-400 mb-4"></i>
-            <h3 class="text-lg font-medium text-white mb-2">No fines found</h3>
-            <p class="text-gray-400 mb-4">You currently have no fines or pending payments.</p>
+
+        <div class="flex flex-col items-end gap-2">
+            <span class="status-badge {{ $fine->status == 'paid' ? 'bg-green-600' : 'bg-red-600' }}">
+    {{ ucfirst($fine->status) }}
+</span>
+
+
+            @if($fine->status != 'paid')
+                <!-- Link to process payment page -->
+                <a href="{{ route('kid.kidprocesspay.index', $fine->fine_id) }}"
+                   class="btn-pay flex items-center justify-center mt-2">
+                   <i class="fas fa-credit-card mr-1"></i> Pay
+                </a>
+            @else
+                <p class="text-green-300 text-sm mt-2">
+    Paid on: {{ $fine->payment ? \Carbon\Carbon::parse($fine->payment->payment_date)->format('d M Y') : '-' }}
+</p>
+
+            @endif
         </div>
-        @endforelse
     </div>
+    @empty
+    <div class="bg-slate-800 rounded-lg shadow p-6 text-center">
+        <i class="fas fa-check-circle text-4xl text-gray-400 mb-4"></i>
+        <h3 class="text-lg font-medium text-white mb-2">No fines found</h3>
+        <p class="text-gray-400 mb-4">You currently have no fines or pending payments.</p>
+    </div>
+    @endforelse
 </div>
 
+<form id="logoutForm" action="{{ route('logout') }}" method="POST" class="hidden">@csrf</form>
 
+<div id="toast" class="toast"></div>
+
+<!-- Logout Confirmation Modal -->
+<div id="logoutModal" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 hidden z-50">
+  <div class="bg-[#0f172a] text-white rounded-2xl shadow-2xl p-6 w-80 transform scale-95 transition-all duration-200" id="logoutCard" style="background-color:#0f172a; opacity:1;">
+    <h2 class="text-xl font-bold text-yellow-400 mb-4 flex items-center justify-center gap-2">
+      <i class="fas fa-sign-out-alt"></i> Confirm Logout
+    </h2>
+    <p class="text-gray-300 mb-6 text-sm">Are you sure you want to log out of your account?</p>
+    <div class="flex justify-center gap-4">
+      <button id="confirmLogout" class="px-4 py-2 bg-red-500 hover:bg-red-600 text-white rounded-lg shadow">
+        Yes
+      </button>
+      <button id="cancelLogout" class="px-4 py-2 bg-gray-600 hover:bg-gray-700 text-white rounded-lg shadow">
+        Cancel
+      </button>
+    </div>
+  </div>
+</div>
+
+<script>
+const logoutBtn = document.getElementById("logoutNav");
+const logoutModal = document.getElementById("logoutModal");
+const confirmLogout = document.getElementById("confirmLogout");
+const cancelLogout = document.getElementById("cancelLogout");
+const logoutForm = document.getElementById("logoutForm");
+const logoutCard = document.getElementById("logoutCard");
+
+logoutBtn.addEventListener("click", () => {
+  logoutModal.classList.remove("hidden");
+  setTimeout(() => {
+    logoutCard.classList.remove("scale-95");
+    logoutCard.classList.add("scale-100");
+  }, 10);
+});
+
+confirmLogout.addEventListener("click", () => {
+  logoutForm.submit();
+});
+
+cancelLogout.addEventListener("click", () => {
+  logoutModal.classList.add("hidden");
+});
+
+logoutModal.addEventListener("click", (e) => {
+  if (e.target === logoutModal) {
+    logoutModal.classList.add("hidden");
+  }
+});
+</script>
 <script>
 function closeNav() {
     document.getElementById('sidebar').style.transform = 'translateX(-100%)';

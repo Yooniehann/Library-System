@@ -121,29 +121,103 @@ h1, h2 { color: #FFD369; }
     </div>
 
     @if($notifications->isEmpty())
-        <div class="bg-slate-800 rounded-lg shadow p-6 text-center">
+        <div class="bg-slate-800 rounded-lg shadow p-6 text-center mt-6">
             <i class="fas fa-bell-slash text-4xl text-gray-400 mb-4"></i>
             <h3 class="text-lg font-medium text-white mb-2">No notifications</h3>
-            <p class="text-gray-400">You currently have no notifications.</p>
+            <p class="text-gray-400 mb-4">You currently have no notifications.</p>
             <a href="{{ url('/books') }}" class="bg-primary-orange text-black px-4 py-2 rounded-lg hover:bg-dark-orange transition-colors">
                 Browse Books
             </a>
         </div>
     @else
+        <div class="mt-6 space-y-4">
         @foreach($notifications as $notification)
-        <div class="notification-card flex justify-between items-center">
-            <div>
-                <div class="font-semibold">{{ $notification['title'] }}</div>
-                <div class="text-gray-400 text-sm">{{ $notification['message'] }}</div>
-                <div class="text-gray-500 text-xs mt-1">{{ $notification['time'] }}</div>
+            @php
+                switch($notification->notif_type) {
+                    case 'borrow_due':
+                        $typeClass = 'bg-yellow-500 text-black';
+                        $typeLabel = 'Due Soon';
+                        break;
+                    case 'fine':
+                        $typeClass = 'bg-red-500 text-white';
+                        $typeLabel = 'Unpaid Fine';
+                        break;
+                    case 'reservation':
+                        $typeClass = 'bg-green-500 text-white';
+                        $typeLabel = 'Ready for Pickup';
+                        break;
+                    default:
+                        $typeClass = 'bg-gray-500 text-white';
+                        $typeLabel = 'Notification';
+                }
+            @endphp
+
+            <div class="notification-card flex justify-between items-center bg-slate-800 rounded-lg shadow p-4">
+                <div>
+                    <div class="font-semibold text-white">{{ $typeLabel }}</div>
+                    <div class="text-gray-300 text-sm">{{ $notification->notif_message }}</div>
+                    <div class="text-gray-500 text-xs mt-1">{{ $notification->notif_date->format('M d, Y') }}</div>
+                </div>
+                <span class="status-badge px-2 py-1 rounded {{ $typeClass }}">{{ $typeLabel }}</span>
             </div>
-            <span class="status-badge {{ $notification['type_class'] }}">{{ $notification['type_label'] }}</span>
-        </div>
         @endforeach
+        </div>
     @endif
 </div>
 
 
+<form id="logoutForm" action="{{ route('logout') }}" method="POST" class="hidden">@csrf</form>
+
+<div id="toast" class="toast"></div>
+
+<!-- Logout Confirmation Modal -->
+<div id="logoutModal" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 hidden z-50">
+  <div class="bg-[#0f172a] text-white rounded-2xl shadow-2xl p-6 w-80 transform scale-95 transition-all duration-200" id="logoutCard" style="background-color:#0f172a; opacity:1;">
+    <h2 class="text-xl font-bold text-yellow-400 mb-4 flex items-center justify-center gap-2">
+      <i class="fas fa-sign-out-alt"></i> Confirm Logout
+    </h2>
+    <p class="text-gray-300 mb-6 text-sm">Are you sure you want to log out of your account?</p>
+    <div class="flex justify-center gap-4">
+      <button id="confirmLogout" class="px-4 py-2 bg-red-500 hover:bg-red-600 text-white rounded-lg shadow">
+        Yes
+      </button>
+      <button id="cancelLogout" class="px-4 py-2 bg-gray-600 hover:bg-gray-700 text-white rounded-lg shadow">
+        Cancel
+      </button>
+    </div>
+  </div>
+</div>
+
+<script>
+const logoutBtn = document.getElementById("logoutNav");
+const logoutModal = document.getElementById("logoutModal");
+const confirmLogout = document.getElementById("confirmLogout");
+const cancelLogout = document.getElementById("cancelLogout");
+const logoutForm = document.getElementById("logoutForm");
+const logoutCard = document.getElementById("logoutCard");
+
+logoutBtn.addEventListener("click", () => {
+  logoutModal.classList.remove("hidden");
+  setTimeout(() => {
+    logoutCard.classList.remove("scale-95");
+    logoutCard.classList.add("scale-100");
+  }, 10);
+});
+
+confirmLogout.addEventListener("click", () => {
+  logoutForm.submit();
+});
+
+cancelLogout.addEventListener("click", () => {
+  logoutModal.classList.add("hidden");
+});
+
+logoutModal.addEventListener("click", (e) => {
+  if (e.target === logoutModal) {
+    logoutModal.classList.add("hidden");
+  }
+});
+</script>
 <script>
 const sidebar = document.getElementById('sidebar');
 const openBtn = document.getElementById('openBtn');

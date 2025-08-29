@@ -26,6 +26,7 @@ use App\Http\Controllers\Admin\AdminPaymentController;
 use App\Http\Controllers\Admin\SearchController;
 use App\Http\Controllers\Admin\SimulationController;
 
+//kids
 use App\Http\Controllers\Kid\BorrowedController;
 use App\Http\Controllers\Kid\KidDashboardController;
 use App\Http\Controllers\Kid\KidReservationController;
@@ -34,6 +35,7 @@ use App\Http\Controllers\Kid\AchievementController;
 use App\Http\Controllers\Kid\KidNotificationController;
 use App\Http\Controllers\Kid\KidContactController;
 use App\Http\Controllers\Kid\KidProfileController;
+use App\Http\Controllers\Kid\KidProcessPayController;
 
 /*
 |--------------------------------------------------------------------------
@@ -365,6 +367,8 @@ Route::post('/reservations/{id}/cancel', [KidReservationController::class, 'canc
   Route::get('/fines', [KidFineController::class, 'index'])->name('kidfinepay.index');
 Route::post('/fines/{fine}/pay', [KidFineController::class, 'pay'])->name('kidfines.pay');
 
+ // Process payment page
+    Route::get('/fines/{fine}/process', [KidProcessPayController::class, 'index'])->name('kidprocesspay.index');
 
     // Notifications
 Route::get('/notifications', [KidNotificationController::class, 'index'])->name('kidnoti.index');

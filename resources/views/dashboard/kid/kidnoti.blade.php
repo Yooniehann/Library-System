@@ -101,7 +101,7 @@ h1, h2 { color: #FFD369; }
         <li class="selected" onclick="location.href='{{ route('kid.kidnoti.index') }}'"><i class="fas fa-bell"></i> Notifications</li>
         <li onclick="window.location='{{ route('kid.kidcontact.index') }}'" class="flex items-center px-4 py-3 text-sm font-medium text-gray-300 hover:text-white hover:bg-slate-700 rounded-lg">
             <i class="fas fa-book-open mr-3"></i> Contact </li>
-       <li onclick="location.href='{{ route('kid.kidprofile.index') }}'">
+       <li onclick="location.href='{{ route('profile.edit') }}'">
     <i class="fas fa-user-cog"></i> Profile Setting
 </li>
 

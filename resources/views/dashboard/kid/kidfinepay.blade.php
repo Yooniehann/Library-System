@@ -72,7 +72,7 @@ body { background: #0f172a; color: #fff; font-family: 'Open Sans', sans-serif; }
 
         <li onclick="location.href='{{ route('kid.kidnoti.index') }}'"><i class="fas fa-bell"></i> Notifications</li>
         <li onclick="location.href='{{ route('kid.kidcontact.index') }}'"><i class="fas fa-envelope"></i> Contact Librarian</li>
-        <li onclick="location.href='{{ route('kid.kidprofile.index') }}'">
+        <li onclick="location.href='{{ route('profile.edit') }}'">
     <i class="fas fa-user-cog"></i> Profile Setting
 </li>
 

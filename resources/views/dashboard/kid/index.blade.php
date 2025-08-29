@@ -238,7 +238,7 @@ table th, table td { white-space: nowrap; }
             <i class="fas fa-book-open mr-3"></i> Notifications </li>
               <li onclick="location.href='{{ route('kid.kidcontact.index') }}'"><i class="fas fa-envelope"></i> Contact Librarian</li>
 
-                      <li onclick="location.href='{{ route('kid.kidprofile.index') }}'">
+                      <li onclick="location.href='{{ route('profile.edit') }}'">
     <i class="fas fa-user-cog"></i> Profile Setting
 </li>
 

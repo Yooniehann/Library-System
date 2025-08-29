@@ -19,7 +19,8 @@ use App\Http\Controllers\{
     ReservationController,
     NotificationController,
     FineController,
-    PaymentController
+    PaymentController,
+    DashboardController
 };
 use App\Http\Controllers\Admin\AdminFineController;
 use App\Http\Controllers\Admin\IssuedBooksController;
@@ -348,9 +349,7 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'verified', 'role:Ad
 
 // Member routes
 Route::middleware(['auth', 'verified', 'role:Member'])->prefix('member')->name('member.')->group(function () {
-    Route::get('/dashboard', function () {
-        return view('dashboard.member.index');
-    })->name('dashboard');
+    Route::get('/dashboard', [App\Http\Controllers\DashboardController::class, 'index'])->name('dashboard');
 
     // Fines routes
     Route::get('/fines', [FineController::class, 'index'])->name('fines.index');

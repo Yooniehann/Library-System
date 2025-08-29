@@ -827,7 +827,7 @@
                 Become a member today and unlock access to our vast collection of resources and services.
             </p>
             <div class="flex flex-wrap justify-center gap-4">
-                <a href="/contact" class="btn-primary">Become a Member</a>
+                <a href="#membership-plans" class="btn-primary">Become a Member</a>
                 <a href="#faq-section" class="btn-outline">Browse Questions</a>
             </div>
         </div>

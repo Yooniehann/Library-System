@@ -294,7 +294,7 @@
                             <i class="fas fa-money-bill-wave mr-4"></i>
                             Fines 
                         </a>
-                        <a href="{{ route('member.fines.index')}}" class="flex items-center px-2 py-2 text-base font-medium text-gray-300 hover:text-white hover:bg-slate-700 rounded-lg">
+                        <a href="{{ route('member.payments.index')}}" class="flex items-center px-2 py-2 text-base font-medium text-gray-300 hover:text-white hover:bg-slate-700 rounded-lg">
                             <i class="fas fa-money-bill-wave mr-4"></i>
                             Payments
                         </a>
@@ -303,7 +303,7 @@
                             <i class="fa-solid fa-bell mr-4"></i>
                             Notification
                         </a>
-                        <a href="#" class="flex items-center px-2 py-2 text-base font-medium text-gray-300 hover:text-white hover:bg-slate-700 rounded-lg">
+                        <a href="{{ route('profile.edit') }}" class="flex items-center px-2 py-2 text-base font-medium text-gray-300 hover:text-white hover:bg-slate-700 rounded-lg">
                             <i class="fas fa-user-cog mr-4"></i>
                             Profile Settings
                         </a>

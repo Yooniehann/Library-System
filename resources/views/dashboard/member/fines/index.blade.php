@@ -54,7 +54,7 @@
                             <i class="fas fa-money-bill-wave mr-3"></i>
                             Payments
                         </a>
-                        <a href="#" class="flex items-center px-4 py-3 text-sm font-medium text-gray-300 hover:text-white hover:bg-slate-700 rounded-lg">
+                        <a href="{{ route('member.notifications.index') }}" class="flex items-center px-4 py-3 text-sm font-medium text-gray-300 hover:text-white hover:bg-slate-700 rounded-lg">
                             <i class="fa-solid fa-bell mr-3"></i>
                             Notification
                         </a>

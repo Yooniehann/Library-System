@@ -23,6 +23,12 @@ class Payment extends Model
         'status'
     ];
 
+    // Add this cast to ensure payment_date is treated as a date
+    protected $casts = [
+        'payment_date' => 'datetime',
+        'amount' => 'decimal:2',
+    ];
+
     // Relationships
     public function user()
     {

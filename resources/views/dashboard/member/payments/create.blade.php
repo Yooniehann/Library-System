@@ -32,7 +32,8 @@
                             <i class="fas fa-tachometer-alt mr-3"></i>
                             Dashboard
                         </a>
-                        <a href="{{ route('books.index') }}" class="flex items-center px-4 py-3 text-sm font-medium text-gray-300 hover:text-white hover:bg-slate-700 rounded-lg">
+                        <a href="{{ route('books.index') }}"
+                            class="flex items-center px-4 py-3 text-sm font-medium text-gray-300 hover:text-white hover:bg-slate-700 rounded-lg">
                             <i class="fa-solid fa-house mr-3"></i>
                             Home
                         </a>
@@ -45,7 +46,7 @@
                             My Reservations
                         </a>
                         <!-- ACTIVE LINK for this page -->
-                        <a href="{{ route('member.payments.create') }}" class="flex items-center px-4 py-3 text-sm font-medium text-white bg-dark-orange rounded-lg">
+                        <a href="{{ route('member.payments.create')}}" class="flex items-center px-4 py-3 text-sm font-medium text-white bg-dark-orange rounded-lg">
                             <i class="fas fa-money-bill-wave mr-3"></i>
                             Fines & Payments
                         </a>
@@ -84,166 +85,141 @@
 
             <!-- Main Content Area -->
             <main class="flex-1 overflow-y-auto p-4 md:p-6">
-                <div class="mb-6">
-                    <div class="flex items-center justify-between">
-                        <div>
-                            <h1 class="text-2xl font-bold text-white">Make Payment</h1>
-                            <p class="text-gray-400">Pay your fines or membership fees</p>
-                        </div>
-                        <a href="{{ route('member.payments.index') }}" class="bg-slate-700 text-white px-4 py-2 rounded-lg hover:bg-slate-600 transition-colors">
-                            <i class="fas fa-arrow-left mr-2"></i> Back to Payments
-                        </a>
+                <div class="flex justify-between items-center mb-6">
+                    <div>
+                        <h1 class="text-2xl font-bold text-white">Make a Payment</h1>
+                        <p class="text-gray-400">Pay your outstanding fines</p>
                     </div>
+                    <a href="{{ route('member.fines.index') }}" class="bg-slate-700 text-white px-4 py-2 rounded-lg hover:bg-slate-600 transition-colors">
+                        <i class="fas fa-arrow-left mr-2"></i> Back to Fines
+                    </a>
                 </div>
 
-                @if(session('error'))
-                    <div class="bg-red-900 border border-red-700 text-red-300 px-4 py-3 rounded-lg mb-6">
-                        <i class="fas fa-exclamation-circle mr-2"></i> {{ session('error') }}
-                    </div>
-                @endif
-
-                <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                    <!-- Payment Form -->
-                    <div class="lg:col-span-2">
-                        <div class="bg-slate-800 rounded-lg shadow p-6">
-                            <h2 class="text-lg font-semibold text-white mb-4">Payment Details</h2>
+                <div class="max-w-2xl mx-auto">
+                    @if($fine)
+                    <!-- Payment for specific fine -->
+                    <div class="bg-slate-800 rounded-lg shadow p-6 mb-6">
+                        <h2 class="text-lg font-semibold text-white mb-4 border-b border-slate-700 pb-2">Paying Fine #{{ $fine->fine_id }}</h2>
+                        
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                            <div>
+                                <p class="text-gray-400 text-sm">Book</p>
+                                <p class="text-white">{{ $fine->borrow->inventory->book->title }}</p>
+                            </div>
                             
-                            <form method="POST" action="{{ route('member.payments.store') }}">
-                                @csrf
-
-                                <div class="mb-4">
-                                    <label for="payment_type" class="block text-sm font-medium text-gray-400 mb-2">Payment Type</label>
-                                    <select class="w-full px-4 py-2 bg-slate-700 border border-slate-600 rounded-lg text-white focus:outline-none focus:border-primary-orange" 
-                                            id="payment_type" name="payment_type" required>
-                                        <option value="">Select Payment Type</option>
-                                        <option value="fine" {{ old('payment_type') === 'fine' ? 'selected' : '' }}>Fine Payment</option>
-                                        <option value="membership_fee" {{ old('payment_type') === 'membership_fee' ? 'selected' : '' }}>Membership Fee</option>
-                                    </select>
-                                    @error('payment_type')
-                                        <div class="text-red-400 text-sm mt-1">{{ $message }}</div>
-                                    @enderror
-                                </div>
-
-                                <div id="fine-section" class="mb-4" style="display: none;">
-                                    <label for="fine_id" class="block text-sm font-medium text-gray-400 mb-2">Select Fine</label>
-                                    <select class="w-full px-4 py-2 bg-slate-700 border border-slate-600 rounded-lg text-white focus:outline-none focus:border-primary-orange" 
-                                            id="fine_id" name="fine_id">
-                                        <option value="">Select Fine to Pay</option>
-                                        @foreach($unpaidFines as $unpaidFine)
-                                            <option value="{{ $unpaidFine->fine_id }}" 
-                                                {{ (old('fine_id') == $unpaidFine->fine_id || ($fine && $fine->fine_id == $unpaidFine->fine_id)) ? 'selected' : '' }}
-                                                data-amount="{{ $unpaidFine->amount_per_day }}">
-                                                {{ $unpaidFine->borrow->book->title }} - RM {{ number_format($unpaidFine->amount_per_day, 2) }} ({{ ucfirst($unpaidFine->fine_type) }})
-                                            </option>
-                                        @endforeach
-                                    </select>
-                                    @error('fine_id')
-                                        <div class="text-red-400 text-sm mt-1">{{ $message }}</div>
-                                    @enderror
-                                </div>
-
-                                <div id="membership-section" class="mb-4" style="display: none;">
-                                    <label for="membership_type_id" class="block text-sm font-medium text-gray-400 mb-2">Select Membership</label>
-                                    <select class="w-full px-4 py-2 bg-slate-700 border border-slate-600 rounded-lg text-white focus:outline-none focus:border-primary-orange" 
-                                            id="membership_type_id" name="membership_type_id">
-                                        <option value="">Select Membership Type</option>
-                                        @foreach($membershipTypes as $membershipType)
-                                            <option value="{{ $membershipType->membership_type_id }}" 
-                                                {{ old('membership_type_id') == $membershipType->membership_type_id ? 'selected' : '' }}
-                                                data-amount="{{ $membershipType->price }}">
-                                                {{ $membershipType->name }} - RM {{ number_format($membershipType->price, 2) }} ({{ ucfirst($membershipType->duration) }})
-                                            </option>
-                                        @endforeach
-                                    </select>
-                                    @error('membership_type_id')
-                                        <div class="text-red-400 text-sm mt-1">{{ $message }}</div>
-                                    @enderror
-                                </div>
-
-                                <div class="mb-4">
-                                    <label for="amount" class="block text-sm font-medium text-gray-400 mb-2">Amount (RM)</label>
-                                    <input type="number" class="w-full px-4 py-2 bg-slate-700 border border-slate-600 rounded-lg text-white focus:outline-none focus:border-primary-orange" 
-                                           id="amount" name="amount" value="{{ old('amount') }}" step="0.01" min="0.01" required readonly>
-                                    @error('amount')
-                                        <div class="text-red-400 text-sm mt-1">{{ $message }}</div>
-                                    @enderror
-                                </div>
-
-                                <div class="mb-4">
-                                    <label for="payment_method" class="block text-sm font-medium text-gray-400 mb-2">Payment Method</label>
-                                    <select class="w-full px-4 py-2 bg-slate-700 border border-slate-600 rounded-lg text-white focus:outline-none focus:border-primary-orange" 
-                                            id="payment_method" name="payment_method" required>
-                                        <option value="">Select Payment Method</option>
-                                        <option value="cash" {{ old('payment_method') === 'cash' ? 'selected' : '' }}>Cash</option>
-                                        <option value="card" {{ old('payment_method') === 'card' ? 'selected' : '' }}>Credit/Debit Card</option>
-                                        <option value="online" {{ old('payment_method') === 'online' ? 'selected' : '' }}>Online Payment</option>
-                                    </select>
-                                    @error('payment_method')
-                                        <div class="text-red-400 text-sm mt-1">{{ $message }}</div>
-                                    @enderror
-                                </div>
-
-                                <div class="mb-6">
-                                    <label for="notes" class="block text-sm font-medium text-gray-400 mb-2">Notes (Optional)</label>
-                                    <textarea class="w-full px-4 py-2 bg-slate-700 border border-slate-600 rounded-lg text-white focus:outline-none focus:border-primary-orange" 
-                                              id="notes" name="notes" rows="3" placeholder="Any additional notes...">{{ old('notes') }}</textarea>
-                                    @error('notes')
-                                        <div class="text-red-400 text-sm mt-1">{{ $message }}</div>
-                                    @enderror
-                                </div>
-
-                                <div class="text-center">
-                                    <button type="submit" class="bg-primary-orange text-black px-8 py-3 rounded-lg hover:bg-dark-orange transition-colors font-semibold">
-                                        <i class="fas fa-credit-card mr-2"></i> Process Payment
-                                    </button>
-                                </div>
-                            </form>
+                            <div>
+                                <p class="text-gray-400 text-sm">Fine Type</p>
+                                <p class="text-white">
+                                    <span class="px-2 py-1 text-xs font-semibold rounded-full 
+                                        {{ $fine->fine_type === 'overdue' ? 'bg-yellow-900 text-yellow-300' : 
+                                           ($fine->fine_type === 'lost' ? 'bg-red-900 text-red-300' : 'bg-gray-600 text-gray-300') }}">
+                                        {{ ucfirst($fine->fine_type) }}
+                                    </span>
+                                </p>
+                            </div>
+                            
+                            <div>
+                                <p class="text-gray-400 text-sm">Total Amount Due</p>
+                                <p class="text-red-400 font-bold">${{ number_format($fine->total_amount, 2) }}</p>
+                            </div>
+                            
+                            <div>
+                                <p class="text-gray-400 text-sm">Amount Already Paid</p>
+                                <p class="text-white">${{ number_format($fine->payment ? $fine->payment->amount : 0, 2) }}</p>
+                            </div>
+                            
+                            <div class="md:col-span-2">
+                                <p class="text-gray-400 text-sm">Remaining Balance</p>
+                                <p class="text-green-400 font-bold text-xl">${{ number_format($fine->total_amount - ($fine->payment ? $fine->payment->amount : 0), 2) }}</p>
+                            </div>
                         </div>
                     </div>
-
-                    <!-- Unpaid Fines Summary -->
-                    <div>
-                        <div class="bg-slate-800 rounded-lg shadow p-6">
-                            <h2 class="text-lg font-semibold text-white mb-4">Unpaid Fines Summary</h2>
-                            
-                            @if($unpaidFines->isEmpty())
-                                <div class="text-center text-gray-400 py-8">
-                                    <i class="fas fa-check-circle text-4xl mb-3"></i>
-                                    <p>No unpaid fines</p>
-                                </div>
-                            @else
-                                <div class="space-y-3">
-                                    @foreach($unpaidFines as $unpaidFine)
-                                    <div class="bg-slate-700 p-3 rounded-lg">
-                                        <div class="flex justify-between items-start">
-                                            <div class="flex-1">
-                                                <div class="text-sm font-medium text-white">{{ $unpaidFine->borrow->book->title }}</div>
-                                                <div class="text-xs text-gray-400">{{ ucfirst($unpaidFine->fine_type) }}</div>
-                                            </div>
-                                            <div class="text-sm font-semibold text-white">RM {{ number_format($unpaidFine->amount_per_day, 2) }}</div>
-                                        </div>
-                                        <div class="text-xs text-gray-400 mt-2">
-                                            Due: {{ $unpaidFine->fine_date->format('M d, Y') }}
-                                        </div>
-                                        <a href="{{ route('member.payments.create.fine', $unpaidFine->fine_id) }}" 
-                                           class="text-xs text-primary-orange hover:text-dark-orange mt-2 inline-block">
-                                            <i class="fas fa-credit-card mr-1"></i> Pay this fine
-                                        </a>
-                                    </div>
-                                    @endforeach
-                                </div>
-                                
-                                <div class="mt-4 pt-4 border-t border-slate-700">
-                                    <div class="flex justify-between items-center">
-                                        <span class="text-gray-400">Total Unpaid:</span>
-                                        <span class="text-lg font-semibold text-white">
-                                            RM {{ number_format($unpaidFines->sum('amount_per_day'), 2) }}
-                                        </span>
-                                    </div>
-                                </div>
-                            @endif
+                    @else
+                    <!-- Select fine to pay -->
+                    <div class="bg-slate-800 rounded-lg shadow p-6 mb-6">
+                        <h2 class="text-lg font-semibold text-white mb-4 border-b border-slate-700 pb-2">Select Fine to Pay</h2>
+                        
+                        <div class="form-group mb-4">
+                            <label for="fineSelect" class="block text-gray-400 text-sm mb-2">Choose a fine to pay</label>
+                            <select class="w-full px-4 py-2 bg-slate-700 border border-slate-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-primary-orange" 
+                                    id="fineSelect" onchange="location = this.value;">
+                                <option value="">-- Select a fine --</option>
+                                @foreach($unpaidFines as $unpaidFine)
+                                <option value="{{ route('member.payments.create', $unpaidFine->fine_id) }}" 
+                                    {{ $fine && $fine->fine_id == $unpaidFine->fine_id ? 'selected' : '' }}>
+                                    Fine #{{ $unpaidFine->fine_id }} - {{ $unpaidFine->borrow->inventory->book->title }} - 
+                                    ${{ number_format($unpaidFine->total_amount, 2) }}
+                                </option>
+                                @endforeach
+                            </select>
                         </div>
+                        
+                        @if($unpaidFines->isEmpty())
+                        <div class="bg-slate-700 rounded-lg p-4 text-center">
+                            <i class="fas fa-check-circle text-green-400 text-2xl mb-2"></i>
+                            <p class="text-gray-300">You don't have any unpaid fines.</p>
+                        </div>
+                        @endif
                     </div>
+                    @endif
+
+                    @if($fine)
+                    <div class="bg-slate-800 rounded-lg shadow p-6">
+                        <h2 class="text-lg font-semibold text-white mb-4 border-b border-slate-700 pb-2">Payment Details</h2>
+                        
+                        <form action="{{ route('member.payments.store') }}" method="POST">
+                            @csrf
+                            <input type="hidden" name="fine_id" value="{{ $fine->fine_id }}">
+
+                            <div class="mb-4">
+                                <label for="amount" class="block text-gray-400 text-sm mb-2">Amount to Pay *</label>
+                                <input type="number" 
+                                       class="w-full px-4 py-2 bg-slate-700 border border-slate-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-primary-orange" 
+                                       id="amount" 
+                                       name="amount" 
+                                       value="{{ $fine->total_amount - ($fine->payment ? $fine->payment->amount : 0) }}" 
+                                       min="0.01" 
+                                       max="{{ $fine->total_amount - ($fine->payment ? $fine->payment->amount : 0) }}" 
+                                       step="0.01" 
+                                       required>
+                                <p class="text-gray-500 text-xs mt-1">
+                                    Maximum amount: ${{ number_format($fine->total_amount - ($fine->payment ? $fine->payment->amount : 0), 2) }}
+                                </p>
+                            </div>
+
+                            <div class="mb-4">
+                                <label for="payment_method" class="block text-gray-400 text-sm mb-2">Payment Method *</label>
+                                <select class="w-full px-4 py-2 bg-slate-700 border border-slate-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-primary-orange" 
+                                        id="payment_method" 
+                                        name="payment_method" 
+                                        required>
+                                    <option value="">-- Select payment method --</option>
+                                    <option value="cash">Cash</option>
+                                    <option value="card">Credit/Debit Card</option>
+                                    <option value="online">Online Payment</option>
+                                </select>
+                            </div>
+
+                            <div class="mb-4">
+                                <label for="notes" class="block text-gray-400 text-sm mb-2">Notes (Optional)</label>
+                                <textarea class="w-full px-4 py-2 bg-slate-700 border border-slate-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-primary-orange" 
+                                          id="notes" 
+                                          name="notes" 
+                                          rows="3" 
+                                          placeholder="Any additional notes about this payment..."></textarea>
+                            </div>
+
+                            <div class="flex flex-col sm:flex-row gap-3 mt-6">
+                                <button type="submit" class="bg-primary-orange text-black px-6 py-3 rounded-lg hover:bg-dark-orange transition-colors font-semibold flex-1">
+                                    <i class="fas fa-credit-card mr-2"></i> Process Payment
+                                </button>
+                                <a href="{{ route('member.fines.index') }}" class="bg-slate-700 text-white px-6 py-3 rounded-lg hover:bg-slate-600 transition-colors text-center">
+                                    Cancel
+                                </a>
+                            </div>
+                        </form>
+                    </div>
+                    @endif
                 </div>
             </main>
         </div>
@@ -268,7 +244,8 @@
                             <i class="fas fa-tachometer-alt mr-4"></i>
                             Dashboard
                         </a>
-                        <a href="{{ route('books.index') }}" class="flex items-center px-2 py-2 text-base font-medium text-gray-300 hover:text-white hover:bg-slate-700 rounded-lg">
+                        <a href="{{ route('books.index') }}"
+                            class="flex items-center px-2 py-2 text-base font-medium text-gray-300 hover:text-white hover:bg-slate-700 rounded-lg">
                             <i class="fa-solid fa-house mr-4"></i>
                             Home
                         </a>
@@ -280,7 +257,8 @@
                             <i class="fas fa-bookmark mr-4"></i>
                             My Reservations
                         </a>
-                        <a href="{{ route('member.payments.create') }}" class="flex items-center px-2 py-2 text-base font-medium text-white bg-dark-orange rounded-lg">
+                        <!-- ACTIVE LINK for this page -->
+                        <a href="{{ route('member.payments.create')}}" class="flex items-center px-2 py-2 text-base font-medium text-white bg-dark-orange rounded-lg">
                             <i class="fas fa-money-bill-wave mr-4"></i>
                             Fines & Payments
                         </a>
@@ -317,57 +295,17 @@
         function toggleMobileSidebar() {
             document.getElementById('mobile-sidebar').classList.toggle('hidden');
         }
-
-        document.addEventListener('DOMContentLoaded', function() {
-            const paymentType = document.getElementById('payment_type');
-            const fineSection = document.getElementById('fine-section');
-            const membershipSection = document.getElementById('membership-section');
-            const fineSelect = document.getElementById('fine_id');
-            const membershipSelect = document.getElementById('membership_type_id');
-            const amountInput = document.getElementById('amount');
-
-            function updateSections() {
-                const selectedType = paymentType.value;
-                
-                fineSection.style.display = selectedType === 'fine' ? 'block' : 'none';
-                membershipSection.style.display = selectedType === 'membership_fee' ? 'block' : 'none';
-                
-                if (selectedType === 'fine') {
-                    fineSelect.required = true;
-                    membershipSelect.required = false;
-                    updateAmountFromSelect(fineSelect);
-                } else if (selectedType === 'membership_fee') {
-                    fineSelect.required = false;
-                    membershipSelect.required = true;
-                    updateAmountFromSelect(membershipSelect);
-                } else {
-                    fineSelect.required = false;
-                    membershipSelect.required = false;
-                    amountInput.value = '';
-                }
+        
+        // Update amount field when payment method changes
+        document.getElementById('payment_method').addEventListener('change', function() {
+            if (this.value === 'online') {
+                // For online payments, set amount to full remaining balance
+                const maxAmount = {{ $fine->total_amount - ($fine->payment ? $fine->payment->amount : 0) }};
+                document.getElementById('amount').value = maxAmount.toFixed(2);
+                document.getElementById('amount').readOnly = true;
+            } else {
+                document.getElementById('amount').readOnly = false;
             }
-
-            function updateAmountFromSelect(selectElement) {
-                const selectedOption = selectElement.options[selectElement.selectedIndex];
-                if (selectedOption && selectedOption.dataset.amount) {
-                    amountInput.value = selectedOption.dataset.amount;
-                } else {
-                    amountInput.value = '';
-                }
-            }
-
-            paymentType.addEventListener('change', updateSections);
-            fineSelect.addEventListener('change', () => updateAmountFromSelect(fineSelect));
-            membershipSelect.addEventListener('change', () => updateAmountFromSelect(membershipSelect));
-
-            // Initialize on page load
-            updateSections();
-
-            // If coming from a specific fine payment link, set the payment type
-            @if($fine)
-                paymentType.value = 'fine';
-                updateSections();
-            @endif
         });
     </script>
 </body>

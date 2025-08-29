@@ -32,7 +32,8 @@
                             <i class="fas fa-tachometer-alt mr-3"></i>
                             Dashboard
                         </a>
-                        <a href="{{ route('books.index') }}" class="flex items-center px-4 py-3 text-sm font-medium text-gray-300 hover:text-white hover:bg-slate-700 rounded-lg">
+                        <a href="{{ route('books.index') }}"
+                            class="flex items-center px-4 py-3 text-sm font-medium text-gray-300 hover:text-white hover:bg-slate-700 rounded-lg">
                             <i class="fa-solid fa-house mr-3"></i>
                             Home
                         </a>
@@ -45,7 +46,7 @@
                             My Reservations
                         </a>
                         <!-- ACTIVE LINK for this page -->
-                        <a href="{{ route('member.fines.index') }}" class="flex items-center px-4 py-3 text-sm font-medium text-white bg-dark-orange rounded-lg">
+                        <a href="{{ route('member.fines.index')}}" class="flex items-center px-4 py-3 text-sm font-medium text-white bg-dark-orange rounded-lg">
                             <i class="fas fa-money-bill-wave mr-3"></i>
                             Fines & Payments
                         </a>
@@ -84,160 +85,170 @@
 
             <!-- Main Content Area -->
             <main class="flex-1 overflow-y-auto p-4 md:p-6">
-                <div class="mb-6">
-                    <div class="flex items-center justify-between">
-                        <div>
-                            <h1 class="text-2xl font-bold text-white">Fine Details</h1>
-                            <p class="text-gray-400">Fine ID: #{{ $fine->fine_id }}</p>
-                        </div>
-                        <a href="{{ route('member.fines.index') }}" class="bg-slate-700 text-white px-4 py-2 rounded-lg hover:bg-slate-600 transition-colors">
-                            <i class="fas fa-arrow-left mr-2"></i> Back to Fines
-                        </a>
+                <div class="flex justify-between items-center mb-6">
+                    <div>
+                        <h1 class="text-2xl font-bold text-white">Fine Details</h1>
+                        <p class="text-gray-400">Fine #{{ $fine->fine_id }}</p>
                     </div>
+                    <a href="{{ route('member.fines.index') }}" class="bg-slate-700 text-white px-4 py-2 rounded-lg hover:bg-slate-600 transition-colors">
+                        <i class="fas fa-arrow-left mr-2"></i> Back to Fines
+                    </a>
                 </div>
 
-                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                    <!-- Fine Information -->
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+                    <!-- Fine Information Card -->
                     <div class="bg-slate-800 rounded-lg shadow p-6">
-                        <h2 class="text-lg font-semibold text-white mb-4">Fine Information</h2>
+                        <h2 class="text-lg font-semibold text-white mb-4 border-b border-slate-700 pb-2">Fine Information</h2>
+                        
                         <div class="space-y-4">
-                            <div class="flex justify-between items-center">
-                                <span class="text-gray-400">Fine Type:</span>
-                                <span class="px-2 py-1 text-xs font-semibold rounded-full 
-                                    @if($fine->fine_type === 'overdue') bg-yellow-900 text-yellow-300
-                                    @elseif($fine->fine_type === 'lost') bg-red-900 text-red-300
-                                    @else bg-gray-600 text-gray-300 @endif">
-                                    {{ ucfirst($fine->fine_type) }}
-                                </span>
+                            <div class="flex justify-between">
+                                <span class="text-gray-400">Fine ID:</span>
+                                <span class="text-white font-mono">#{{ $fine->fine_id }}</span>
                             </div>
-                            <div class="flex justify-between items-center">
-                                <span class="text-gray-400">Amount:</span>
-                                <span class="text-lg font-semibold text-white">RM {{ number_format($fine->amount_per_day, 2) }}</span>
-                            </div>
-                            <div class="flex justify-between items-center">
-                                <span class="text-gray-400">Fine Date:</span>
-                                <span class="text-white">{{ $fine->fine_date->format('M d, Y') }}</span>
-                            </div>
-                            <div class="flex justify-between items-center">
+                            
+                            <div class="flex justify-between">
                                 <span class="text-gray-400">Status:</span>
                                 <span class="px-2 py-1 text-xs font-semibold rounded-full 
-                                    @if($fine->status === 'unpaid') bg-red-900 text-red-300
-                                    @elseif($fine->status === 'paid') bg-green-900 text-green-300
-                                    @else bg-blue-900 text-blue-300 @endif">
+                                    {{ $fine->status === 'paid' ? 'bg-green-900 text-green-300' : 
+                                       ($fine->status === 'waived' ? 'bg-blue-900 text-blue-300' : 'bg-red-900 text-red-300') }}">
                                     {{ ucfirst($fine->status) }}
                                 </span>
                             </div>
-                            @if($fine->description)
-                            <div>
-                                <span class="text-gray-400 block mb-2">Description:</span>
-                                <p class="text-white bg-slate-700 p-3 rounded-lg">{{ $fine->description }}</p>
+                            
+                            <div class="flex justify-between">
+                                <span class="text-gray-400">Type:</span>
+                                <span class="px-2 py-1 text-xs font-semibold rounded-full 
+                                    {{ $fine->fine_type === 'overdue' ? 'bg-yellow-900 text-yellow-300' : 
+                                       ($fine->fine_type === 'lost' ? 'bg-red-900 text-red-300' : 'bg-gray-600 text-gray-300') }}">
+                                    {{ ucfirst($fine->fine_type) }}
+                                </span>
+                            </div>
+                            
+                            <div class="flex justify-between">
+                                <span class="text-gray-400">Amount per Day:</span>
+                                <span class="text-white">${{ number_format($fine->amount_per_day, 2) }}</span>
+                            </div>
+                            
+                            <div class="flex justify-between">
+                                <span class="text-gray-400">Total Amount:</span>
+                                <span class="text-red-400 font-bold">${{ number_format($fine->total_amount, 2) }}</span>
+                            </div>
+                            
+                            <div class="flex justify-between">
+                                <span class="text-gray-400">Fine Date:</span>
+                                <span class="text-white">{{ $fine->fine_date->format('M d, Y') }}</span>
+                            </div>
+                            
+                            @if($fine->fine_type === 'overdue')
+                            <div class="flex justify-between">
+                                <span class="text-gray-400">Days Overdue:</span>
+                                <span class="text-white">{{ $fine->days_overdue }} days</span>
                             </div>
                             @endif
                         </div>
                     </div>
 
-                    <!-- Book Information -->
+                    <!-- Book Information Card -->
                     <div class="bg-slate-800 rounded-lg shadow p-6">
-                        <h2 class="text-lg font-semibold text-white mb-4">Book Information</h2>
-                        @if($fine->borrow && $fine->borrow->book)
-                        @php
-                            $book = $fine->borrow->book;
-                            $coverImage = $book->cover_image ? asset('storage/' . $book->cover_image) : 'https://via.placeholder.com/128x192/1e293b/ffffff?text=No+Cover';
-                        @endphp
-                        <div class="flex items-start space-x-4">
-                            <div class="h-24 w-16 bg-slate-600 rounded-lg overflow-hidden shadow-md flex items-center justify-center">
-                                @if($book->cover_image)
-                                    <img src="{{ $coverImage }}" alt="{{ $book->title }} cover" class="h-full w-full object-cover">
+                        <h2 class="text-lg font-semibold text-white mb-4 border-b border-slate-700 pb-2">Book Information</h2>
+                        
+                        <div class="flex items-start mb-4">
+                            <div class="h-20 w-14 bg-slate-700 rounded overflow-hidden shadow-md flex items-center justify-center mr-4">
+                                @if($fine->borrow->inventory->book->cover_image)
+                                    <img src="{{ asset('storage/' . $fine->borrow->inventory->book->cover_image) }}" alt="Book cover" class="h-full w-full object-cover">
                                 @else
                                     <i class="fas fa-book text-gray-400 text-xl"></i>
                                 @endif
                             </div>
-                            <div class="flex-1">
-                                <h3 class="text-lg font-semibold text-white">{{ $book->title }}</h3>
-                                <p class="text-gray-400">by {{ $book->author->name ?? 'Unknown Author' }}</p>
-                                <p class="text-sm text-gray-500">ISBN: {{ $book->isbn }}</p>
-                                <a href="{{ route('books.show', $book->book_id) }}" class="text-primary-orange hover:text-dark-orange text-sm inline-block mt-2">
-                                    <i class="fas fa-eye mr-1"></i> View Book Details
-                                </a>
+                            <div>
+                                <h3 class="text-lg font-semibold text-white">{{ $fine->borrow->inventory->book->title }}</h3>
+                                <p class="text-gray-400">by {{ $fine->borrow->inventory->book->author->fullname ?? 'Unknown Author' }}</p>
+                                <p class="text-sm text-gray-500">ISBN: {{ $fine->borrow->inventory->book->isbn }}</p>
                             </div>
                         </div>
-                        @else
-                        <div class="text-center text-gray-400 py-8">
-                            <i class="fas fa-book text-4xl mb-3"></i>
-                            <p>Book information not available</p>
-                        </div>
-                        @endif
-                    </div>
-
-                    <!-- Borrow Information -->
-                    <div class="bg-slate-800 rounded-lg shadow p-6">
-                        <h2 class="text-lg font-semibold text-white mb-4">Borrow Information</h2>
-                        @if($fine->borrow)
-                        <div class="space-y-3">
-                            <div class="flex justify-between items-center">
+                        
+                        <div class="space-y-2">
+                            <div class="flex justify-between">
                                 <span class="text-gray-400">Borrow Date:</span>
                                 <span class="text-white">{{ $fine->borrow->borrow_date->format('M d, Y') }}</span>
                             </div>
-                            <div class="flex justify-between items-center">
+                            
+                            <div class="flex justify-between">
                                 <span class="text-gray-400">Due Date:</span>
                                 <span class="text-white">{{ $fine->borrow->due_date->format('M d, Y') }}</span>
                             </div>
-                            <div class="flex justify-between items-center">
-                                <span class="text-gray-400">Status:</span>
-                                <span class="px-2 py-1 text-xs font-semibold rounded-full 
-                                    @if($fine->borrow->status === 'active') bg-green-900 text-green-300
-                                    @elseif($fine->borrow->status === 'overdue') bg-red-900 text-red-300
-                                    @else bg-gray-600 text-gray-300 @endif">
-                                    {{ ucfirst($fine->borrow->status) }}
+                            
+                            <div class="flex justify-between">
+                                <span class="text-gray-400">Return Date:</span>
+                                <span class="text-white">
+                                    {{ $fine->borrow->return_date ? $fine->borrow->return_date->format('M d, Y') : 'Not returned' }}
                                 </span>
                             </div>
                         </div>
-                        @else
-                        <div class="text-center text-gray-400 py-8">
-                            <i class="fas fa-history text-4xl mb-3"></i>
-                            <p>Borrow information not available</p>
+                    </div>
+                </div>
+
+                <!-- Description Card -->
+                <div class="bg-slate-800 rounded-lg shadow p-6 mb-6">
+                    <h2 class="text-lg font-semibold text-white mb-4 border-b border-slate-700 pb-2">Description</h2>
+                    <p class="text-gray-300">{{ $fine->description }}</p>
+                </div>
+
+                <!-- Payment Information Card (if paid) -->
+                @if($fine->payment)
+                <div class="bg-slate-800 rounded-lg shadow p-6 mb-6">
+                    <h2 class="text-lg font-semibold text-white mb-4 border-b border-slate-700 pb-2">Payment Information</h2>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div class="flex justify-between">
+                            <span class="text-gray-400">Payment ID:</span>
+                            <span class="text-white">#{{ $fine->payment->payment_id }}</span>
+                        </div>
+                        
+                        <div class="flex justify-between">
+                            <span class="text-gray-400">Amount Paid:</span>
+                            <span class="text-green-400 font-bold">${{ number_format($fine->payment->amount, 2) }}</span>
+                        </div>
+                        
+                        <div class="flex justify-between">
+                            <span class="text-gray-400">Payment Method:</span>
+                            <span class="text-white">{{ ucfirst($fine->payment->payment_method) }}</span>
+                        </div>
+                        
+                        <div class="flex justify-between">
+                            <span class="text-gray-400">Payment Date:</span>
+                            <span class="text-white">{{ $fine->payment->payment_date->format('M d, Y') }}</span>
+                        </div>
+                        
+                        @if($fine->payment->transaction_id)
+                        <div class="flex justify-between md:col-span-2">
+                            <span class="text-gray-400">Transaction ID:</span>
+                            <span class="text-white font-mono">{{ $fine->payment->transaction_id }}</span>
+                        </div>
+                        @endif
+                        
+                        @if($fine->payment->notes)
+                        <div class="md:col-span-2 mt-4 pt-4 border-t border-slate-700">
+                            <h3 class="text-md font-semibold text-white mb-2">Payment Notes</h3>
+                            <p class="text-gray-300">{{ $fine->payment->notes }}</p>
                         </div>
                         @endif
                     </div>
+                </div>
+                @endif
 
-                    <!-- Payment Information -->
-                    <div class="bg-slate-800 rounded-lg shadow p-6">
-                        <h2 class="text-lg font-semibold text-white mb-4">Payment Information</h2>
-                        @if($fine->payment)
-                        <div class="space-y-3">
-                            <div class="flex justify-between items-center">
-                                <span class="text-gray-400">Payment Date:</span>
-                                <span class="text-white">{{ $fine->payment->payment_date->format('M d, Y H:i') }}</span>
-                            </div>
-                            <div class="flex justify-between items-center">
-                                <span class="text-gray-400">Payment Method:</span>
-                                <span class="text-white capitalize">{{ $fine->payment->payment_method }}</span>
-                            </div>
-                            <div class="flex justify-between items-center">
-                                <span class="text-gray-400">Transaction ID:</span>
-                                <span class="text-white">{{ $fine->payment->transaction_id ?? 'N/A' }}</span>
-                            </div>
-                            <div class="flex justify-between items-center">
-                                <span class="text-gray-400">Status:</span>
-                                <span class="px-2 py-1 text-xs font-semibold rounded-full 
-                                    @if($fine->payment->status === 'completed') bg-green-900 text-green-300
-                                    @elseif($fine->payment->status === 'pending') bg-yellow-900 text-yellow-300
-                                    @else bg-red-900 text-red-300 @endif">
-                                    {{ ucfirst($fine->payment->status) }}
-                                </span>
-                            </div>
-                        </div>
-                        @else
-                        <div class="text-center text-gray-400 py-8">
-                            <i class="fas fa-credit-card text-4xl mb-3"></i>
-                            <p>No payment information available</p>
-                            @if($fine->status === 'unpaid')
-                            <a href="{{ route('member.payments.create.fine', $fine->fine_id) }}" class="bg-primary-orange text-black px-4 py-2 rounded-lg hover:bg-dark-orange transition-colors inline-block mt-3">
-                                <i class="fas fa-credit-card mr-2"></i> Pay Now
-                            </a>
-                            @endif
-                        </div>
+                <!-- Action Buttons -->
+                <div class="bg-slate-800 rounded-lg shadow p-6">
+                    <div class="flex flex-col sm:flex-row gap-4">
+                        @if($fine->status === 'unpaid')
+                        <a href="{{ route('member.payments.create', $fine->fine_id) }}" class="bg-primary-orange text-black px-6 py-3 rounded-lg hover:bg-dark-orange transition-colors text-center font-semibold">
+                            <i class="fas fa-credit-card mr-2"></i> Pay Now
+                        </a>
                         @endif
+                        
+                        <a href="{{ route('member.fines.index') }}" class="bg-slate-700 text-white px-6 py-3 rounded-lg hover:bg-slate-600 transition-colors text-center">
+                            <i class="fas fa-list mr-2"></i> Back to Fines List
+                        </a>
                     </div>
                 </div>
             </main>
@@ -263,7 +274,8 @@
                             <i class="fas fa-tachometer-alt mr-4"></i>
                             Dashboard
                         </a>
-                        <a href="{{ route('books.index') }}" class="flex items-center px-2 py-2 text-base font-medium text-gray-300 hover:text-white hover:bg-slate-700 rounded-lg">
+                        <a href="{{ route('books.index') }}"
+                            class="flex items-center px-2 py-2 text-base font-medium text-gray-300 hover:text-white hover:bg-slate-700 rounded-lg">
                             <i class="fa-solid fa-house mr-4"></i>
                             Home
                         </a>
@@ -275,7 +287,8 @@
                             <i class="fas fa-bookmark mr-4"></i>
                             My Reservations
                         </a>
-                        <a href="{{ route('member.fines.index') }}" class="flex items-center px-2 py-2 text-base font-medium text-white bg-dark-orange rounded-lg">
+                        <!-- ACTIVE LINK for this page -->
+                        <a href="{{ route('member.fines.index')}}" class="flex items-center px-2 py-2 text-base font-medium text-white bg-dark-orange rounded-lg">
                             <i class="fas fa-money-bill-wave mr-4"></i>
                             Fines & Payments
                         </a>

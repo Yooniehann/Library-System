@@ -26,6 +26,26 @@
                     </div>
                 @endif
 
+                <!-- Notification Message Modal -->
+                <div id="notificationModal" class="fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center z-50 hidden">
+                    <div class="bg-slate-800 rounded-lg w-11/12 md:w-2/3 lg:w-1/2 max-h-96 overflow-hidden flex flex-col">
+                        <div class="px-6 py-4 border-b border-slate-700 flex justify-between items-center">
+                            <h3 class="text-lg font-semibold text-white" id="modalTitle">Notification Message</h3>
+                            <button id="closeModal" class="text-gray-400 hover:text-white">
+                                <i class="fas fa-times"></i>
+                            </button>
+                        </div>
+                        <div class="p-6 overflow-y-auto flex-grow">
+                            <p class="text-white whitespace-pre-wrap" id="modalMessage"></p>
+                        </div>
+                        <div class="px-6 py-4 border-t border-slate-700 bg-slate-900 flex justify-end">
+                            <button id="modalCloseButton" class="bg-slate-600 text-white px-4 py-2 rounded hover:bg-slate-500 transition-colors">
+                                Close
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
                 <div class="bg-slate-800 rounded-lg shadow overflow-hidden">
                     <div class="px-6 py-4 border-b border-slate-700">
                         <h2 class="text-lg font-semibold text-white">All Notifications</h2>
@@ -97,7 +117,7 @@
                                     </td>
                                     <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
                                         <div class="flex space-x-2">
-                                            <button onclick="alert('Message: {{ addslashes($notification->message) }}')" 
+                                            <button onclick="viewNotification('{{ addslashes($notification->title) }}', `{{ addslashes($notification->message) }}`)" 
                                                 class="text-blue-400 hover:text-blue-300">
                                                 <i class="fas fa-eye"></i> View
                                             </button>
@@ -146,6 +166,45 @@
             </main>
         </div>
     </div>
+
+    <script>
+        function viewNotification(title, message) {
+            // Decode any escaped characters
+            const decodedMessage = message.replace(/\\'/g, "'")
+                                         .replace(/\\"/g, '"')
+                                         .replace(/\\\\/g, '\\');
+            
+            // Set modal content
+            document.getElementById('modalTitle').textContent = title;
+            document.getElementById('modalMessage').textContent = decodedMessage;
+            
+            // Show modal
+            document.getElementById('notificationModal').classList.remove('hidden');
+        }
+        
+        // Close modal functionality
+        document.getElementById('closeModal').addEventListener('click', function() {
+            document.getElementById('notificationModal').classList.add('hidden');
+        });
+        
+        document.getElementById('modalCloseButton').addEventListener('click', function() {
+            document.getElementById('notificationModal').classList.add('hidden');
+        });
+        
+        // Close modal when clicking outside content
+        document.getElementById('notificationModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                document.getElementById('notificationModal').classList.add('hidden');
+            }
+        });
+        
+        // Close modal with Escape key
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape' && !document.getElementById('notificationModal').classList.contains('hidden')) {
+                document.getElementById('notificationModal').classList.add('hidden');
+            }
+        });
+    </script>
 </body>
 </html>
 @endsection

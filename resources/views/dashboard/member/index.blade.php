@@ -28,7 +28,7 @@
                 </div>
                 <div class="flex flex-col flex-grow px-4 py-4 overflow-y-auto">
                     <nav class="flex-1 space-y-2">
-                        <a href="#" class="flex items-center px-4 py-3 text-sm font-medium text-white bg-dark-orange rounded-lg">
+                        <a href="{{ route('member.dashboard') }}" class="flex items-center px-4 py-3 text-sm font-medium text-white bg-dark-orange rounded-lg">
                             <i class="fas fa-tachometer-alt mr-3"></i>
                             Dashboard
                         </a>
@@ -46,13 +46,17 @@
                         </a>
                         <a href="{{ route('member.fines.index')}}" class="flex items-center px-4 py-3 text-sm font-medium text-gray-300 hover:text-white hover:bg-slate-700 rounded-lg">
                             <i class="fas fa-money-bill-wave mr-3"></i>
-                            Fines & Payments
+                            Fines 
+                        </a>
+                        <a href="{{ route('member.payments.index')}}" class="flex items-center px-4 py-3 text-sm font-medium text-gray-300 hover:text-white hover:bg-slate-700 rounded-lg">
+                            <i class="fas fa-money-bill-wave mr-3"></i>
+                            Payments
                         </a>
                         <a href="{{ route('member.notifications.index') }}" class="flex items-center px-4 py-3 text-sm font-medium text-gray-300 hover:text-white hover:bg-slate-700 rounded-lg">
                             <i class="fa-solid fa-bell mr-3"></i>
                             Notification
                         </a>
-                        <a href="#" class="flex items-center px-4 py-3 text-sm font-medium text-gray-300 hover:text-white hover:bg-slate-700 rounded-lg">
+                        <a href="{{ route('profile.edit') }}" class="flex items-center px-4 py-3 text-sm font-medium text-gray-300 hover:text-white hover:bg-slate-700 rounded-lg">
                             <i class="fas fa-user-cog mr-3"></i>
                             Profile Settings
                         </a>
@@ -74,7 +78,7 @@
         <div class="flex flex-col flex-1 overflow-hidden">
             <!-- Top Navigation (Mobile) -->
             <div class="md:hidden flex items-center justify-between px-4 py-3 bg-black border-b border-slate-700">
-                <button class="text-primary-orange focus:outline-none">
+                <button class="text-primary-orange focus:outline-none" onclick="toggleMobileSidebar()">
                     <i class="fas fa-bars"></i>
                 </button>
                 <span class="text-primary-orange text-lg font-bold">Member Dashboard</span>
@@ -84,7 +88,7 @@
             <!-- Main Content Area -->
             <main class="flex-1 overflow-y-auto p-4 md:p-6">
                 <div class="mb-6">
-                    <h1 class="text-2xl font-bold text-white">Welcome back, Si Si!</h1>
+                    <h1 class="text-2xl font-bold text-white">Welcome back, {{ $user->fullname }}!</h1>
                     <p class="text-gray-400">Here's what's happening with your account today.</p>
                 </div>
 
@@ -97,7 +101,7 @@
                             </div>
                             <div class="ml-4">
                                 <p class="text-sm font-medium text-gray-400">Borrowed Books</p>
-                                <p class="text-2xl font-semibold text-white">3</p>
+                                <p class="text-2xl font-semibold text-white">{{ $borrowedBooksCount }}</p>
                             </div>
                         </div>
                     </div>
@@ -108,7 +112,7 @@
                             </div>
                             <div class="ml-4">
                                 <p class="text-sm font-medium text-gray-400">Overdue Books</p>
-                                <p class="text-2xl font-semibold text-white">1</p>
+                                <p class="text-2xl font-semibold text-white">{{ $overdueBooksCount }}</p>
                             </div>
                         </div>
                     </div>
@@ -119,7 +123,7 @@
                             </div>
                             <div class="ml-4">
                                 <p class="text-sm font-medium text-gray-400">Reservations</p>
-                                <p class="text-2xl font-semibold text-white">2</p>
+                                <p class="text-2xl font-semibold text-white">{{ $reservationsCount }}</p>
                             </div>
                         </div>
                     </div>
@@ -130,7 +134,7 @@
                             </div>
                             <div class="ml-4">
                                 <p class="text-sm font-medium text-gray-400">Fines Due</p>
-                                <p class="text-2xl font-semibold text-white">$5.50</p>
+                                <p class="text-2xl font-semibold text-white">${{ number_format($finesDue, 2) }}</p>
                             </div>
                         </div>
                     </div>
@@ -140,22 +144,20 @@
                 <div class="mb-6">
                     <h2 class="text-lg font-semibold text-white mb-3">Quick Actions</h2>
                     <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                        <a href="#" class="bg-slate-800 rounded-lg shadow p-4 flex items-center justify-center border border-slate-700 hover:border-primary-orange transition-colors hover:bg-slate-700">
+                        <a href="{{ route('books.index') }}" class="bg-slate-800 rounded-lg shadow p-4 flex items-center justify-center border border-slate-700 hover:border-primary-orange transition-colors hover:bg-slate-700">
                             <i class="fas fa-book text-primary-orange mr-2"></i>
                             <span>Borrow a Book</span>
                         </a>
-                        <a href="#" class="bg-slate-800 rounded-lg shadow p-4 flex items-center justify-center border border-slate-700 hover:border-primary-orange transition-colors hover:bg-slate-700">
+                        <a href="{{ route('borrowed.index') }}" class="bg-slate-800 rounded-lg shadow p-4 flex items-center justify-center border border-slate-700 hover:border-primary-orange transition-colors hover:bg-slate-700">
                             <i class="fas fa-sync-alt text-primary-orange mr-2"></i>
                             <span>Renew Books</span>
                         </a>
-                        <a href="#" class="bg-slate-800 rounded-lg shadow p-4 flex items-center justify-center border border-slate-700 hover:border-primary-orange transition-colors hover:bg-slate-700">
+                        <a href="{{ route('member.fines.index') }}" class="bg-slate-800 rounded-lg shadow p-4 flex items-center justify-center border border-slate-700 hover:border-primary-orange transition-colors hover:bg-slate-700">
                             <i class="fas fa-credit-card text-primary-orange mr-2"></i>
                             <span>Pay Fines</span>
                         </a>
                     </div>
                 </div>
-
-
 
                 <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
                     <!-- Current Borrowings -->
@@ -165,56 +167,45 @@
                                 <h2 class="text-lg font-semibold text-white">Currently Borrowed Books</h2>
                             </div>
                             <div class="divide-y divide-slate-700">
+                                @forelse($currentBorrowings as $borrowing)
                                 <div class="p-4 hover:bg-slate-700">
                                     <div class="flex items-center">
                                         <div class="flex-shrink-0 h-16 w-12 bg-slate-600 flex items-center justify-center">
-                                            <i class="fas fa-book text-gray-400"></i>
+                                            @if($borrowing->inventory->book->cover_image)
+                                                <img src="{{ asset('storage/' . $borrowing->inventory->book->cover_image) }}" alt="Book cover" class="h-full w-full object-cover">
+                                            @else
+                                                <i class="fas fa-book text-gray-400"></i>
+                                            @endif
                                         </div>
                                         <div class="ml-4 flex-1">
-                                            <h3 class="text-sm font-medium text-white">The Silent Patient</h3>
-                                            <p class="text-sm text-gray-400">Alex Michaelides</p>
-                                            <p class="text-xs text-gray-500">Due: May 15, 2023</p>
+                                            <h3 class="text-sm font-medium text-white">{{ $borrowing->inventory->book->title }}</h3>
+                                            <p class="text-sm text-gray-400">{{ $borrowing->inventory->book->author->name ?? 'Unknown Author' }}</p>
+                                            <p class="text-xs text-gray-500">Due: {{ $borrowing->due_date->format('M d, Y') }}</p>
                                         </div>
                                         <div class="ml-4">
-                                            <span class="px-2 py-1 text-xs font-semibold rounded-full bg-red-900 text-red-300">Overdue</span>
-                                            <button class="ml-2 text-sm text-primary-orange hover:text-dark-orange">Renew</button>
+                                            @if($borrowing->status === 'overdue')
+                                                <span class="px-2 py-1 text-xs font-semibold rounded-full bg-red-900 text-red-300">Overdue</span>
+                                            @endif
+                                            @if($borrowing->status === 'active' && $borrowing->renewal_count < 3)
+                                                <form action="{{ route('borrow.renew', $borrowing->borrow_id) }}" method="POST" class="inline">
+                                                    @csrf
+                                                    <button type="submit" class="ml-2 text-sm text-primary-orange hover:text-dark-orange">Renew</button>
+                                                </form>
+                                            @endif
                                         </div>
                                     </div>
                                 </div>
-                                <div class="p-4 hover:bg-slate-700">
-                                    <div class="flex items-center">
-                                        <div class="flex-shrink-0 h-16 w-12 bg-slate-600 flex items-center justify-center">
-                                            <i class="fas fa-book text-gray-400"></i>
-                                        </div>
-                                        <div class="ml-4 flex-1">
-                                            <h3 class="text-sm font-medium text-white">Educated</h3>
-                                            <p class="text-sm text-gray-400">Tara Westover</p>
-                                            <p class="text-xs text-gray-500">Due: May 20, 2023</p>
-                                        </div>
-                                        <div class="ml-4">
-                                            <button class="text-sm text-primary-orange hover:text-dark-orange">Renew</button>
-                                        </div>
-                                    </div>
+                                @empty
+                                <div class="p-4 text-center">
+                                    <p class="text-gray-400">No books currently borrowed</p>
                                 </div>
-                                <div class="p-4 hover:bg-slate-700">
-                                    <div class="flex items-center">
-                                        <div class="flex-shrink-0 h-16 w-12 bg-slate-600 flex items-center justify-center">
-                                            <i class="fas fa-book text-gray-400"></i>
-                                        </div>
-                                        <div class="ml-4 flex-1">
-                                            <h3 class="text-sm font-medium text-white">Atomic Habits</h3>
-                                            <p class="text-sm text-gray-400">James Clear</p>
-                                            <p class="text-xs text-gray-500">Due: May 25, 2023</p>
-                                        </div>
-                                        <div class="ml-4">
-                                            <button class="text-sm text-primary-orange hover:text-dark-orange">Renew</button>
-                                        </div>
-                                    </div>
-                                </div>
+                                @endforelse
                             </div>
+                            @if($currentBorrowings->count() > 0)
                             <div class="px-6 py-4 border-t border-slate-700 bg-slate-900">
-                                <a href="#" class="text-sm font-medium text-primary-orange hover:text-dark-orange">View all borrowed books →</a>
+                                <a href="{{ route('borrowed.index') }}" class="text-sm font-medium text-primary-orange hover:text-dark-orange">View all borrowed books →</a>
                             </div>
+                            @endif
                         </div>
                     </div> 
 
@@ -222,49 +213,42 @@
                     <div>
                         <div class="bg-slate-800 rounded-lg shadow overflow-hidden">
                             <div class="px-6 py-4 border-b border-slate-700">
-                                <h2 class="text-lg font-semibold text-white">Notifications</h2>
+                                <h2 class="text-lg font-semibold text-white">Recent Notifications</h2>
                             </div>
                             <div class="divide-y divide-slate-700">
+                                @forelse($notifications as $notification)
                                 <div class="p-4 hover:bg-slate-700">
                                     <div class="flex">
                                         <div class="flex-shrink-0">
-                                            <i class="h-5 w-5 text-red-400 fas fa-exclamation-circle"></i>
+                                            @switch($notification->notification_type)
+                                                @case('overdue')
+                                                    <i class="h-5 w-5 text-red-400 fas fa-exclamation-circle"></i>
+                                                    @break
+                                                @case('reservation_ready')
+                                                    <i class="h-5 w-5 text-green-400 fas fa-check-circle"></i>
+                                                    @break
+                                                @default
+                                                    <i class="h-5 w-5 text-blue-400 fas fa-info-circle"></i>
+                                            @endswitch
                                         </div>
                                         <div class="ml-3">
-                                            <p class="text-sm font-medium text-white">Overdue book</p>
-                                            <p class="text-sm text-gray-400">"The Silent Patient" was due on May 15</p>
-                                            <p class="text-xs text-gray-500">2 days ago</p>
+                                            <p class="text-sm font-medium text-white">{{ $notification->title }}</p>
+                                            <p class="text-sm text-gray-400">{{ Str::limit($notification->message, 50) }}</p>
+                                            <p class="text-xs text-gray-500">{{ $notification->sent_date->diffForHumans() }}</p>
                                         </div>
                                     </div>
                                 </div>
-                                <div class="p-4 hover:bg-slate-700">
-                                    <div class="flex">
-                                        <div class="flex-shrink-0">
-                                            <i class="h-5 w-5 text-green-400 fas fa-check-circle"></i>
-                                        </div>
-                                        <div class="ml-3">
-                                            <p class="text-sm font-medium text-white">Reservation ready</p>
-                                            <p class="text-sm text-gray-400">"Where the Crawdads Sing" is available for pickup</p>
-                                            <p class="text-xs text-gray-500">1 day ago</p>
-                                        </div>
-                                    </div>
+                                @empty
+                                <div class="p-4 text-center">
+                                    <p class="text-gray-400">No notifications</p>
                                 </div>
-                                <div class="p-4 hover:bg-slate-700">
-                                    <div class="flex">
-                                        <div class="flex-shrink-0">
-                                            <i class="h-5 w-5 text-blue-400 fas fa-info-circle"></i>
-                                        </div>
-                                        <div class="ml-3">
-                                            <p class="text-sm font-medium text-white">Library announcement</p>
-                                            <p class="text-sm text-gray-400">Extended hours this weekend</p>
-                                            <p class="text-xs text-gray-500">3 days ago</p>
-                                        </div>
-                                    </div>
-                                </div>
+                                @endforelse
                             </div>
+                            @if($notifications->count() > 0)
                             <div class="px-6 py-4 border-t border-slate-700 bg-slate-900">
-                                <a href="#" class="text-sm font-medium text-primary-orange hover:text-dark-orange">View all notifications →</a>
+                                <a href="{{ route('member.notifications.index') }}" class="text-sm font-medium text-primary-orange hover:text-dark-orange">View all notifications →</a>
                             </div>
+                            @endif
                         </div>
                     </div> 
                 </div>
@@ -274,11 +258,11 @@
 
     <!-- Mobile sidebar overlay -->
     <div class="fixed inset-0 z-40 md:hidden hidden" id="mobile-sidebar">
-        <div class="fixed inset-0 bg-gray-900 bg-opacity-75"></div>
+        <div class="fixed inset-0 bg-gray-900 bg-opacity-75" onclick="toggleMobileSidebar()"></div>
         <div class="fixed inset-y-0 left-0 flex max-w-xs w-full">
             <div class="relative flex-1 flex flex-col w-64 bg-black">
                 <div class="absolute top-0 right-0 -mr-14 p-1">
-                    <button class="flex items-center justify-center h-12 w-12 rounded-full focus:outline-none focus:bg-gray-600">
+                    <button class="flex items-center justify-center h-12 w-12 rounded-full focus:outline-none focus:bg-gray-600" onclick="toggleMobileSidebar()">
                         <i class="fas fa-times text-white"></i>
                     </button>
                 </div>
@@ -287,11 +271,11 @@
                         <span class="text-primary-orange text-xl font-bold">Member Dashboard</span>
                     </div>
                     <nav class="mt-5 px-2 space-y-1">
-                        <a href="#" class="flex items-center px-2 py-2 text-base font-medium text-white bg-dark-orange rounded-lg">
+                        <a href="{{ route('member.dashboard')}}" class="flex items-center px-2 py-2 text-base font-medium text-white bg-dark-orange rounded-lg">
                             <i class="fas fa-tachometer-alt mr-4"></i>
                             Dashboard
                         </a>
-                        <a href="#" class="flex items-center px-2 py-2 text-base font-medium text-gray-300 hover:text-white hover:bg-slate-700 rounded-lg">
+                        <a href="{{ route('books.index')}}" class="flex items-center px-2 py-2 text-base font-medium text-gray-300 hover:text-white hover:bg-slate-700 rounded-lg">
                             <i class="fa-solid fa-house mr-4"></i>
                             Home
                         </a>
@@ -299,20 +283,24 @@
                             <i class="fas fa-book-open mr-4"></i>
                             My Borrowed Books
                         </a>
-                        <a href="#" class="flex items-center px-2 py-2 text-base font-medium text-gray-300 hover:text-white hover:bg-slate-700 rounded-lg">
+                        <a href="{{ route('reservations.index')}}" class="flex items-center px-2 py-2 text-base font-medium text-gray-300 hover:text-white hover:bg-slate-700 rounded-lg">
                             <i class="fas fa-bookmark mr-4"></i>
                             My Reservations
                         </a>
                         <a href="{{ route('member.fines.index')}}" class="flex items-center px-2 py-2 text-base font-medium text-gray-300 hover:text-white hover:bg-slate-700 rounded-lg">
                             <i class="fas fa-money-bill-wave mr-4"></i>
-                            Fines & Payments
+                            Fines 
+                        </a>
+                        <a href="{{ route('member.payments.index')}}" class="flex items-center px-2 py-2 text-base font-medium text-gray-300 hover:text-white hover:bg-slate-700 rounded-lg">
+                            <i class="fas fa-money-bill-wave mr-4"></i>
+                            Payments
                         </a>
                         <a href="{{ route('member.notifications.index') }}"
                             class="flex items-center px-2 py-2 text-base font-medium text-gray-300 hover:text-white hover:bg-slate-700 rounded-lg">
                             <i class="fa-solid fa-bell mr-4"></i>
                             Notification
                         </a>
-                        <a href="#" class="flex items-center px-2 py-2 text-base font-medium text-gray-300 hover:text-white hover:bg-slate-700 rounded-lg">
+                        <a href="{{ route('profile.edit') }}" class="flex items-center px-2 py-2 text-base font-medium text-gray-300 hover:text-white hover:bg-slate-700 rounded-lg">
                             <i class="fas fa-user-cog mr-4"></i>
                             Profile Settings
                         </a>
@@ -338,21 +326,9 @@
     </div> 
 
     <script>
-        // Simple mobile sidebar toggle
-        document.addEventListener('DOMContentLoaded', function() {
-            const mobileSidebar = document.getElementById('mobile-sidebar');
-            const sidebarToggle = document.querySelector('.md\\:hidden button');
-            
-            sidebarToggle.addEventListener('click', function() {
-                mobileSidebar.classList.toggle('hidden');
-            });
-            
-            // Close button inside mobile sidebar
-            const closeButton = document.querySelector('#mobile-sidebar button');
-            closeButton.addEventListener('click', function() {
-                mobileSidebar.classList.add('hidden');
-            });
-        });
+        function toggleMobileSidebar() {
+            document.getElementById('mobile-sidebar').classList.toggle('hidden');
+        }
     </script>
 </body>
 </html>

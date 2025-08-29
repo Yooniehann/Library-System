@@ -22,11 +22,24 @@ use App\Http\Controllers\{
     PaymentController,
     DashboardController
 };
+use App\Http\Controllers\Admin\AdminDashboardController;
 use App\Http\Controllers\Admin\AdminFineController;
 use App\Http\Controllers\Admin\IssuedBooksController;
 use App\Http\Controllers\Admin\AdminPaymentController;
 use App\Http\Controllers\Admin\SearchController;
 use App\Http\Controllers\Admin\SimulationController;
+
+//kids
+use App\Http\Controllers\Kid\BorrowedController;
+use App\Http\Controllers\Kid\KidDashboardController;
+use App\Http\Controllers\Kid\KidReservationController;
+use App\Http\Controllers\Kid\KidFineController;
+use App\Http\Controllers\Kid\AchievementController;
+use App\Http\Controllers\Kid\KidNotificationController;
+use App\Http\Controllers\Kid\KidContactController;
+use App\Http\Controllers\Kid\KidProfileController;
+use App\Http\Controllers\Kid\KidProcessPayController;
+use App\Http\Controllers\Kid\KidBookReturnController;
 
 /*
 |--------------------------------------------------------------------------
@@ -157,18 +170,6 @@ Route::middleware(['auth', 'verified'])->group(function () {
         ->middleware('role:Member,Kid')
         ->name('borrowed.show');
 
-
-    // Reservations
-    // Route::get('/reservations', [ReservationController::class, 'index'])
-    //     ->middleware('role:Member,Kid')
-    //     ->name('reservations.index');
-
-    // // Reservation cancel route
-    // Route::post('/reservations/{id}/cancel', [ReservationController::class, 'cancel'])
-    //     ->middleware('role:Member,Kid')
-    //     ->name('reservations.cancel')
-    //     ->name('borrowed.index')
-    //     ->middleware('role:Member,Kid');
 
     // Reservations
     Route::get('/reservations', [ReservationController::class, 'index'])

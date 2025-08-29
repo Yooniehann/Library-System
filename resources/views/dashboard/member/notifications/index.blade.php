@@ -247,7 +247,7 @@
 
                     <div class="bg-slate-800 rounded-lg shadow overflow-hidden">
                         <div class="px-6 py-4 border-b border-slate-700 flex justify-between items-center">
-                            <h2 class="text-lg font-semibold text-white">Your Notifications ({{ $notifications->count() }})</h2>
+                            <h2 class="text-lg font-semibold text-white">Your Notifications ({{ $notifications->total() }})</h2>
                             @if(isset($searchTerm) && $searchTerm)
                                 <span class="text-sm text-gray-400">Search results for "{{ $searchTerm }}"</span>
                             @endif
@@ -257,33 +257,37 @@
                             @foreach($notifications as $notification)
                             <div class="p-6 transition-colors notification-item 
                                 {{ $notification->is_new ? 'notification-new' : 'notification-old' }}"
-                                data-is-new="{{ $notification->is_new ? 'true' : 'false' }}">
+                                data-is-new="{{ $notification->is_new ? 'true' : 'false' }}"
+                                data-id="{{ $notification->id }}">
                                 <div class="flex justify-between items-start">
                                     <div class="flex-1">
                                         <div class="flex items-center justify-between mb-1">
                                             <h3 class="text-lg font-semibold text-white">{{ $notification->title }}</h3>
                                             <div class="flex items-center space-x-2">
                                                 @if($notification->is_new)
-                                                <span class="text-xs px-2 py-1 bg-primary-orange bg-opacity-20 text-primary-orange rounded-full flex items-center">
-                                                    <span class="h-2 w-2 rounded-full bg-primary-orange mr-1"></span>
+                                                <span class="text-xs px-2 py-1 bg-primary-orange bg-opacity-20 text-black rounded-full flex items-center new-badge">
+                                                    <span class="h-2 w-2 rounded-full bg-primary-orange mr-2"></span>
                                                     NEW
                                                 </span>
                                                 @endif
-                                                <span class="text-xs px-2 py-1 rounded-full badge-{{ $notification->notification_type }}">
+                                                {{-- <span class="text-xs px-2 py-1 rounded-full badge-{{ $notification->notification_type }}">
                                                     {{ ucfirst($notification->notification_type) }}
-                                                </span>
+                                                </span> --}}
                                             </div>
                                         </div>
                                         <p class="text-gray-300 mb-3">{{ $notification->message }}</p>
                                         <div class="flex items-center text-sm text-gray-400">
-                                            <span class="mr-4">
-                                                <i class="far fa-calendar-alt mr-1"></i>
+                                            <span class="notification-date mr-4">
                                                 {{ $notification->sent_date->format('M d, Y') }}
                                             </span>
                                             <span>
+                                                <i class="fa-solid fa-tag"></i>
+                                                    {{ ucfirst($notification->notification_type) }}
+                                                </span>
+                                            {{-- <span>
                                                 <i class="far fa-clock mr-1"></i>
                                                 {{ $notification->sent_date->format('h:i A') }}
-                                            </span>
+                                            </span> --}}
                                         </div>
                                     </div>
                                 </div>
@@ -421,6 +425,35 @@
                     });
                 });
             });
+            
+            // Auto-mark notifications as read after 30 seconds
+            setTimeout(function() {
+                const newNotifications = document.querySelectorAll('.notification-item[data-is-new="true"]');
+                
+                newNotifications.forEach(notification => {
+                    const notificationId = notification.getAttribute('data-id');
+                    
+                    // Update the UI to mark as read
+                    notification.classList.remove('notification-new');
+                    notification.classList.add('notification-old');
+                    notification.setAttribute('data-is-new', 'false');
+                    
+                    // Remove the NEW badge if it exists
+                    const newBadge = notification.querySelector('.new-badge');
+                    if (newBadge) {
+                        newBadge.remove();
+                    }
+                    
+                    // Send AJAX request to mark as read in the database
+                    fetch(`/member/notifications/${notificationId}/mark-as-read`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                        }
+                    }).catch(error => console.error('Error marking notification as read:', error));
+                });
+            }, 30000); // 30 seconds
         });
     </script>
 </body>

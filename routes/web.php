@@ -17,7 +17,9 @@ use App\Http\Controllers\{
     StockInDetailController,
     CatalogController,
     ReservationController,
-    NotificationController
+    NotificationController,
+    FineController,
+    PaymentController
 };
 use App\Http\Controllers\Admin\AdminFineController;
 use App\Http\Controllers\Admin\IssuedBooksController;
@@ -327,16 +329,10 @@ Route::middleware(['auth', 'verified', 'role:Member'])->prefix('member')->name('
     Route::post('/payments', [PaymentController::class, 'store'])->name('payments.store');
     Route::get('/payments/{payment}', [PaymentController::class, 'show'])->name('payments.show');
 
-        // Payments routes
-        Route::get('/payments', [PaymentController::class, 'index'])->name('payments.index');
-        Route::get('/payments/create/{fine?}', [PaymentController::class, 'create'])->name('payments.create');
-        Route::post('/payments', [PaymentController::class, 'store'])->name('payments.store');
-        Route::get('/payments/{payment}', [PaymentController::class, 'show'])->name('payments.show');
 
     // Notifications routes - Member
         Route::get('notifications/', [NotificationController::class, 'memberIndex'])->name('notifications.index');
         Route::post('/notifications/{id}/read', [NotificationController::class, 'markAsRead'])->name('notifications.markAsRead');
-
 });
 
 // Kid routes

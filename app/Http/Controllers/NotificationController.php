@@ -4,9 +4,9 @@ namespace App\Http\Controllers;
 
 use App\Models\Notification;
 use App\Models\User;
-use App\Models\SimulationSetting;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Carbon\Carbon;
 
 class NotificationController extends Controller
 {
@@ -24,7 +24,7 @@ class NotificationController extends Controller
                         $q->where('fullname', 'like', "%{$searchTerm}%");
                     });
             })
-            ->orderBy('sent_date', 'desc')
+            ->orderBy('created_at', 'desc')
             ->paginate(20);
 
         return view('dashboard.admin.notifications.index', compact('notifications', 'searchTerm'));
@@ -48,9 +48,6 @@ class NotificationController extends Controller
             'delivery_method' => 'required|in:email,sms,system'
         ]);
 
-        // Use simulated time if active, otherwise use current time
-        $sentDate = SimulationSetting::getCurrentDate();
-
         Notification::create([
             'user_id' => $request->user_id,
             'title' => $request->title,
@@ -58,7 +55,7 @@ class NotificationController extends Controller
             'notification_type' => $request->notification_type,
             'delivery_method' => $request->delivery_method,
             'status' => 'sent',
-            'sent_date' => $sentDate
+            'sent_date' => Carbon::now() // Use Carbon for proper time handling
         ]);
 
         return redirect()->route('admin.notifications.index')
@@ -73,16 +70,41 @@ class NotificationController extends Controller
         $notifications = Auth::user()->notifications()
             ->when($searchTerm, function ($query, $searchTerm) {
                 return $query->where('title', 'like', "%{$searchTerm}%")
-                    // ->orWhere('message', 'like', "%{$searchTerm}%")
                     ->orWhere('notification_type', 'like', "%{$searchTerm}%");
             })
-            ->orderBy('sent_date', 'desc')
+            ->orderBy('created_at', 'desc')
             ->paginate(15);
+
+        // Add is_new property to each notification
+        $notifications->getCollection()->transform(function ($notification) {
+            $notification->is_new = is_null($notification->viewed_at);
+            return $notification;
+        });
 
         return view('dashboard.member.notifications.index', compact('notifications', 'searchTerm'));
     }
 
-    // Member: Mark notification as read (simple delete)
+    // Member: View notification details
+    public function show($id)
+    {
+        $notification = Notification::findOrFail($id);
+        
+        if ($notification->user_id !== Auth::id()) {
+            return redirect()->back()->with('error', 'Unauthorized action.');
+        }
+
+        // Mark as read by updating viewed_at timestamp
+        if (!$notification->viewed_at) {
+            $notification->update(['viewed_at' => Carbon::now()]);
+        }
+
+        // Add is_new property
+        $notification->is_new = false;
+
+        return view('dashboard.member.notifications.show', compact('notification'));
+    }
+
+    // Member: Mark notification as read
     public function markAsRead($id)
     {
         $notification = Notification::findOrFail($id);
@@ -91,9 +113,20 @@ class NotificationController extends Controller
             return redirect()->back()->with('error', 'Unauthorized action.');
         }
 
-        $notification->delete();
+        // Update viewed_at instead of deleting
+        $notification->update(['viewed_at' => Carbon::now()]);
 
         return redirect()->back()->with('success', 'Notification marked as read');
+    }
+
+    // Member: Mark all notifications as read
+    public function markAllAsRead()
+    {
+        Auth::user()->notifications()
+            ->whereNull('viewed_at')
+            ->update(['viewed_at' => Carbon::now()]);
+
+        return redirect()->back()->with('success', 'All notifications marked as read');
     }
 
     // Admin: Delete notification

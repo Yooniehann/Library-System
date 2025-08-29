@@ -34,7 +34,11 @@ class BookReturnController extends Controller
             'return_date' => now(),
             'condition' => 'good', // Default condition
             'fine_amount' => $fineAmount,
+<<<<<<< HEAD
+           // 'notes' => 'Returned by user'
+=======
             // 'notes' => 'Returned by user'
+>>>>>>> 76a310bf383cdeedbec1527bc5504a1adb7fca6d
         ]);
 
         // Update borrow status

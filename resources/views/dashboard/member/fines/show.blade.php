@@ -254,9 +254,9 @@
                         </a>
                         @endif
                         
-                        <a href="{{ route('member.fines.index') }}" class="bg-slate-700 text-white px-6 py-3 rounded-lg hover:bg-slate-600 transition-colors text-center">
+                        {{-- <a href="{{ route('member.fines.index') }}" class="bg-slate-700 text-white px-6 py-3 rounded-lg hover:bg-slate-600 transition-colors text-center">
                             <i class="fas fa-list mr-2"></i> Back to Fines List
-                        </a>
+                        </a> --}}
                     </div>
                 </div>
             </main>

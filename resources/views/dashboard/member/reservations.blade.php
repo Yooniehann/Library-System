@@ -48,9 +48,13 @@
                         </a>
                         <a href="{{ route('member.fines.index')}}" class="flex items-center px-4 py-3 text-sm font-medium text-gray-300 hover:text-white hover:bg-slate-700 rounded-lg">
                             <i class="fas fa-money-bill-wave mr-3"></i>
-                            Fines & Payments
+                            Fines 
                         </a>
-                        <a href="#" class="flex items-center px-4 py-3 text-sm font-medium text-gray-300 hover:text-white hover:bg-slate-700 rounded-lg">
+                        <a href="{{ route('member.payments.index')}}" class="flex items-center px-4 py-3 text-sm font-medium text-gray-300 hover:text-white hover:bg-slate-700 rounded-lg">
+                            <i class="fas fa-money-bill-wave mr-3"></i>
+                            Payments
+                        </a>
+                        <a href="{{ route('member.notifications.index') }}" class="flex items-center px-4 py-3 text-sm font-medium text-gray-300 hover:text-white hover:bg-slate-700 rounded-lg">
                             <i class="fa-solid fa-bell mr-3"></i>
                             Notification
                         </a>
@@ -261,7 +265,7 @@
         <div class="fixed inset-y-0 left-0 flex max-w-xs w-full">
             <div class="relative flex-1 flex flex-col w-64 bg-black">
                 <div class="absolute top-0 right-0 -mr-14 p-1">
-                    <button class="flex items-center justify-center h-12 w-12 rounded-full focus:outline-none focus:bg-gray-600">
+                    <button class="flex items-center justify-center h-12 w-12 rounded-full focus:outline-none focus:bg-gray-600" onclick="toggleMobileSidebar()">
                         <i class="fas fa-times text-white"></i>
                     </button>
                 </div>
@@ -270,11 +274,11 @@
                         <span class="text-primary-orange text-xl font-bold">Member Dashboard</span>
                     </div>
                     <nav class="mt-5 px-2 space-y-1">
-                        <a href="#" class="flex items-center px-2 py-2 text-base font-medium text-white bg-dark-orange rounded-lg">
+                        <a href="{{ route('member.dashboard')}}" class="flex items-center px-2 py-2 text-base font-medium text-gray-300 hover:text-white hover:bg-slate-700 rounded-lg">
                             <i class="fas fa-tachometer-alt mr-4"></i>
                             Dashboard
                         </a>
-                        <a href="#" class="flex items-center px-2 py-2 text-base font-medium text-gray-300 hover:text-white hover:bg-slate-700 rounded-lg">
+                        <a href="{{ route('books.index')}}" class="flex items-center px-2 py-2 text-base font-medium text-gray-300 hover:text-white hover:bg-slate-700 rounded-lg">
                             <i class="fa-solid fa-house mr-4"></i>
                             Home
                         </a>
@@ -282,20 +286,24 @@
                             <i class="fas fa-book-open mr-4"></i>
                             My Borrowed Books
                         </a>
-                        <a href="#" class="flex items-center px-2 py-2 text-base font-medium text-gray-300 hover:text-white hover:bg-slate-700 rounded-lg">
+                        <a href="{{ route('reservations.index')}}" class="flex items-center px-2 py-2 text-base font-medium text-white bg-dark-orange rounded-lg">
                             <i class="fas fa-bookmark mr-4"></i>
                             My Reservations
                         </a>
                         <a href="{{ route('member.fines.index')}}" class="flex items-center px-2 py-2 text-base font-medium text-gray-300 hover:text-white hover:bg-slate-700 rounded-lg">
                             <i class="fas fa-money-bill-wave mr-4"></i>
-                            Fines & Payments
+                            Fines 
                         </a>
-                        <a href="#"
+                        <a href="{{ route('member.payments.index')}}" class="flex items-center px-2 py-2 text-base font-medium text-gray-300 hover:text-white hover:bg-slate-700 rounded-lg">
+                            <i class="fas fa-money-bill-wave mr-4"></i>
+                            Payments
+                        </a>
+                        <a href="{{ route('member.notifications.index') }}"
                             class="flex items-center px-2 py-2 text-base font-medium text-gray-300 hover:text-white hover:bg-slate-700 rounded-lg">
                             <i class="fa-solid fa-bell mr-4"></i>
                             Notification
                         </a>
-                        <a href="#" class="flex items-center px-2 py-2 text-base font-medium text-gray-300 hover:text-white hover:bg-slate-700 rounded-lg">
+                        <a href="{{ route('profile.edit') }}" class="flex items-center px-2 py-2 text-base font-medium text-gray-300 hover:text-white hover:bg-slate-700 rounded-lg">
                             <i class="fas fa-user-cog mr-4"></i>
                             Profile Settings
                         </a>

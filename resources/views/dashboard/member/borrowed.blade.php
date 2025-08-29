@@ -76,7 +76,7 @@
                             <i class="fas fa-bookmark mr-3"></i>
                             My Reservations
                         </a>
-                        <a href="#"
+                        <a href="{{ route('member.fines.index')}}"
                             class="flex items-center px-4 py-3 text-sm font-medium text-gray-300 hover:text-white hover:bg-slate-700 rounded-lg">
                             <i class="fas fa-money-bill-wave mr-3"></i>
                             Fines & Payments
@@ -229,25 +229,36 @@
                                         
                                         <!-- Status Column -->
                                         <td class="px-6 py-4 whitespace-nowrap">
-                                            @if($borrow->status == 'active')
-                                                @if($borrow->due_date->isPast())
-                                                    <span class="px-3 py-1 text-xs font-semibold rounded-full bg-red-900 text-red-300">Overdue</span>
-                                                    <div class="text-xs text-red-400 mt-1">Please return ASAP</div>
-                                                @else
-                                                    <span class="px-3 py-1 text-xs font-semibold rounded-full bg-green-900 text-green-300">Active</span>
-                                                    <div class="text-xs text-gray-400 mt-1">
-                                                        {{ round(now()->diffInDays($borrow->due_date)) }} days remaining
-                                                    </div>
-                                                @endif
+                                            @php
+                                                $status = strtolower($borrow->status ?? '');
+                                                $isOverdueByDate = $borrow->due_date && $borrow->due_date->isPast();
+                                            @endphp
+
+                                            @if($isOverdueByDate || $status === 'overdue')
+                                                <span class="px-3 py-1 text-xs font-semibold rounded-full bg-red-600 text-red-50">Overdue</span>
+                                                <div class="text-xs text-red-400 mt-1">Please return ASAP</div>
+
+                                            @elseif($status === 'active')
+                                                <span class="px-3 py-1 text-xs font-semibold rounded-full bg-green-700 text-green-100">Active</span>
+                                                <div class="text-xs text-gray-400 mt-1">
+                                                    {{ round(now()->diffInDays($borrow->due_date)) }} days remaining
+                                                </div>
+
+                                            @elseif($status === 'returned')
+                                                <span class="px-3 py-1 text-xs font-semibold rounded-full bg-gray-700 text-gray-300">Returned</span>
+
                                             @else
-                                                <span class="px-3 py-1 text-xs font-semibold rounded-full bg-gray-600 text-gray-300">{{ ucfirst($borrow->status) }}</span>
+                                                <span class="px-3 py-1 text-xs font-semibold rounded-full bg-gray-600 text-gray-300">
+                                                    {{ ucfirst($borrow->status) }}
+                                                </span>
                                             @endif
                                         </td>
+
                                         
                                         <!-- Actions Column -->
                                         <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
                                             <div class="flex flex-col space-y-2">
-                                                @if($borrow->status == 'active')
+                                                @if($borrow->status !== 'returned')
                                                     <!-- Renew Button -->
                                                     <form action="{{ route('borrow.renew', $borrow->borrow_id) }}" method="POST" class="w-full">
                                                         @csrf
@@ -317,7 +328,7 @@
                             <i class="fas fa-bookmark mr-4"></i>
                             My Reservations
                         </a>
-                        <a href="#"
+                        <a href="{{ route('member.fines.index')}}"
                             class="flex items-center px-2 py-2 text-base font-medium text-gray-300 hover:text-white hover:bg-slate-700 rounded-lg">
                             <i class="fas fa-money-bill-wave mr-4"></i>
                             Fines & Payments

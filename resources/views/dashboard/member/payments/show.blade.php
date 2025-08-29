@@ -121,7 +121,7 @@
                             </div>
                             <div class="flex justify-between items-center">
                                 <span class="text-gray-400">Amount:</span>
-                                <span class="text-lg font-semibold text-white">RM {{ number_format($payment->amount, 2) }}</span>
+                                <span class="text-lg font-semibold text-white">$ {{ number_format($payment->amount, 2) }}</span>
                             </div>
                             <div class="flex justify-between items-center">
                                 <span class="text-gray-400">Payment Method:</span>

@@ -168,6 +168,7 @@
                                 @php
                                     $currentDate = \App\Helpers\DateHelper::now();
                                     $isOverdueByDate = $borrow->due_date < $currentDate;
+                                    $hasUnpaidFines = $borrow->fines->where('status', 'unpaid')->count() > 0;
                                 @endphp
                                 <tr>
                                     <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-300">#{{ $borrow->borrow_id }}
@@ -208,6 +209,9 @@
                                         @elseif($borrow->status == 'overdue')
                                             <span
                                                 class="px-2 py-1 text-xs font-semibold bg-red-500/20 text-red-400 rounded-full">Overdue</span>
+                                            @if(!$hasUnpaidFines)
+                                                <span class="text-xs text-yellow-400 ml-1">(Fines paid)</span>
+                                            @endif
                                         @else
                                             <span
                                                 class="px-2 py-1 text-xs font-semibold bg-gray-500/20 text-gray-400 rounded-full">{{ ucfirst($borrow->status) }}</span>

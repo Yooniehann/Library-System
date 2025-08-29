@@ -27,6 +27,24 @@ class Fine extends Model
         'fine_date' => 'date'
     ];
 
+    // NEW: Add boot method to handle events
+    protected static function boot()
+    {
+        parent::boot();
+
+        // Update borrow status when fine is updated
+        static::updated(function ($fine) {
+            if ($fine->isDirty('status')) {
+                $fine->borrow->updateStatusBasedOnFines();
+            }
+        });
+
+        // Update borrow status when fine is created
+        static::created(function ($fine) {
+            $fine->borrow->updateStatusBasedOnFines();
+        });
+    }
+
     public function borrow()
     {
         return $this->belongsTo(Borrow::class, 'borrow_id');
@@ -82,7 +100,7 @@ class Fine extends Model
 
     public function scopeForUser(Builder $query, $userId)
     {
-        return $query->whereHas('borrow', function($q) use ($userId) {
+        return $query->whereHas('borrow', function ($q) use ($userId) {
             $q->where('user_id', $userId);
         });
     }

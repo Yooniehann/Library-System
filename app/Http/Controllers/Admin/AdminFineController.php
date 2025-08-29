@@ -116,7 +116,7 @@ class AdminFineController extends Controller
                     'fine_type' => 'overdue',
                     'amount_per_day' => 1.00,
                     'description' => "Overdue fine for '{$borrow->inventory->book->title}'. " .
-                    ($daysOverdue == 1 ? "1 day overdue." : "{$daysOverdue} days overdue."),
+                        ($daysOverdue == 1 ? "1 day overdue." : "{$daysOverdue} days overdue."),
                     'fine_date' => $currentDate,
                     'status' => 'unpaid',
                 ]);
@@ -143,9 +143,31 @@ class AdminFineController extends Controller
      */
     public function waive($id)
     {
-        $fine = Fine::findOrFail($id);
+        $fine = Fine::with('borrow')->findOrFail($id);
         $fine->update(['status' => 'waived']);
 
+        // NEW: Update borrow status if all fines are resolved
+        $this->updateBorrowStatusAfterWaive($fine->borrow);
+
         return redirect()->route('admin.fines.index')->with('success', 'Fine waived successfully!');
+    }
+
+    /**
+     * NEW: Update borrow status after waiving fine
+     * If all fines are resolved (paid or waived) and the book is still overdue,
+     * change status back to active
+     */
+    private function updateBorrowStatusAfterWaive($borrow)
+    {
+        // Reload the borrow with fines to get updated status
+        $borrow->load('fines');
+
+        // Check if all fines are resolved (paid or waived) and book is still overdue
+        $unresolvedFines = $borrow->fines->whereNotIn('status', ['paid', 'waived']);
+
+        if ($unresolvedFines->count() === 0 && $borrow->status === 'overdue') {
+            // All fines resolved, but book is still overdue - change status back to active
+            $borrow->update(['status' => 'active']);
+        }
     }
 }

@@ -100,9 +100,12 @@ class AdminPaymentController extends Controller
             $paymentData['fine_id'] = $request->fine_id;
 
             // Update the fine status to paid
-            $fine = Fine::find($request->fine_id);
+            $fine = Fine::with('borrow')->find($request->fine_id);
             if ($fine) {
                 $fine->update(['status' => 'paid']);
+
+                // NEW: Update borrow status if all fines are paid
+                $this->updateBorrowStatusAfterPayment($fine->borrow);
             }
         }
 
@@ -187,6 +190,7 @@ class AdminPaymentController extends Controller
         return response()->json($fines);
     }
 
+
     /**
      * Process fine payment directly from fine details
      */
@@ -227,15 +231,30 @@ class AdminPaymentController extends Controller
         // Update fine status
         $fine->update(['status' => 'paid']);
 
-        // Check if all fines for this borrow are paid and update borrow status if needed
-        $unpaidFines = $fine->borrow->fines->where('status', 'unpaid');
-        if ($unpaidFines->count() === 0 && $fine->borrow->status === 'overdue') {
-            // All fines paid, but book is still overdue - change status back to active
-            $fine->borrow->update(['status' => 'active']);
-        }
+        // NEW: Check if all fines for this borrow are paid and update borrow status if needed
+        $this->updateBorrowStatusAfterPayment($fine->borrow);
 
         return redirect()->route('admin.fines.index')
             ->with('success', 'Fine payment processed successfully!');
+    }
+
+
+    /**
+     * NEW: Update borrow status after payment
+     * If all fines are paid and the book is still overdue, change status back to active
+     */
+    private function updateBorrowStatusAfterPayment($borrow)
+    {
+        // Reload the borrow with fines to get updated status
+        $borrow->load('fines');
+
+        // Check if all fines are paid and book is still overdue
+        $unpaidFines = $borrow->fines->where('status', 'unpaid');
+
+        if ($unpaidFines->count() === 0 && $borrow->status === 'overdue') {
+            // All fines paid, but book is still overdue - change status back to active
+            $borrow->update(['status' => 'active']);
+        }
     }
 
     /**

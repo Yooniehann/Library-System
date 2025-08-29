@@ -28,18 +28,6 @@ use App\Http\Controllers\Admin\AdminPaymentController;
 use App\Http\Controllers\Admin\SearchController;
 use App\Http\Controllers\Admin\SimulationController;
 
-//kids
-use App\Http\Controllers\Kid\BorrowedController;
-use App\Http\Controllers\Kid\KidDashboardController;
-use App\Http\Controllers\Kid\KidReservationController;
-use App\Http\Controllers\Kid\KidFineController;
-use App\Http\Controllers\Kid\AchievementController;
-use App\Http\Controllers\Kid\KidNotificationController;
-use App\Http\Controllers\Kid\KidContactController;
-use App\Http\Controllers\Kid\KidProfileController;
-use App\Http\Controllers\Kid\KidProcessPayController;
-use App\Http\Controllers\Kid\KidBookReturnController;
-
 /*
 |--------------------------------------------------------------------------
 | Public Routes
@@ -210,10 +198,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
 // Admin routes - Consolidated all admin routes into one group
 Route::prefix('admin')->name('admin.')->middleware(['auth', 'verified', 'role:Admin'])->group(function () {
-    // Dashboard
-    Route::get('/dashboard', function () {
-        return view('dashboard.admin.index');
-    })->name('dashboard');
+    // Dashboard - Updated to use controller
+    Route::get('/dashboard', [AdminDashboardController::class, 'index'])->name('dashboard');
 
     // Search route
     Route::get('/search', [SearchController::class, 'search'])->name('search');

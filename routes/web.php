@@ -159,7 +159,6 @@ Route::middleware(['auth', 'verified'])->group(function () {
         ->name('book.return')
         ->middleware('role:Member,Kid');
 
-    // Borrowing history - Only for members
     Route::get('/borrowed', [BorrowController::class, 'index'])
         ->middleware('role:Member,Kid')
         ->name('borrowed.index');
@@ -182,7 +181,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
         ->middleware('role:Member,Kid')
         ->name('reservations.cancel');
 
-        // Profile routes
+    // Profile routes
     Route::controller(ProfileController::class)->name('profile.')->group(function () {
         Route::get('/profile', 'edit')->name('edit');
         Route::patch('/profile', 'update')->name('update');
@@ -338,6 +337,9 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'verified', 'role:Ad
 Route::middleware(['auth', 'verified', 'role:Member'])->prefix('member')->name('member.')->group(function () {
     Route::get('/dashboard', [App\Http\Controllers\DashboardController::class, 'index'])->name('dashboard');
 
+    // Member borrowed books - Moved to member-specific routes
+    Route::get('/borrowed', [BorrowController::class, 'index'])->name('borrowed.index');
+
     // Fines routes
     Route::get('/fines', [FineController::class, 'index'])->name('fines.index');
     Route::get('/fines/{fine}', [FineController::class, 'show'])->name('fines.show');
@@ -350,8 +352,8 @@ Route::middleware(['auth', 'verified', 'role:Member'])->prefix('member')->name('
     Route::get('/payments/{payment}/print', [PaymentController::class, 'print'])->name('payments.print');
 
     // Notifications routes - Member
-        Route::get('notifications/', [NotificationController::class, 'memberIndex'])->name('notifications.index');
-        Route::post('/notifications/{id}/read', [NotificationController::class, 'markAsRead'])->name('notifications.markAsRead');
+    Route::get('notifications/', [NotificationController::class, 'memberIndex'])->name('notifications.index');
+    Route::post('/notifications/{id}/read', [NotificationController::class, 'markAsRead'])->name('notifications.markAsRead');
 });
 
 // Kid routes
@@ -360,36 +362,35 @@ Route::middleware(['auth', 'verified', 'role:Kid'])->prefix('kid')->name('kid.')
     // Dashboard main page
     Route::get('/dashboard', [KidDashboardController::class, 'index'])->name('dashboard');
 
+    // Borrowed books
+    Route::get('/borrowed', [BorrowedController::class, 'index'])->name('kidborrowed.index');
+    Route::post('/borrow/{borrow}/renew', [BorrowedController::class, 'renew'])->name('kidborrow.renew');
+    Route::post('/borrow/{borrow}/return', [BorrowedController::class, 'return'])->name('kidborrow.return');
 
-  // Borrowed books
-Route::get('/borrowed', [BorrowedController::class, 'index'])->name('kidborrowed.index');
-Route::post('/borrow/{book}/renew', [BorrowedController::class, 'renew'])->name('kidborrow.renew');
+    // **New Return route**
+    Route::post('/borrow/{borrow}/return', [KidBookReturnController::class, 'returnBook'])->name('kidborrow.return');
 
-// **New Return route**
-Route::post('/borrow/{borrow}/return', [KidBookReturnController::class, 'returnBook'])->name('kidborrow.return');
     // Kid Reservations
-Route::get('/reservations', [KidReservationController::class, 'index'])->name('kidreservation.index');
-Route::post('/reserve/{book}', [KidReservationController::class, 'create'])->name('kidreservation.create');
-Route::post('/reservations/{id}/cancel', [KidReservationController::class, 'cancel'])->name('kidreservation.cancel');
+    Route::get('/reservations', [KidReservationController::class, 'index'])->name('kidreservation.index');
+    Route::post('/reserve/{book}', [KidReservationController::class, 'create'])->name('kidreservation.create');
+    Route::post('/reservations/{id}/cancel', [KidReservationController::class, 'cancel'])->name('kidreservation.cancel');
 
+    // Fines & Payments
+    Route::get('/fines', [KidFineController::class, 'index'])->name('kidfinepay.index');
+    Route::post('/fines/{fine}/pay', [KidFineController::class, 'pay'])->name('kidfines.pay');
 
-  // Fines & Payments
-  Route::get('/fines', [KidFineController::class, 'index'])->name('kidfinepay.index');
-Route::post('/fines/{fine}/pay', [KidFineController::class, 'pay'])->name('kidfines.pay');
-
- // Process payment page
+    // Process payment page
     Route::get('/fines/{fine}/process', [KidProcessPayController::class, 'index'])->name('kidprocesspay.index');
 
-// Notifications
+    // Notifications
     Route::get('/notifications', [KidNotificationController::class, 'index'])->name('kidnoti.index');
     Route::post('/notifications/{id}/read', [KidNotificationController::class, 'markAsRead'])->name('kidnoti.markAsRead');
 
-  // Contact Librarian (fixed, not nested)
+    // Contact Librarian (fixed, not nested)
     Route::get('/contact', [KidContactController::class, 'index'])->name('kidcontact.index');
     Route::post('/contact/send', [KidContactController::class, 'send'])->name('kidcontact.send');
 
-
     // Profile Settings
-Route::get('/profile', [KidProfileController::class, 'edit'])->name('kidprofile.index');
-Route::patch('/profile', [KidProfileController::class, 'update'])->name('kidprofile.update');
+    Route::get('/profile', [KidProfileController::class, 'edit'])->name('kidprofile.index');
+    Route::patch('/profile', [KidProfileController::class, 'update'])->name('kidprofile.update');
 });

@@ -164,6 +164,14 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::post('/reservations/{id}/cancel', [ReservationController::class, 'cancel'])
         ->middleware('role:Member,Kid')
         ->name('reservations.cancel');
+
+        // Profile routes
+    Route::controller(ProfileController::class)->name('profile.')->group(function () {
+        Route::get('/profile', 'edit')->name('edit');
+        Route::patch('/profile', 'update')->name('update');
+        Route::patch('/profile/password', 'password')->name('password');
+        Route::delete('/profile', 'destroy')->name('destroy');
+    });
 });
 
 /*
@@ -310,15 +318,14 @@ Route::middleware(['auth', 'verified', 'role:Member'])->prefix('member')->name('
     })->name('dashboard');
 
     // Fines routes
-        Route::get('/fines', [FineController::class, 'index'])->name('fines.index');
-        Route::get('/fines/{fine}', [FineController::class, 'show'])->name('fines.show');
+    Route::get('/fines', [FineController::class, 'index'])->name('fines.index');
+    Route::get('/fines/{fine}', [FineController::class, 'show'])->name('fines.show');
 
-        // Payments routes
-        Route::get('/payments', [PaymentController::class, 'index'])->name('payments.index');
-        Route::get('/payments/create/{fine?}', [PaymentController::class, 'create'])->name('payments.create');
-        Route::post('/payments', [PaymentController::class, 'store'])->name('payments.store');
-        Route::get('/payments/{payment}', [PaymentController::class, 'show'])->name('payments.show');
-
+    // Payments routes
+    Route::get('/payments', [PaymentController::class, 'index'])->name('payments.index');
+    Route::get('/payments/create/{fine?}', [PaymentController::class, 'create'])->name('payments.create');
+    Route::post('/payments', [PaymentController::class, 'store'])->name('payments.store');
+    Route::get('/payments/{payment}', [PaymentController::class, 'show'])->name('payments.show');
 });
 
 // Kid routes

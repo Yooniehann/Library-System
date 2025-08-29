@@ -29,7 +29,7 @@
         <!-- User profile and date -->
         <div class="flex items-center space-x-4">
             <div class="hidden md:block text-right">
-                <p class="text-sm font-medium text-white">Welcome! Admin</p>
+                <p class="text-sm font-medium text-white">Welcome! {{ Auth::user()->fullname }}</p>
                 <p class="text-xs text-white">{{ now()->format('M d, Y | l, h:i A') }}</p>
             </div>
 
@@ -38,7 +38,7 @@
                 <button @click="open = !open" class="flex items-center space-x-2 focus:outline-none">
                     <div
                         class="h-8 w-8 rounded-full bg-yellow-400 flex items-center justify-center text-black font-semibold">
-                        A
+                        {{ strtoupper(substr(Auth::user()->fullname, 0, 1)) }}
                     </div>
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-gray-500" fill="none"
                         viewBox="0 0 24 24" stroke="currentColor">
@@ -49,9 +49,10 @@
                 <div x-show="open" @click.away="open = false"
                     class="origin-top-right absolute right-0 mt-2 w-48 rounded-md shadow-lg bg-black ring-1 ring-white ring-opacity-5 z-50">
                     <div class="py-1">
-                        <a href="#"
-                            class="block px-4 py-2 text-sm text-white hover:bg-yellow-400 hover:text-black">Your
-                            Profile</a>
+                        <a href="{{ route('profile.edit') }}"
+                            class="block px-4 py-2 text-sm text-white hover:bg-yellow-400 hover:text-black">
+                            <i class="fas fa-user-circle mr-2"></i>Your Profile
+                        </a>
                         <form action="{{ route('logout') }}" method="POST" class="bg-black">
                             @csrf
                             <button type="submit"

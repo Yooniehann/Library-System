@@ -340,6 +340,7 @@ Route::middleware(['auth', 'verified', 'role:Member'])->prefix('member')->name('
 
     // Member borrowed books - Moved to member-specific routes
     Route::get('/borrowed', [BorrowController::class, 'index'])->name('borrowed.index');
+    Route::post('/borrow/{borrow}/renew', [BorrowController::class, 'renew'])->name('borrow.renew');
 
     // Fines routes
     Route::get('/fines', [FineController::class, 'index'])->name('fines.index');

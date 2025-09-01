@@ -128,24 +128,33 @@ class BorrowController extends Controller
 
         $borrow = Borrow::where('user_id', $user->user_id)
             ->findOrFail($borrowId);
- 
-        // Check if already renewed maximum times (e.g., 2 times)
+
+        // Check if already renewed maximum times (2 times)
         if ($borrow->renewal_count >= 2) {
-            return redirect()->back()->with('error', 'Maximum renewals reached for this book.');
+            return redirect()->back()->with('error', 'Maximum renewals reached! You can only renew a book twice. Please return the book by ' . $borrow->due_date->format('M d, Y') . ' to avoid fines.');
         }
- 
+
         // Check if book is overdue
         if ($borrow->due_date->isPast()) {
-            return redirect()->back()->with('error', 'Cannot renew overdue book. Please return it.');
+            return redirect()->back()->with('error', 'Cannot renew overdue book. Please return it to avoid additional fines.');
         }
- 
+
         // Renew for another 2 weeks
         $borrow->update([
             'due_date' => now()->addDays(14),
             'renewal_count' => $borrow->renewal_count + 1
         ]);
- 
-        return redirect()->back()->with('success', 'Book renewed successfully! New due date: ' . $borrow->due_date->format('M d, Y'));
+
+        $renewalsLeft = 2 - $borrow->renewal_count;
+        $message = 'Book renewed successfully! New due date: ' . $borrow->due_date->format('M d, Y');
+        
+        if ($renewalsLeft > 0) {
+            $message .= '. You have ' . $renewalsLeft . ' renewal' . ($renewalsLeft > 1 ? 's' : '') . ' left.';
+        } else {
+            $message .= '. This is your final renewal.';
+        }
+
+        return redirect()->back()->with('success', $message);
     }
 
     /**

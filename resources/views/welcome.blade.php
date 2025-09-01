@@ -334,10 +334,10 @@
             <p class="text-xl md:text-2xl mb-8 max-w-3xl mx-auto leading-relaxed">
                 Discover your next great read from our collection of 50,000+ books
             </p>
-            <div class="relative max-w-xl mx-auto">
-                <input type="text" placeholder="Search by title, author, or ISBN..."
+            <form action="{{ route('books.index') }}" method="GET" class="relative max-w-xl mx-auto">
+                <input type="text" name="search" placeholder="Search by title, author, or ISBN..."
                     class="w-full py-4 px-6 rounded-full text-gray-800 shadow-lg focus:outline-none focus:ring-2 focus:ring-black">
-                <button
+                <button type="submit"
                     class="absolute right-3 top-1/2 transform -translate-y-1/2 bg-black text-primary-orange p-2 rounded-full hover:bg-gray-800 transition">
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24"
                         stroke="currentColor">
@@ -345,9 +345,10 @@
                             d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
                     </svg>
                 </button>
-            </div>
+            </form>
         </div>
     </section>
+
 
     <!-- Library Introduction -->
     <section class="py-16">

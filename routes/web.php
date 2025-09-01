@@ -58,6 +58,7 @@ Route::view('/faq', 'static.faq')->name('faq');
 Route::view('/privacy', 'static.privacy')->name('privacy');
 Route::view('/terms', 'static.terms')->name('terms');
 Route::view('/memberplan', 'static.memberplan')->name('memberplan');
+Route::get('/search', [BookController::class, 'search'])->name('search');
 
 // Book page in home
 Route::get('/books', [CatalogController::class, 'books'])->name('books.index');

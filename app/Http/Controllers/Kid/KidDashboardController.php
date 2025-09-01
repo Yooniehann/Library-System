@@ -22,18 +22,19 @@ class KidDashboardController extends Controller
         $borrowedCount = $user->activeBorrows()->count();
 
         // Overdue books count
-        $overdueCount = $user->activeBorrows()
-                            ->where('due_date', '<', now())
-                            ->count();
+        $overdueCount = $user->borrows()
+                             ->whereIn('status', ['active', 'overdue'])
+                             ->where('due_date', '<', now())
+                             ->count();
 
         // Total unpaid fines
         $finesTotal = $user->unpaidFines()->sum('amount_per_day');
 
         // Recommended Books (example: top 5 latest books)
         $recommendedBooks = Book::with('author')
-                            ->orderBy('created_at', 'desc')
-                            ->take(5)
-                            ->get();
+                                ->orderBy('created_at', 'desc')
+                                ->take(5)
+                                ->get();
 
         // Top Picks (example: top 5 most borrowed books)
         $topPicks = Book::with('author')

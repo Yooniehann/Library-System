@@ -6,16 +6,19 @@ use App\Models\Borrow;
 use App\Models\BookReturn;
 use App\Models\Fine;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 
 class BookReturnController extends Controller
 {
     public function returnBook($borrowId)
     {
-        $borrow = Borrow::where('user_id', Auth::id())
-            ->findOrFail($borrowId);
+        $borrow = Borrow::with('inventory', 'bookReturn')->findOrFail($borrowId);
 
-        // Check if book is already returned
+        // Make sure the current user owns the borrow (if not admin)
+        if (auth()->user()->role !== 'Admin' && $borrow->user_id !== auth()->id()) {
+            abort(403, 'Unauthorized action.');
+        }
+
+        // Check if already returned
         if ($borrow->status === 'returned') {
             return redirect()->back()->with('error', 'This book has already been returned.');
         }

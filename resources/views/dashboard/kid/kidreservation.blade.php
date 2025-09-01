@@ -7,6 +7,58 @@
 <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 <style>
+
+       /* Search Bar */
+.search-bar input {
+    background-color: #0f172a;  /* same as body */
+    color: #ededed;             /* black text inside search */
+    border: 1px solid #4b5563; /* subtle border */
+    border-radius: 0.5rem;
+    padding: 0.5rem 1rem;
+    outline: none;
+    font-size: 0.95rem;
+}
+.search-bar input::placeholder {
+    color: #9ca3af; /* placeholder color */
+}
+.search-bar input:focus {
+    border-color: #FF9F1C; /* orange border on focus */
+    box-shadow: 0 0 0 2px rgba(255, 159, 28, 0.3); /* subtle focus glow */
+}
+
+/* Search Button */
+.search-bar button {
+    background-color: #FF9F1C;  /* orange button */
+    color: #000000;             /* black text on button */
+    border-radius: 0.5rem;
+    padding: 0.5rem 1.5rem;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.25rem;
+    transition: background-color 0.2s;
+}
+.search-bar button:hover {
+    background-color: #FF8C00;  /* slightly darker orange on hover */
+}
+
+/* Clear Button */
+.search-bar a {
+    border-radius: 0.5rem;
+    padding: 0.5rem 1rem;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.25rem;
+    transition: background-color 0.2s;
+    background-color: #6b7280; /* gray background */
+    color: #f7f7f7;
+}
+.search-bar a:hover {
+    background-color: #4b5563; /* darker gray on hover */
+}
 body { background: #0f172a; color: #fff; font-family: 'Open Sans', sans-serif; }
 
 /* Sidebar */
@@ -97,11 +149,32 @@ h1, h2 { color: #FFD369; }
 
 <!-- Main Content -->
 <div class="main-content" id="mainContent">
+
     <!-- Flex container for hamburger + heading -->
     <div class="flex-header">
         <button class="open-btn" id="openBtn" onclick="openNav()"><i class="fas fa-bars"></i></button>
         <h1 class="text-2xl font-bold text-white">My Reservations</h1>
     </div>
+    <!-- Search Bar -->
+<div class="bg-slate-800 rounded-lg shadow p-4 mb-6 search-bar">
+    <form action="{{ route('kid.kidreservation.index') }}" method="GET" class="flex gap-3">
+        <div class="flex-1">
+            <input type="text"
+                   name="search"
+                   value="{{ request()->get('search') ?? '' }}"
+                   placeholder="Search by book title, author, borrow ID, or status..."
+                   class="w-full px-4 py-2 rounded-lg text-black bg-slate-800 border border-slate-600 placeholder-gray-400 focus:outline-none focus:border-yellow-500">
+        </div>
+        <button type="submit" class="px-6 py-2 rounded-lg bg-yellow-400 text-black hover:bg-orange-500 transition-colors flex items-center gap-2">
+            <i class="fas fa-search"></i> Search
+        </button>
+        @if(request()->get('search'))
+            <a href="{{ route('kid.kidreservation.index') }}" class="px-4 py-2 rounded-lg bg-gray-600 text-white hover:bg-gray-500 transition-colors flex items-center gap-2">
+                <i class="fas fa-times"></i> Clear
+            </a>
+        @endif
+    </form>
+</div>
 
     @if($reservations->isEmpty())
     <div class="bg-slate-800 rounded-lg shadow p-6 text-center">
@@ -251,5 +324,26 @@ window.addEventListener('resize', () => {
     }
 });
 </script>
+
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+    const searchInput = document.getElementById('searchInput');
+    const tableContainer = document.getElementById('reservationTableContainer');
+
+    searchInput.addEventListener('input', function() {
+        const search = this.value;
+
+        fetch(`{{ route('kid.kidreservation.index') }}?search=${encodeURIComponent(search)}`, {
+            headers: { 'X-Requested-With': 'XMLHttpRequest' }
+        })
+        .then(response => response.text())
+        .then(html => {
+            tableContainer.innerHTML = html;
+        })
+        .catch(err => console.error(err));
+    });
+});
+</script>
+
 </body>
 </html>

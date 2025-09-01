@@ -289,81 +289,94 @@ table th, table td { white-space: nowrap; }
   </div>
 
   <!-- Two-Column Dashboard Layout -->
-  <div class="dashboard-grid gap-6">
+<div class="dashboard-grid gap-6">
 
     <!-- Left Column: Recommended + Top Picks -->
     <div class="dashboard-left flex flex-col gap-6">
 
-      <!-- Recommended Books -->
-      <div>
-        <h2 class="text-xl font-semibold text-white mb-2">Recommended Books</h2>
-        <div class="flex gap-4 overflow-x-auto pb-2">
-          @foreach($recommendedBooks as $book)
-            <div class="dashboard-card flex-shrink-0 w-40">
-              <img src="{{ $book->cover_image ? asset('storage/' . $book->cover_image) : 'https://via.placeholder.com/128x192/1e293b/ffffff?text=No+Cover' }}"
-                   alt="{{ $book->title }}">
-              <p class="book-title">{{ $book->title }}</p>
-              <p class="book-author">by {{ $book->author->fullname ?? 'Unknown' }}</p>
+        <!-- Recommended Books -->
+        <div>
+            <div class="flex justify-between items-center mb-2 border-b border-yellow-400 pb-1">
+                <h2 class="text-xl font-semibold text-white">Recommended Books</h2>
+                <a href="{{ url('/books') }}" class="text-sm text-primary-orange hover:text-yellow-400">View More</a>
             </div>
-          @endforeach
+            <div class="flex gap-4 overflow-x-auto pb-2">
+                @foreach($recommendedBooks->take(3) as $book)
+                    <div class="dashboard-card flex-shrink-0 w-40">
+                        <img src="{{ $book->cover_image ? asset('storage/' . $book->cover_image) : 'https://via.placeholder.com/128x192/1e293b/ffffff?text=No+Cover' }}"
+                             alt="{{ $book->title }}">
+                        <p class="book-title">{{ $book->title }}</p>
+                        <p class="book-author">by {{ $book->author->fullname ?? 'Unknown' }}</p>
+                    </div>
+                @endforeach
+            </div>
         </div>
-      </div>
 
-      <!-- Top Picks -->
-      <div>
-        <h2 class="text-xl font-semibold text-white mb-2">Top Picks</h2>
-        <div class="flex gap-4 overflow-x-auto pb-2">
-          @foreach($topPicks as $book)
-            <div class="dashboard-card flex-shrink-0 w-40">
-              <img src="{{ $book->cover_image ? asset('storage/' . $book->cover_image) : 'https://via.placeholder.com/128x192/1e293b/ffffff?text=No+Cover' }}"
-                   alt="{{ $book->title }}">
-              <p class="book-title">{{ $book->title }}</p>
-              <p class="book-author">by {{ $book->author->fullname ?? 'Unknown' }}</p>
-              <p class="borrow-due text-yellow-400">Borrowed {{ $book->borrow_count ?? 0 }} times</p>
+        <!-- Top Picks -->
+        <div>
+            <div class="flex justify-between items-center mb-2 border-b border-yellow-400 pb-1">
+                <h2 class="text-xl font-semibold text-white">Top Picks</h2>
+                <a href="{{ url('/books') }}" class="text-sm text-primary-orange hover:text-yellow-400">View More</a>
             </div>
-          @endforeach
+            <div class="flex gap-4 overflow-x-auto pb-2">
+                @foreach($topPicks->take(3) as $book)
+                    <div class="dashboard-card flex-shrink-0 w-40">
+                        <img src="{{ $book->cover_image ? asset('storage/' . $book->cover_image) : 'https://via.placeholder.com/128x192/1e293b/ffffff?text=No+Cover' }}"
+                             alt="{{ $book->title }}">
+                        <p class="book-title">{{ $book->title }}</p>
+                        <p class="book-author">by {{ $book->author->fullname ?? 'Unknown' }}</p>
+                        <p class="borrow-due text-yellow-400">Borrowed {{ $book->borrow_count ?? 0 }} times</p>
+                    </div>
+                @endforeach
+            </div>
         </div>
-      </div>
 
     </div>
 
     <!-- Right Column: My Borrowed Books + Notifications -->
     <div class="dashboard-right flex flex-col gap-6">
 
-      <!-- My Borrowed Books -->
-      <div>
-        <h2 class="text-xl font-semibold text-white mb-2">My Borrowed Books</h2>
-        <div class="flex gap-4 overflow-x-auto pb-2">
-          @foreach($myBorrowedBooks as $borrow)
-            <div class="dashboard-card flex-shrink-0 w-40">
-              <img src="{{ $borrow->inventory->book->cover_image ? asset('storage/' . $borrow->inventory->book->cover_image) : 'https://via.placeholder.com/128x192/1e293b/ffffff?text=No+Cover' }}"
-                   alt="{{ $borrow->inventory->book->title }}">
-              <p class="book-title">{{ $borrow->inventory->book->title }}</p>
-              <p class="book-author">by {{ $borrow->inventory->book->author->fullname ?? 'Unknown' }}</p>
-              <p class="borrow-due">Due: {{ $borrow->due_date->format('M d, Y') }}</p>
+        <!-- My Borrowed Books -->
+        <div>
+            <div class="flex justify-between items-center mb-2 border-b border-yellow-400 pb-1">
+                <h2 class="text-xl font-semibold text-white">My Borrowed Books</h2>
+                <a href="{{ route('kid.kidborrowed.index') }}" class="text-sm text-primary-orange hover:text-yellow-400">View More</a>
             </div>
-          @endforeach
+            <div class="flex gap-4 overflow-x-auto pb-2">
+                @foreach($myBorrowedBooks->take(3) as $borrow)
+                    <div class="dashboard-card flex-shrink-0 w-40">
+                        <img src="{{ $borrow->inventory->book->cover_image ? asset('storage/' . $borrow->inventory->book->cover_image) : 'https://via.placeholder.com/128x192/1e293b/ffffff?text=No+Cover' }}"
+                             alt="{{ $borrow->inventory->book->title }}">
+                        <p class="book-title">{{ $borrow->inventory->book->title }}</p>
+                        <p class="book-author">by {{ $borrow->inventory->book->author->fullname ?? 'Unknown' }}</p>
+                        <p class="borrow-due">Due: {{ $borrow->due_date->format('M d, Y') }}</p>
+                    </div>
+                @endforeach
+            </div>
         </div>
-      </div>
 
-      <!-- Notifications -->
-      <div>
-        <h2 class="text-xl font-semibold text-white mb-2">Latest Notifications</h2>
-        <div class="flex flex-col gap-2">
-          @forelse($notifications as $note)
-            <div class="notification-card">
-              <p class="time">{{ $note->created_at->format('M d, Y H:i') }}</p>
-              <p class="message">{{ $note->message }}</p>
+        <!-- Notifications -->
+        <div>
+            <div class="flex justify-between items-center mb-2 border-b border-yellow-400 pb-1">
+                <h2 class="text-xl font-semibold text-white">Latest Notifications</h2>
+                <a href="{{ route('kid.kidnoti.index') }}" class="text-sm text-primary-orange hover:text-yellow-400">View More</a>
             </div>
-          @empty
-            <p class="text-gray-400 text-sm">No notifications yet.</p>
-          @endforelse
+            <div class="flex flex-col gap-2">
+                @forelse($notifications->take(3) as $note)
+                    <div class="notification-card">
+                        <p class="time text-gray-400 text-xs">{{ $note->created_at->format('M d, Y H:i') }}</p>
+                        <p class="message">{{ $note->message }}</p>
+                    </div>
+                @empty
+                    <p class="text-gray-400 text-sm">No notifications yet.</p>
+                @endforelse
+            </div>
         </div>
-      </div>
 
     </div>
 
-  </div>
+</div>
+
 </section>
 
 <form id="logoutForm" action="{{ route('logout') }}" method="POST" class="hidden">@csrf</form>

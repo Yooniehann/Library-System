@@ -21,8 +21,12 @@ body { background: #0f172a; color: #fff; font-family: 'Open Sans', sans-serif; }
 
 /* Main Content */
 .main-content { margin-left: 250px; padding: 24px; transition: margin-left 0.3s ease; }
-.flex-header { display: flex; align-items: center; gap: 16px; transition: margin-left 0.3s ease; position: relative; z-index: 500; }
-.open-btn { background: transparent; border: none; font-size: 1.5rem; color: #FFD369; cursor: pointer; position: fixed; top: 16px; left: 16px; z-index: 1001; }
+h1, h2 { color: #FFD369; }
+
+/* Flex header for hamburger + title */
+.flex-header { display: flex; align-items: center; gap: 16px; margin-bottom: 1.5rem; }
+.open-btn { font-size: 1.5rem; color: #FFB347; background: none; border: none; cursor: pointer; }
+
 
 /* Fine Cards */
 .fine-card { background: #1e293b; padding: 16px; border-radius: 12px; display: flex; justify-content: space-between; align-items: center; transition: background 0.3s; }
@@ -41,9 +45,22 @@ body { background: #0f172a; color: #fff; font-family: 'Open Sans', sans-serif; }
 
 /* Responsive adjustments */
 @media (max-width: 768px) {
-  .main-content { margin-left: 0; padding: 16px; }
-  .sidebar { width: 200px; }
-  .flex-header { margin-left: 0; }
+    .main-content { margin-left: 0; }
+}
+/* Hamburger as flex item */
+.flex-header { display: flex; align-items: center; gap: 16px; margin-bottom: 1.5rem; }
+.open-btn { background: transparent; border: none; font-size: 1.5rem; color: #FFD369; cursor: pointer; }
+
+/* Close button inside sidebar */
+.close-btn { position: absolute; top: 16px; right: 16px; background: transparent; border: none; color: #FFD369; font-size: 1.25rem; cursor: pointer; }
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .main-content { margin-left: 0; }
+  .table-card-body { grid-template-columns: 48px 2fr 1fr; grid-template-rows: auto auto; }
+  .table-card-body div:nth-child(4),
+  .table-card-body div:nth-child(5),
+  .table-card-body div:nth-child(6) { grid-column: span 3; font-size: 0.75rem; color: #bbb; }
 }
 </style>
 </head>
@@ -87,28 +104,11 @@ body { background: #0f172a; color: #fff; font-family: 'Open Sans', sans-serif; }
 
 <!-- Main Content -->
 <div class="main-content" id="mainContent">
+
+     <!-- Hamburger + Heading -->
     <div class="flex-header">
         <button class="open-btn" id="openBtn" onclick="openNav()"><i class="fas fa-bars"></i></button>
-        <h1 class="text-2xl font-bold text-white ml-8 md:ml-0">Fines & Payments</h1>
-    </div>
-
-    <!-- Search -->
-    <div class="bg-slate-800 rounded-lg shadow p-4 mb-6">
-        <form action="{{ route('kid.kidfinepay.index') }}" method="GET" class="flex gap-3 flex-wrap">
-            <input type="text"
-                   name="search"
-                   value="{{ request()->get('search') ?? '' }}"
-                   placeholder="Search by book title, borrow ID, fine type, or status..."
-                   class="flex-1 px-4 py-2 bg-slate-700 border border-slate-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-yellow-400">
-            <button type="submit" class="bg-yellow-400 text-black px-6 py-2 rounded-lg hover:bg-yellow-500 transition-colors">
-                <i class="fas fa-search mr-2"></i> Search
-            </button>
-            @if(request()->get('search'))
-                <a href="{{ route('kid.kidfinepay.index') }}" class="bg-gray-600 text-white px-4 py-2 rounded-lg hover:bg-gray-500 transition-colors flex items-center">
-                    <i class="fas fa-times mr-2"></i> Clear
-                </a>
-            @endif
-        </form>
+        <h1 class="text-2xl font-bold">Fine and Payment</h1>
     </div>
 
   <!-- Fines & Payments List -->
@@ -218,6 +218,51 @@ function openNav() {
     document.getElementById('mainContent').style.marginLeft = '250px';
     document.querySelector('.flex-header').style.marginLeft = '250px';
 }
+</script>
+
+<script>
+const sidebar = document.getElementById('sidebar');
+const openBtn = document.getElementById('openBtn');
+const mainContent = document.getElementById('mainContent');
+
+function closeNav() {
+    sidebar.style.transform = 'translateX(-100%)';
+    openBtn.style.display = 'flex';
+    mainContent.style.marginLeft = '0';
+}
+
+function openNav() {
+    sidebar.style.transform = 'translateX(0)';
+    openBtn.style.display = 'none';
+    mainContent.style.marginLeft = '250px';
+}
+
+window.addEventListener('DOMContentLoaded', () => {
+    if(window.innerWidth >= 768){
+        sidebar.style.transform = 'translateX(0)';
+        openBtn.style.display = 'none';
+        mainContent.style.marginLeft = '250px';
+    } else {
+        sidebar.style.transform = 'translateX(-100%)';
+        openBtn.style.display = 'flex';
+        mainContent.style.marginLeft = '0';
+    }
+});
+
+window.addEventListener('resize', () => {
+    if(window.innerWidth >= 768){
+        sidebar.style.transform = 'translateX(0)';
+        openBtn.style.display = 'none';
+        mainContent.style.marginLeft = '250px';
+    } else {
+        sidebar.style.transform = 'translateX(-100%)';
+        openBtn.style.display = 'flex';
+        mainContent.style.marginLeft = '0';
+    }
+});
+
+
+
 </script>
 
 </body>

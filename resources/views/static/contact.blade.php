@@ -11,8 +11,15 @@
         background-color: #000;
         font-family: 'Open Sans', sans-serif;
         color: #EEBA30;
-        padding: 40px 20px;
         min-height: 100vh;
+
+        display: flex;
+        flex-direction: column;
+    }
+
+    main {
+        flex: 1; /* pushes footer down */
+        padding: 40px 20px; /* moved padding from body to main */
     }
 
     .container {
@@ -25,6 +32,7 @@
         width: 100%;
         min-height: 400px;
         margin: auto;
+        margin-bottom: 60px; /* spacing above footer */
     }
 
     .contact-card {
@@ -172,50 +180,52 @@
 @endpush
 
 @section('content')
-<div class="container">
-    <section class="contact-card">
-        <h1>Contact Us</h1>
-        <form id="contactForm">
-            <label class="label-icon">
-                <svg viewBox="0 0 24 24"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4
-                1.79-4 4 1.79 4 4 4zm0 2c-2.67
-                0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>
-                Name
-            </label>
-            <div class="input-wrapper">
-                <input type="text" id="name" placeholder="Your Name" required>
-            </div>
+<main>
+    <div class="container">
+        <section class="contact-card">
+            <h1>Contact Us</h1>
+            <form id="contactForm">
+                <label class="label-icon">
+                    <svg viewBox="0 0 24 24"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4
+                    1.79-4 4 1.79 4 4 4zm0 2c-2.67
+                    0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>
+                    Name
+                </label>
+                <div class="input-wrapper">
+                    <input type="text" id="name" placeholder="Your Name" required>
+                </div>
 
-            <label class="label-icon">
-                <svg viewBox="0 0 24 24"><path d="M20 4H4c-1.1
-                0-2 .9-2 2v12c0 1.1.9 2
-                2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0
-                4l-8 5-8-5V6l8 5 8-5v2z"/></svg>
-                Email
-            </label>
-            <div class="input-wrapper">
-                <input type="email" id="email" placeholder="Your Email" required
-                       value="{{ auth()->check() ? auth()->user()->email : '' }}">
-            </div>
+                <label class="label-icon">
+                    <svg viewBox="0 0 24 24"><path d="M20 4H4c-1.1
+                    0-2 .9-2 2v12c0 1.1.9 2
+                    2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0
+                    4l-8 5-8-5V6l8 5 8-5v2z"/></svg>
+                    Email
+                </label>
+                <div class="input-wrapper">
+                    <input type="email" id="email" placeholder="Your Email" required
+                           value="{{ auth()->check() ? auth()->user()->email : '' }}">
+                </div>
 
-            <label class="label-icon">
-                <svg viewBox="0 0 24 24"><path d="M20 2H4c-1.1
-                0-2 .9-2 2v16l4-4h14c1.1
-                0 2-.9 2-2V4c0-1.1-.9-2-2-2z"/></svg>
-                Message
-            </label>
-            <div class="input-wrapper">
-                <textarea id="message" placeholder="Your Message" required></textarea>
-            </div>
+                <label class="label-icon">
+                    <svg viewBox="0 0 24 24"><path d="M20 2H4c-1.1
+                    0-2 .9-2 2v16l4-4h14c1.1
+                    0 2-.9 2-2V4c0-1.1-.9-2-2-2z"/></svg>
+                    Message
+                </label>
+                <div class="input-wrapper">
+                    <textarea id="message" placeholder="Your Message" required></textarea>
+                </div>
 
-            <button type="button" class="btn-send" onclick="sendMessage()">Send</button>
-        </form>
-    </section>
+                <button type="button" class="btn-send" onclick="sendMessage()">Send</button>
+            </form>
+        </section>
 
-    <aside class="image-wrapper">
-        <img src="{{ asset('images/books.png') }}" alt="Library Contact">
-    </aside>
-</div>
+        <aside class="image-wrapper">
+            <img src="{{ asset('images/books.png') }}" alt="Library Contact">
+        </aside>
+    </div>
+</main>
 
 <div class="overlay" id="overlay"></div>
 
@@ -234,7 +244,7 @@
 @push('scripts')
 <script>
     const isUserLoggedIn = {{ auth()->check() ? 'true' : 'false' }};
-    const myEmail = 'yonakou2002@gmail.com'; // <-- REPLACE THIS WITH YOUR EMAIL
+    const myEmail = 'yonakou2002@gmail.com';
 
     function sendMessage() {
         const fields = [
@@ -243,7 +253,6 @@
             { el: document.getElementById('message'), name: 'Message' }
         ];
 
-        // Check empty fields
         for (let field of fields) {
             removeFieldError(field.el);
             if (!field.el.value.trim()) {
@@ -258,7 +267,6 @@
             return;
         }
 
-        // Send email via mailto
         const subject = encodeURIComponent(`Contact from ${fields[0].el.value}`);
         const body = encodeURIComponent(`Name: ${fields[0].el.value}\nEmail: ${fields[1].el.value}\n\nMessage:\n${fields[2].el.value}`);
         window.location.href = `mailto:${myEmail}?subject=${subject}&body=${body}`;
@@ -290,7 +298,7 @@
     }
 
     function redirectToSignIn() {
-        window.location.href = '/login'; // replace with your login page route
+        window.location.href = '/login';
     }
 </script>
 @endpush

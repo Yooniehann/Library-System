@@ -7,14 +7,20 @@
 <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 <style>
-body { background: #0f172a; color: #fff; font-family: 'Open Sans', sans-serif; }
-h1, h2 { color: #FFD369; }
+body {
+    background: #0f172a;
+    color: #fff;
+    font-family: 'Open Sans', sans-serif;
+    margin: 0;
+}
 
 /* Sidebar */
 .sidebar {
     position: fixed;
-    top: 0; left: 0;
-    width: 250px; height: 100%;
+    top: 0;
+    left: 0;
+    width: 250px;
+    height: 100%;
     background: #111827;
     padding-top: 60px;
     z-index: 1000;
@@ -27,9 +33,15 @@ h1, h2 { color: #FFD369; }
 .sidebar::-webkit-scrollbar { display: none; }
 .sidebar ul { list-style: none; padding: 0; margin: 0; }
 .sidebar ul li {
-    padding: 14px 20px; font-size: 1rem;
-    color: #FFD369; display: flex; align-items: center; gap: 14px;
-    border-radius: 0.5rem; cursor: pointer; margin: 4px 10px;
+    padding: 14px 20px;
+    font-size: 1rem;
+    color: #FFD369;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    border-radius: 0.5rem;
+    cursor: pointer;
+    margin: 4px 10px;
     transition: background .3s, color .3s;
 }
 .sidebar ul li:hover { background: #FF9F1C; color: #111827; }
@@ -39,9 +51,9 @@ h1, h2 { color: #FFD369; }
 
 /* Close button inside sidebar */
 .close-btn {
-    position: fixed; /* Fix the button always visible */
+    position: fixed;
     top: 16px;
-    left: 210px; /* inside sidebar area */
+    left: 210px;
     background: transparent;
     border: none;
     color: #FFD369;
@@ -51,26 +63,108 @@ h1, h2 { color: #FFD369; }
 }
 
 /* Main Content */
-.main-content { margin-left: 250px; padding: 24px; transition: margin-left 0.3s ease; }
+.main-content {
+    margin-left: 250px;
+    padding: 2rem;
+    transition: margin-left 0.3s ease;
+    min-height: 100vh;
+}
 
-/* Flex header for hamburger + title */
-.flex-header { display: flex; align-items: center; gap: 16px; margin-bottom: 1.5rem; }
-.open-btn { font-size: 1.5rem; color: #FFB347; background: none; border: none; cursor: pointer; }
+/* Flex header (hamburger + title) */
+.flex-header {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin-bottom: 2rem;
+}
+.open-btn {
+    font-size: 1.5rem;
+    color: #FFB347;
+    background: none;
+    border: none;
+    cursor: pointer;
+}
+h1, h2 {
+    color: #FFD369;
+    margin: 0;
+}
 
-/* Notification cards */
-.notification-card { background: #1e293b; border-radius: 12px; padding: 16px; margin-bottom: 12px; transition: background 0.2s; }
-.notification-card:hover { background: #334155; }
-.status-badge { padding: 2px 6px; border-radius: 9999px; font-size: 0.75rem; font-weight: 600; }
+/* Notification Cards */
+.notification-card {
+    background: #1e293b;
+    border-radius: 12px;
+    padding: 16px;
+    transition: background 0.3s, transform 0.2s;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    flex-wrap: wrap;
+}
+.notification-card:hover {
+    background: #334155;
+    transform: translateY(-2px);
+}
+.notification-card > div {
+    flex: 1;
+}
+.status-badge {
+    padding: 4px 8px;
+    border-radius: 9999px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-align: center;
+    white-space: nowrap;
+}
 .bg-borrow { background: #2563eb; color: #fff; }
 .bg-fine { background: #dc2626; color: #fff; }
 .bg-reservation { background: #f59e0b; color: #111827; }
 
-/* Responsive adjustments */
+/* Buttons */
+.btn-action {
+    padding: 6px 12px;
+    border-radius: 6px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+.btn-orange { background: #FF9F1C; color: #111827; }
+.btn-orange:hover { background: #e68a00; }
+
+/* Input Group */
+.input-group {
+    position: relative;
+    width: 100%;
+}
+.input-group i {
+    position: absolute;
+    top: 50%;
+    left: 12px;
+    transform: translateY(-50%);
+    color: #9ca3af;
+}
+.input-group input {
+    width: 100%;
+    padding-left: 2.5rem;
+}
+
+/* Responsive Adjustments */
+@media (max-width: 1024px) {
+    .main-content { padding: 1.5rem; }
+}
+
 @media (max-width: 768px) {
-    .main-content { margin-left: 0; }
-    .close-btn { left: 180px; } /* Adjust close button inside smaller sidebar */
+    .main-content { margin-left: 0; padding: 1rem; }
+    .close-btn { left: 180px; }
+    .notification-card { flex-direction: column; gap: 1rem; }
+    .status-badge { margin-top: 0.5rem; }
+}
+
+@media (max-width: 480px) {
+    .main-content { padding: 0.8rem; }
+    .flex-header { flex-direction: column; align-items: flex-start; gap: 0.5rem; }
 }
 </style>
+
 </head>
 <body>
 
@@ -112,11 +206,11 @@ h1, h2 { color: #FFD369; }
         </li>
     </ul>
 </div>
-
 <!-- Main Content -->
 <div class="main-content" id="mainContent">
-    <div class="flex justify-between items-center mb-6">
-        <h1 class="text-2xl font-bold text-white">Notifications</h1>
+    <div class="flex-header">
+        <button class="open-btn" id="openBtn" onclick="openNav()"><i class="fas fa-bars"></i></button>
+        <h1 class="text-2xl font-bold">Notifications</h1>
     </div>
 
     @if($notifications->isEmpty())
@@ -167,17 +261,6 @@ h1, h2 { color: #FFD369; }
                     </div>
                     <div class="flex flex-col items-end space-y-2">
                         <span class="status-badge px-2 py-1 rounded {{ $typeClass }}">{{ $typeLabel }}</span>
-
-                        @if($notification->status !== 'read')
-                            <form action="{{ route('kid.kidnoti.markAsRead', $notification->notification_id) }}" method="POST">
-                                @csrf
-                                <button type="submit" class="text-sm bg-primary-orange px-3 py-1 rounded hover:bg-dark-orange transition-colors">
-                                    Mark as Read
-                                </button>
-                            </form>
-                        @else
-                            <span class="text-xs text-gray-400">Read</span>
-                        @endif
                     </div>
                 </div>
             @endforeach
@@ -189,6 +272,7 @@ h1, h2 { color: #FFD369; }
         </div>
     @endif
 </div>
+
 
 
 

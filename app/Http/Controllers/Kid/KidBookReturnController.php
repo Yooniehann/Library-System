@@ -44,9 +44,8 @@ class KidBookReturnController extends Controller
             'return_date' => $returnDate,
             'condition_on_return' => $request->input('condition_on_return', 'good'),
             'late_days' => $lateDays,
-            'fine_amount' => $fineAmount,
+            'fine_amount' => $fineAmount
             // 'notes' => $request->input('notes', null),
-        ]);
         ]);
 
         // Update borrow status

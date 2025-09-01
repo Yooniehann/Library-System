@@ -160,11 +160,11 @@
                 <!-- Desktop Menu -->
                 <div class="hidden md:flex items-center space-x-6">
                     <!-- Search Bar -->
-                    <div class="search-box relative mr-4">
+                    {{-- <div class="search-box relative mr-4">
                         <input type="text" placeholder="Search books..."
                             class="bg-black bg-opacity-30 text-white pl-10 pr-4 py-2 rounded-full w-64 focus:outline-none focus:ring-2 focus:ring-yellow-300 transition-all">
                         <i class="fas fa-search absolute left-3 top-3 text-gray-400"></i>
-                    </div>
+                    </div> --}}
 
                     <a href="{{ route('home') }}"
                         class="text-white hover:text-yellow-300 transition duration-300 font-medium">Home</a>

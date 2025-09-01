@@ -56,6 +56,7 @@ Route::view('/faq', 'static.faq')->name('faq');
 Route::view('/privacy', 'static.privacy')->name('privacy');
 Route::view('/terms', 'static.terms')->name('terms');
 Route::view('/memberplan', 'static.memberplan')->name('memberplan');
+Route::get('/search', [BookController::class, 'search'])->name('search');
 
 // Book page in home
 Route::get('/books', [CatalogController::class, 'books'])->name('books.index');
@@ -337,6 +338,7 @@ Route::middleware(['auth', 'verified', 'role:Member'])->prefix('member')->name('
 
     // Member borrowed books - Moved to member-specific routes
     Route::get('/borrowed', [BorrowController::class, 'index'])->name('borrowed.index');
+    Route::post('/borrow/{borrow}/renew', [BorrowController::class, 'renew'])->name('borrow.renew');
 
     // Fines routes
     Route::get('/fines', [FineController::class, 'index'])->name('fines.index');
@@ -347,7 +349,7 @@ Route::middleware(['auth', 'verified', 'role:Member'])->prefix('member')->name('
     Route::get('/payments/create/{fine?}', [PaymentController::class, 'create'])->name('payments.create');
     Route::post('/payments', [PaymentController::class, 'store'])->name('payments.store');
     Route::get('/payments/{payment}', [PaymentController::class, 'show'])->name('payments.show');
-
+    Route::get('/payments/{payment}/print', [PaymentController::class, 'print'])->name('payments.print');
 
     // Notifications routes - Member
     Route::get('notifications/', [NotificationController::class, 'memberIndex'])->name('notifications.index');

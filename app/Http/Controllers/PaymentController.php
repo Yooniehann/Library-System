@@ -115,4 +115,13 @@ class PaymentController extends Controller
 
         return view('dashboard.member.payments.show', compact('payment'));
     }
+
+    public function print($id)
+    {
+        $payment = Payment::with(['fine', 'fine.borrow.inventory.book'])
+            ->where('user_id', Auth::id())
+            ->findOrFail($id);
+
+        return view('dashboard.member.payments.print', compact('payment'));
+    }
 }

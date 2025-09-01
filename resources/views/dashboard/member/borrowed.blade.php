@@ -121,8 +121,27 @@
                 <div class="w-6"></div> <!-- Spacer for balance -->
             </div>
 
+
             <!-- Main Content Area -->
             <main class="flex-1 overflow-y-auto p-4 md:p-6">
+                <!-- Success/Error Messages -->
+                @if(session('success'))
+                    <div class="bg-green-700 border-l-4 border-green-500 text-white p-4 mb-6 rounded">
+                        <div class="flex items-center">
+                            <i class="fas fa-check-circle mr-3"></i>
+                            <p>{{ session('success') }}</p>
+                        </div>
+                    </div>
+                @endif
+                
+                @if(session('error'))
+                    <div class="bg-red-700 border-l-4 border-red-500 text-white p-4 mb-6 rounded">
+                        <div class="flex items-center">
+                            <i class="fas fa-exclamation-circle mr-3"></i>
+                            <p>{{ session('error') }}</p>
+                        </div>
+                    </div>
+                @endif
                 <div class="mb-6">
                     <h1 class="text-2xl font-bold text-white">My Borrowed Books</h1>
                     <p class="text-gray-400">View and manage all books you've borrowed from the library.</p>
@@ -233,59 +252,82 @@
                                         </td>
                                         
                                         <!-- Status Column -->
-                                        <td class="px-6 py-4 whitespace-nowrap">
-                                            @php
-                                                $status = strtolower($borrow->status ?? '');
-                                                $isOverdueByDate = $borrow->due_date && $borrow->due_date->isPast();
-                                            @endphp
+<td class="px-6 py-4 whitespace-nowrap">
+    @php
+        $status = strtolower($borrow->status ?? '');
+        $isOverdueByDate = $borrow->due_date && $borrow->due_date->isPast();
+        $renewalsLeft = 2 - $borrow->renewal_count;
+    @endphp
 
-                                            @if($isOverdueByDate || $status === 'overdue')
-                                                <span class="px-3 py-1 text-xs font-semibold rounded-full bg-red-600 text-red-50">Overdue</span>
-                                                <div class="text-xs text-red-400 mt-1">Please return ASAP</div>
+    @if($isOverdueByDate || $status === 'overdue')
+        <span class="px-3 py-1 text-xs font-semibold rounded-full bg-red-600 text-red-50">Overdue</span>
+        <div class="text-xs text-red-400 mt-1">Please return ASAP</div>
 
-                                            @elseif($status === 'active')
-                                                <span class="px-3 py-1 text-xs font-semibold rounded-full bg-green-700 text-green-100">Active</span>
-                                                <div class="text-xs text-gray-400 mt-1">
-                                                    {{ round(now()->diffInDays($borrow->due_date)) }} days remaining
-                                                </div>
+    @elseif($status === 'active')
+        <span class="px-3 py-1 text-xs font-semibold rounded-full bg-green-700 text-green-100">Active</span>
+        <div class="text-xs text-gray-400 mt-1">
+            {{ round(now()->diffInDays($borrow->due_date)) }} days remaining
+        </div>
+        <!-- Show renewal information -->
+        <div class="text-xs mt-1 {{ $renewalsLeft > 0 ? 'text-blue-400' : 'text-orange-400' }}">
+            <i class="fas fa-sync-alt mr-1"></i>
+            @if($renewalsLeft > 0)
+                {{ $renewalsLeft }} renewal{{ $renewalsLeft > 1 ? 's' : '' }} left
+            @else
+                No renewals left
+            @endif
+        </div>
 
-                                            @elseif($status === 'returned')
-                                                <span class="px-3 py-1 text-xs font-semibold rounded-full bg-gray-700 text-gray-300">Returned</span>
+    @elseif($status === 'returned')
+        <span class="px-3 py-1 text-xs font-semibold rounded-full bg-gray-700 text-gray-300">Returned</span>
 
-                                            @else
-                                                <span class="px-3 py-1 text-xs font-semibold rounded-full bg-gray-600 text-gray-300">
-                                                    {{ ucfirst($borrow->status) }}
-                                                </span>
-                                            @endif
-                                        </td>
+    @else
+        <span class="px-3 py-1 text-xs font-semibold rounded-full bg-gray-600 text-gray-300">
+            {{ ucfirst($borrow->status) }}
+        </span>
+    @endif
+</td>
 
                                         
                                         <!-- Actions Column -->
-                                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                                            <div class="flex flex-col space-y-2">
-                                                @if($borrow->status !== 'returned')
-                                                    <!-- Renew Button -->
-                                                    <form action="{{ route('borrow.renew', $borrow->borrow_id) }}" method="POST" class="w-full">
-                                                        @csrf
-                                                        <button type="submit" 
-                                                                class="w-full flex items-center justify-center px-4 py-2 bg-blue-700 text-white text-sm rounded hover:bg-blue-600 transition-colors">
-                                                            <i class="fas fa-sync-alt mr-2"></i> Renew
-                                                        </button>
-                                                    </form>
-                                                    
-                                                    <!-- Return Button -->
-                                                    <form action="{{ route('book.return', $borrow->borrow_id) }}" method="POST" class="w-full">
-                                                        @csrf
-                                                        <button type="submit" 
-                                                                class="w-full flex items-center justify-center px-4 py-2 bg-green-700 text-white text-sm rounded hover:bg-green-600 transition-colors">
-                                                            <i class="fas fa-undo mr-2"></i> Return
-                                                        </button>
-                                                    </form>
-                                                @else
-                                                    <span class="text-gray-500 text-sm">No actions available</span>
-                                                @endif
-                                            </div>
-                                        </td>
+<td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+    <div class="flex flex-col space-y-2">
+        @if($borrow->status !== 'returned')
+            @php
+                $renewalsLeft = 2 - $borrow->renewal_count;
+                $canRenew = $renewalsLeft > 0 && !$borrow->due_date->isPast();
+            @endphp
+
+            <!-- Renew Button -->
+            @if($canRenew)
+                <form action="{{ route('borrow.renew', $borrow->borrow_id) }}" method="POST" class="w-full">
+                    @csrf
+                    <button type="submit" 
+                            class="w-full flex items-center justify-center px-4 py-2 bg-blue-700 text-white text-sm rounded hover:bg-blue-600 transition-colors">
+                        <i class="fas fa-sync-alt mr-2"></i> Renew
+                    </button>
+                </form>
+            @else
+                <button class="w-full flex items-center justify-center px-4 py-2 bg-gray-600 text-gray-300 text-sm rounded cursor-not-allowed"
+                        title="{{ $renewalsLeft <= 0 ? 'Maximum renewals reached' : 'Cannot renew overdue book' }}">
+                    <i class="fas fa-sync-alt mr-2"></i> 
+                    {{ $renewalsLeft <= 0 ? 'Max Renewed' : 'Cannot Renew' }}
+                </button>
+            @endif
+            
+            <!-- Return Button -->
+            <form action="{{ route('book.return', $borrow->borrow_id) }}" method="POST" class="w-full">
+                @csrf
+                <button type="submit" 
+                        class="w-full flex items-center justify-center px-4 py-2 bg-green-700 text-white text-sm rounded hover:bg-green-600 transition-colors">
+                    <i class="fas fa-undo mr-2"></i> Return
+                </button>
+            </form>
+        @else
+            <span class="text-gray-500 text-sm">No actions available</span>
+        @endif
+    </div>
+</td>
                                     </tr>
                                     @endforeach
                                 </tbody>
@@ -333,11 +375,11 @@
                             <i class="fas fa-bookmark mr-4"></i>
                             My Reservations
                         </a>
-                        <a href="{{ route('member.fines.index')}}" class="flex items-center px-4 py-3 text-sm font-medium text-gray-300 hover:text-white hover:bg-slate-700 rounded-lg">
+                        <a href="{{ route('member.fines.index')}}" class="flex items-center px-2 py-2 text-sm font-medium text-gray-300 hover:text-white hover:bg-slate-700 rounded-lg">
                             <i class="fas fa-money-bill-wave mr-3"></i>
                             Fines 
                         </a>
-                        <a href="{{ route('member.payments.index')}}" class="flex items-center px-4 py-3 text-sm font-medium text-gray-300 hover:text-white hover:bg-slate-700 rounded-lg">
+                        <a href="{{ route('member.payments.index')}}" class="flex items-center px-2 py-2 text-sm font-medium text-gray-300 hover:text-white hover:bg-slate-700 rounded-lg">
                             <i class="fas fa-money-bill-wave mr-3"></i>
                             Payments
                         </a>

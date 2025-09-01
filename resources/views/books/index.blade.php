@@ -638,7 +638,7 @@
                         <div class="category-section">
                             <div class="category-header">
                                 <h2 class="category-title">{{ $category->category_name }}</h2>
-                                <button class="see-all-btn">See All</button>
+                                {{-- <button class="see-all-btn">See All</button> --}}
                             </div>
 
                             <div class="books-slider">

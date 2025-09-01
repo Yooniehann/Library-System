@@ -408,6 +408,14 @@
             margin-left: 70px;
         }
 
+        /* Search Results Grid */
+        .search-results-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 20px;
+            margin-top: 2rem;
+        }
+
         /* Responsive Adjustments */
         @media (max-width: 1200px) {
             .slider-item {
@@ -426,6 +434,10 @@
 
             .slider-item {
                 flex: 0 0 calc(33.333% - 20px);
+            }
+
+            .search-results-grid {
+                grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
             }
         }
 
@@ -446,6 +458,10 @@
 
             .books-slider {
                 padding: 0 30px;
+            }
+
+            .search-results-grid {
+                grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
             }
         }
 
@@ -469,6 +485,10 @@
             .slider-btn {
                 width: 30px;
                 height: 30px;
+            }
+
+            .search-results-grid {
+                grid-template-columns: 1fr;
             }
         }
 
@@ -535,6 +555,82 @@
                 </div>
             </div>
 
+            <!-- Search Results Section -->
+            @if($search)
+                <div class="search-results-section">
+                    <div class="category-header">
+                        <h2 class="category-title">Search Results for "{{ $search }}"</h2>
+                    </div>
+
+                    @if($books->count() > 0)
+                        <div class="search-results-grid">
+                            @foreach($books as $book)
+                                <div class="book-card">
+                                    <div class="book-cover-container">
+                                        <img src="{{ $book->cover_image ? asset('storage/' . $book->cover_image) : asset('images/default-book-cover.jpg') }}"
+                                            class="book-cover" alt="Cover of {{ $book->title }}"
+                                            onerror="this.onerror=null; this.src='{{ asset('images/default-book-cover.jpg') }}'">
+                                        @if ($book->availableInventories->count() > 0)
+                                            <span class="badge-available">{{ $book->availableInventories->count() }}
+                                                Available</span>
+                                        @else
+                                            <span class="badge-unavailable">Out of Stock</span>
+                                        @endif
+                                    </div>
+                                    <div class="card-body">
+                                        <h5 class="card-title">{{ Str::limit($book->title, 40) }}</h5>
+                                        <p class="card-text card-author">By: {{ $book->author->fullname }}</p>
+                                        <p class="card-text">Published: {{ $book->publication_year }}</p>
+                                        <p class="card-price">${{ number_format($book->pricing, 2) }}</p>
+                                        <div class="card-actions">
+                                            <a href="{{ route('books.show', $book->book_id) }}"
+                                                class="btn-view">View Details</a>
+                                            @auth
+                                                @if (Auth::user()->role === 'Guest')
+                                                    <span class="login-prompt">Upgrade membership to borrow</span>
+                                                @elseif (Auth::user()->role === 'Member' || Auth::user()->role === 'Kid')
+                                                    @if ($book->availableInventories->count() > 0)
+                                                        <form action="{{ route('borrow.create', $book->book_id) }}"
+                                                            method="POST">
+                                                            @csrf
+                                                            <button type="submit"
+                                                                class="btn-borrow">Borrow</button>
+                                                        </form>
+                                                    @else
+                                                        <form
+                                                            action="{{ route('reservations.create', $book->book_id) }}"
+                                                            method="POST">
+                                                            @csrf
+                                                            <button type="submit"
+                                                                class="btn-reserve">Reserve</button>
+                                                        </form>
+                                                    @endif
+                                                @else
+                                                    <span class="login-prompt">Admins cannot borrow books</span>
+                                                @endif
+                                            @else
+                                                <span class="login-prompt">Login to borrow</span>
+                                            @endauth
+                                        </div>
+                                    </div>
+                                </div>
+                            @endforeach
+                        </div>
+
+                        <!-- Pagination for search results -->
+                        <div class="pagination-container">
+                            {{ $books->links() }}
+                        </div>
+                    @else
+                        <div class="text-center py-5">
+                            <i class="fas fa-book-open fa-3x mb-3" style="color: var(--yellow-300);"></i>
+                            <h3>No books found</h3>
+                            <p>We couldn't find any books matching your search criteria.</p>
+                        </div>
+                    @endif
+                </div>
+            @endif
+
             <!-- Books by Category -->
             @if ($categories->count() > 0)
                 @foreach ($categories as $category)
@@ -577,7 +673,7 @@
                                                         @auth
                                                             @if (Auth::user()->role === 'Guest')
                                                                 <span class="login-prompt">Upgrade membership to borrow</span>
-                                                            @else
+                                                            @elseif (Auth::user()->role === 'Member' || Auth::user()->role === 'Kid')
                                                                 @if ($book->availableInventories->count() > 0)
                                                                     <form action="{{ route('borrow.create', $book->book_id) }}"
                                                                         method="POST">
@@ -594,6 +690,8 @@
                                                                             class="btn-reserve">Reserve</button>
                                                                     </form>
                                                                 @endif
+                                                            @else
+                                                                <span class="login-prompt">Admins cannot borrow books</span>
                                                             @endif
                                                         @else
                                                             <span class="login-prompt">Login to borrow</span>

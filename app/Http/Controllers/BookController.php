@@ -38,6 +38,22 @@ class BookController extends Controller
         return view('dashboard.admin.books.index', compact('books', 'search'));
     }
 
+    // Welcome page with new arrivals and bestsellers
+    public function welcome()
+    {
+        $newArrivals = Book::with(['author', 'inventories'])
+            ->orderBy('created_at', 'desc')
+            ->take(4)
+            ->get();
+
+        $bestsellers = Book::with(['author', 'inventories'])
+            ->withCount('borrows')
+            ->orderBy('borrows_count', 'desc')
+            ->take(4)
+            ->get();
+
+        return view('welcome', compact('newArrivals', 'bestsellers'));
+    }
 
     // Show create form
     public function create()

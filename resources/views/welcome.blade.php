@@ -288,15 +288,40 @@
         .carousel-nav {
             /* display: none; */
         }
-        
+
         .membership-carousel {
             padding: 0 20px;
         }
-        
+
         .membership-card {
             margin: 0 0.5rem;
             flex: 0 0 calc(100% - 1rem);
         }
+    }
+
+    /* Badge Styles */
+    .badge-available {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        background: rgba(40, 167, 69, 0.9);
+        color: white;
+        padding: 5px 10px;
+        border-radius: 4px;
+        font-size: 0.75rem;
+        font-weight: 600;
+    }
+
+    .badge-unavailable {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        background: rgba(239, 68, 68, 0.9);
+        color: white;
+        padding: 5px 10px;
+        border-radius: 4px;
+        font-size: 0.75rem;
+        font-weight: 600;
     }
     </style>
 @endpush
@@ -418,7 +443,7 @@
                                     <span class="text-primary-orange mr-2">✓</span>
                                     <span>Weekly story time sessions</span>
                                 </li>
-                                <li class="flex items-start">
+                                <li class="flex items start">
                                     <span class="text-primary-orange mr-2">✓</span>
                                     <span>Child-friendly reading areas</span>
                                 </li>
@@ -544,64 +569,31 @@
         <div class="text-white container mx-auto px-4 max-w-6xl">
             <h2 class="section-title">New Arrivals</h2>
             <div class="book-grid">
-                <!-- Book 1 -->
+                @foreach($newArrivals as $book)
                 <div class="book-card">
-                    <img src="https://m.media-amazon.com/images/I/71FTb9X6wsL._AC_UF1000,1000_QL80_.jpg"
-                        alt="The Great Gatsby" class="w-full h-72 object-cover">
+                    <div class="relative">
+                        <img src="{{ $book->cover_image ? asset('storage/' . $book->cover_image) : asset('images/default-book-cover.jpg') }}"
+                            alt="{{ $book->title }}" class="w-full h-72 object-cover"
+                            onerror="this.onerror=null; this.src='{{ asset('images/default-book-cover.jpg') }}'">
+                        @if($book->availableInventories->count() > 0)
+                            <span class="badge-available">{{ $book->availableInventories->count() }} Available</span>
+                        @else
+                            <span class="badge-unavailable">Out of Stock</span>
+                        @endif
+                    </div>
                     <div class="p-5">
-                        <h3 class="font-bold text-lg text-gray-700 mb-1">The Great Gatsby</h3>
-                        <p class="text-gray-600 mb-3">F. Scott Fitzgerald</p>
+                        <h3 class="font-bold text-lg text-gray-700 mb-1">{{ Str::limit($book->title, 30) }}</h3>
+                        <p class="text-gray-600 mb-3">{{ $book->author->fullname }}</p>
                         <div class="flex justify-between items-center">
                             <span class="text-primary-orange text-sm font-medium">New Release</span>
-                            <button class="btn-primary text-sm px-3 py-1">View</button>
+                            <a href="{{ route('books.show', $book->book_id) }}" class="btn-primary text-sm px-3 py-1">View</a>
                         </div>
                     </div>
                 </div>
-
-                <!-- Book 2 -->
-                <div class="book-card">
-                    <img src="https://m.media-amazon.com/images/I/81af+MCATTL._AC_UF1000,1000_QL80_.jpg"
-                        alt="Atomic Habits" class="w-full h-72 object-cover">
-                    <div class="p-5">
-                        <h3 class="font-bold text-lg text-gray-700 mb-1">Atomic Habits</h3>
-                        <p class="text-gray-600 mb-3">James Clear</p>
-                        <div class="flex justify-between items-center">
-                            <span class="text-primary-orange text-sm font-medium">New Release</span>
-                            <button class="btn-primary text-sm px-3 py-1">View</button>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Book 3 -->
-                <div class="book-card">
-                    <img src="https://m.media-amazon.com/images/I/71UwSHSZRnS._AC_UF1000,1000_QL80_.jpg" alt="Educated"
-                        class="w-full h-72 object-cover">
-                    <div class="p-5">
-                        <h3 class="font-bold text-lg text-gray-700 mb-1">Educated</h3>
-                        <p class="text-gray-600 mb-3">Tara Westover</p>
-                        <div class="flex justify-between items-center">
-                            <span class="text-primary-orange text-sm font-medium">New Release</span>
-                            <button class="btn-primary text-sm px-3 py-1">View</button>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Book 4 -->
-                <div class="book-card">
-                    <img src="https://m.media-amazon.com/images/I/81bsw6fnUiL._AC_UF1000,1000_QL80_.jpg"
-                        alt="The Silent Patient" class="w-full h-72 object-cover">
-                    <div class="p-5">
-                        <h3 class="font-bold text-lg text-gray-700 mb-1">The Silent Patient</h3>
-                        <p class="text-gray-600 mb-3">Alex Michaelides</p>
-                        <div class="flex justify-between items-center">
-                            <span class="text-primary-orange text-sm font-medium">New Release</span>
-                            <button class="btn-primary text-sm px-3 py-1">View</button>
-                        </div>
-                    </div>
-                </div>
+                @endforeach
             </div>
             <div class="text-center mt-10">
-                <a href="#" class="btn-outline inline-block">View All New Arrivals</a>
+                <a href="{{ route('books.index') }}" class="btn-outline inline-block">View All New Arrivals</a>
             </div>
         </div>
     </section>
@@ -611,64 +603,31 @@
         <div class="text-white container mx-auto px-4 max-w-6xl">
             <h2 class="section-title">Bestsellers</h2>
             <div class="book-grid">
-                <!-- Book 1 -->
+                @foreach($bestsellers as $book)
                 <div class="book-card">
-                    <img src="https://m.media-amazon.com/images/I/71FxgtFKcQL._AC_UF1000,1000_QL80_.jpg"
-                        alt="To Kill a Mockingbird" class="w-full h-72 object-cover">
-                    <div class="p-5">
-                        <h3 class="font-bold text-lg text-gray-700 mb-1">To Kill a Mockingbird</h3>
-                        <p class="text-gray-600 mb-3">Harper Lee</p>
-                        <div class="flex justify-between items-center">
-                            <span class="text-primary-orange text-sm font-medium">#1 Bestseller</span>
-                            <button class="btn-primary text-sm px-3 py-1">View</button>
-                        </div>
+                    <div class="relative">
+                        <img src="{{ $book->cover_image ? asset('storage/' . $book->cover_image) : asset('images/default-book-cover.jpg') }}"
+                            alt="{{ $book->title }}" class="w-full h-72 object-cover"
+                            onerror="this.onerror=null; this.src='{{ asset('images/default-book-cover.jpg') }}'">
+                        @if($book->availableInventories->count() > 0)
+                            <span class="badge-available">{{ $book->availableInventories->count() }} Available</span>
+                        @else
+                            <span class="badge-unavailable">Out of Stock</span>
+                        @endif
                     </div>
-                </div>
-
-                <!-- Book 2 -->
-                <div class="book-card">
-                    <img src="https://m.media-amazon.com/images/I/61ZewDE3beL._AC_UF1000,1000_QL80_.jpg" alt="1984"
-                        class="w-full h-72 object-cover">
                     <div class="p-5">
-                        <h3 class="font-bold text-lg text-gray-700 mb-1">1984</h3>
-                        <p class="text-gray-600 mb-3">George Orwell</p>
+                        <h3 class="font-bold text-lg text-gray-700 mb-1">{{ Str::limit($book->title, 30) }}</h3>
+                        <p class="text-gray-600 mb-3">{{ $book->author->fullname }}</p>
                         <div class="flex justify-between items-center">
                             <span class="text-primary-orange text-sm font-medium">Top 10</span>
-                            <button class="btn-primary text-sm px-3 py-1">View</button>
+                            <a href="{{ route('books.show', $book->book_id) }}" class="btn-primary text-sm px-3 py-1">View</a>
                         </div>
                     </div>
                 </div>
-
-                <!-- Book 3 -->
-                <div class="book-card">
-                    <img src="https://m.media-amazon.com/images/I/71Q1tPupKjL._AC_UF1000,1000_QL80_.jpg"
-                        alt="Pride and Prejudice" class="w-full h-72 object-cover">
-                    <div class="p-5">
-                        <h3 class="font-bold text-lg text-gray-700 mb-1">Pride and Prejudice</h3>
-                        <p class="text-gray-600 mb-3">Jane Austen</p>
-                        <div class="flex justify-between items-center">
-                            <span class="text-primary-orange text-sm font-medium">Top 10</span>
-                            <button class="btn-primary text-sm px-3 py-1">View</button>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Book 4 -->
-                <div class="book-card">
-                    <img src="https://m.media-amazon.com/images/I/71X1p4TGlxL._AC_UF1000,1000_QL80_.jpg" alt="The Hobbit"
-                        class="w-full h-72 object-cover">
-                    <div class="p-5">
-                        <h3 class="font-bold text-lg text-gray-700 mb-1">The Hobbit</h3>
-                        <p class="text-gray-600 mb-3">J.R.R. Tolkien</p>
-                        <div class="flex justify-between items-center">
-                            <span class="text-primary-orange text-sm font-medium">Top 10</span>
-                            <button class="btn-primary text-sm px-3 py-1">View</button>
-                        </div>
-                    </div>
-                </div>
+                @endforeach
             </div>
             <div class="text-center mt-10">
-                <a href="#" class="btn-outline inline-block">View All Bestsellers</a>
+                <a href="{{ route('books.index') }}?sort=bestsellers" class="btn-outline inline-block">View All Bestsellers</a>
             </div>
         </div>
     </section>

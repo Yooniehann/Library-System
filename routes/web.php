@@ -47,9 +47,7 @@ use App\Http\Controllers\Kid\KidBookReturnController;
 |--------------------------------------------------------------------------
 */
 
-Route::get('/', function () {
-    return view('welcome');
-})->name('home');
+Route::get('/', [BookController::class, 'welcome'])->name('home');
 
 // Static Pages
 Route::view('/about', 'static.about')->name('about');

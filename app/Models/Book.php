@@ -51,6 +51,19 @@ class Book extends Model
         return $this->hasMany(Inventory::class, 'book_id');
     }
 
+    public function borrows()
+    {
+        // Access borrows through inventories
+        return $this->hasManyThrough(
+            Borrow::class,    // Final model
+            Inventory::class, // Intermediate model
+            'book_id',        // Foreign key on inventories table
+            'inventory_id',   // Foreign key on borrows table
+            'book_id',        // Local key on books table
+            'inventory_id'    // Local key on inventories table
+        );
+    }
+
     public function inventory()
     {
         return $this->hasMany(Inventory::class, 'book_id');

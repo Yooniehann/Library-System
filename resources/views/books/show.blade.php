@@ -182,6 +182,12 @@
             margin-bottom: 2rem;
         }
 
+        .admin-message {
+            color: #fbbf24;
+            font-style: italic;
+            margin-top: 1rem;
+        }
+
 
         @media (max-width: 768px) {
             .book-image-container {
@@ -276,7 +282,7 @@
                                             class="btn-borrow">
                                             <i class="fas fa-crown me-2"></i>Upgrade to Borrow
                                         </a>
-                                    @else
+                                    @elseif (Auth::user()->role === 'Member' || Auth::user()->role === 'Kid')
                                         @if ($book->inventories->where('status', 'available')->count() > 0)
                                             <form action="{{ route('borrow.create', $book->book_id) }}" method="POST">
                                                 @csrf
@@ -292,6 +298,8 @@
                                                 </button>
                                             </form>
                                         @endif
+                                    @else
+                                        <p class="admin-message">Administrators cannot borrow books.</p>
                                     @endif
                                 @else
                                     <p class="text-muted">Please log in to borrow or reserve this book.</p>

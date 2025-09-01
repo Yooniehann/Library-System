@@ -17,7 +17,7 @@
     </div>
 
     <!-- Statistics Cards -->
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         <!-- Total Users -->
         <div class="bg-gradient-to-r from-blue-600 to-blue-800 rounded-xl p-6 shadow-lg text-white">
             <div class="flex items-center justify-between">
@@ -70,22 +70,6 @@
                 <a href="{{ route('admin.issued-books.index') }}" class="text-sm opacity-80 hover:opacity-100 flex items-center">
                     View borrows <i class="fas fa-arrow-right ml-2"></i>
                 </a>
-            </div>
-        </div>
-
-        <!-- Total Revenue -->
-        <div class="bg-gradient-to-r from-purple-600 to-purple-800 rounded-xl p-6 shadow-lg text-white">
-            <div class="flex items-center justify-between">
-                <div>
-                    <p class="text-sm opacity-80">Total Revenue</p>
-                    <p class="text-3xl font-bold">${{ number_format($totalRevenue, 2) }}</p>
-                </div>
-                <div class="bg-purple-500 p-3 rounded-full">
-                    <i class="fas fa-dollar-sign text-2xl"></i>
-                </div>
-            </div>
-            <div class="mt-4">
-                <p class="text-sm opacity-80">From fines</p>
             </div>
         </div>
     </div>

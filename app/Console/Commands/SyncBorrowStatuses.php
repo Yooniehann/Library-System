@@ -24,6 +24,15 @@ class SyncBorrowStatuses extends Command
 
         foreach ($borrows as $borrow) {
             $originalStatus = $borrow->status;
+
+            // Check if overdue status should be reverted
+            if ($borrow->status === 'overdue' && $borrow->due_date >= $currentDate) {
+                $borrow->status = 'active';
+                $borrow->save();
+                $updatedCount++;
+                continue;
+            }
+
             $borrow->updateStatusBasedOnFines();
 
             if ($borrow->status !== $originalStatus) {

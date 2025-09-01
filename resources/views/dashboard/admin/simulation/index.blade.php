@@ -14,6 +14,16 @@
             </div>
         @endif
 
+        @if ($errors->any())
+            <div class="bg-red-500 text-white p-4 rounded mb-6">
+                <ul>
+                    @foreach ($errors->all() as $error)
+                        <li>{{ $error }}</li>
+                    @endforeach
+                </ul>
+            </div>
+        @endif
+
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
             <!-- Simulation Settings Card -->
             <div class="bg-slate-800 rounded-lg shadow p-6">
@@ -91,11 +101,15 @@
                         <div id="simulation-fields" class="{{ $setting->is_active ? '' : 'hidden' }} space-y-4">
                             <div>
                                 <label for="simulation_date" class="block text-sm font-medium text-gray-300 mb-1">
-                                    Simulation Date
+                                    Simulation Date *
                                 </label>
                                 <input type="datetime-local" name="simulation_date" id="simulation_date"
                                     value="{{ $setting->simulation_date ? $setting->simulation_date->format('Y-m-d\TH:i') : now()->format('Y-m-d\TH:i') }}"
-                                    class="w-full bg-slate-700 border border-gray-600 text-white rounded-lg py-2 px-4 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                    class="w-full bg-slate-700 border border-gray-600 text-white rounded-lg py-2 px-4 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                    required>
+                                @error('simulation_date')
+                                    <p class="text-red-400 text-sm mt-1">{{ $message }}</p>
+                                @enderror
                             </div>
 
                             <div>
@@ -104,7 +118,7 @@
                                 </label>
                                 <textarea name="description" id="description" rows="3"
                                     placeholder="e.g., Testing overdue books for September 2025"
-                                    class="w-full bg-slate-700 border border-gray-600 text-white rounded-lg py-2 px-4 focus:outline-none focus:ring-2 focus:ring-blue-500">{{ $setting->description }}</textarea>
+                                    class="w-full bg-slate-700 border border-gray-600 text-white rounded-lg py-2 px-4 focus:outline-none focus:ring-2 focus:ring-blue-500">{{ old('description', $setting->description) }}</textarea>
                             </div>
                         </div>
 
@@ -124,11 +138,35 @@
                                 </form>
                             @endif
                         </div>
-                        
+
                     </div>
                 </form>
             </div>
         </div>
+
+        <!-- Status Update Section -->
+        @if ($setting->is_active)
+        <div class="mt-6 bg-slate-800 rounded-lg shadow p-6">
+            <h2 class="text-lg font-semibold text-white mb-4 border-b border-gray-700 pb-2">
+                Immediate Status Update
+            </h2>
+
+            <p class="text-gray-300 mb-4">
+                After enabling simulation, you may need to manually update book statuses to reflect the new date.
+            </p>
+
+            <form action="{{ route('admin.simulation.update-status') }}" method="POST">
+                @csrf
+                <button type="submit"
+                    class="bg-purple-600 hover:bg-purple-700 text-white font-medium py-2 px-4 rounded-lg transition-colors">
+                    Update All Book Statuses Now
+                </button>
+                <p class="text-gray-400 text-sm mt-2">
+                    This will run the overdue check and status sync commands immediately.
+                </p>
+            </form>
+        </div>
+        @endif
 
         <!-- Help Section -->
         <div class="mt-6 bg-slate-800 rounded-lg shadow p-6">
@@ -143,6 +181,7 @@
                         <li>Set simulation date to a date after September 5, 2025</li>
                         <li>The system will calculate overdue days based on the simulation date</li>
                         <li>Fines will be calculated automatically</li>
+                        <li>Click "Update All Book Statuses Now" to see immediate changes</li>
                     </ul>
                 </div>
 
@@ -152,6 +191,7 @@
                         <li>Simulation affects all date calculations system-wide</li>
                         <li>Remember to disable simulation when done testing</li>
                         <li>Real dates are used when simulation is disabled</li>
+                        <li>Status updates may take up to 1 minute with scheduled commands</li>
                     </ul>
                 </div>
             </div>
@@ -166,11 +206,35 @@
             const toggleCheckbox = document.getElementById('is_active');
             const simulationFields = document.getElementById('simulation-fields');
 
+            // Initial state
+            if (toggleCheckbox.checked) {
+                simulationFields.classList.remove('hidden');
+            } else {
+                simulationFields.classList.add('hidden');
+            }
+
+            // Change event
             toggleCheckbox.addEventListener('change', function() {
                 if (this.checked) {
                     simulationFields.classList.remove('hidden');
+                    // Make simulation date required when enabled
+                    document.getElementById('simulation_date').required = true;
                 } else {
                     simulationFields.classList.add('hidden');
+                    // Remove required attribute when disabled
+                    document.getElementById('simulation_date').required = false;
+                }
+            });
+
+            // Form validation
+            const form = document.querySelector('form');
+            form.addEventListener('submit', function(e) {
+                if (toggleCheckbox.checked) {
+                    const simulationDate = document.getElementById('simulation_date').value;
+                    if (!simulationDate) {
+                        e.preventDefault();
+                        alert('Please select a simulation date when enabling time simulation.');
+                    }
                 }
             });
         });

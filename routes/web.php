@@ -290,12 +290,15 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'verified', 'role:Ad
         Route::get('/{id}', [IssuedBooksController::class, 'returnedShow'])->name('show');
     });
 
-    // Admin Simulation Routes
+    // Admin Simulation Routes - Fixed
     Route::prefix('simulation')->name('simulation.')->group(function () {
         Route::get('/', [SimulationController::class, 'index'])->name('index');
         Route::post('/', [SimulationController::class, 'update'])->name('update');
         Route::post('/disable', [SimulationController::class, 'disable'])->name('disable');
+        Route::post('/update-status', [SimulationController::class, 'updateStatus'])->name('update-status');
     });
+
+
 
     // Admin Overdue Books Routes
     Route::prefix('overdue-books')->name('overdue-books.')->group(function () {

@@ -30,5 +30,13 @@ class SimulationSetting extends Model
 
         return now();
     }
-    
+
+    public static function getSettings()
+    {
+        return self::firstOrCreate([], [
+            'is_active' => false,
+            'simulation_date' => now(),
+            'description' => 'Default simulation settings'
+        ]);
+    }
 }

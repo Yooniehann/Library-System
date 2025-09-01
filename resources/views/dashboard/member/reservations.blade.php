@@ -48,7 +48,7 @@
                         </a>
                         <a href="{{ route('member.fines.index')}}" class="flex items-center px-4 py-3 text-sm font-medium text-gray-300 hover:text-white hover:bg-slate-700 rounded-lg">
                             <i class="fas fa-money-bill-wave mr-3"></i>
-                            Fines 
+                            Fines
                         </a>
                         <a href="{{ route('member.payments.index')}}" class="flex items-center px-4 py-3 text-sm font-medium text-gray-300 hover:text-white hover:bg-slate-700 rounded-lg">
                             <i class="fas fa-money-bill-wave mr-3"></i>
@@ -98,10 +98,10 @@
                 <div class="bg-slate-800 rounded-lg shadow p-4 mb-6">
                     <form action="{{ route('reservations.index') }}" method="GET" class="flex gap-3">
                         <div class="flex-1">
-                            <input type="text" 
-                                   name="search" 
-                                   value="{{ $searchTerm ?? '' }}" 
-                                   placeholder="Search by book title, author, reservation ID, or status..." 
+                            <input type="text"
+                                   name="search"
+                                   value="{{ $searchTerm ?? '' }}"
+                                   placeholder="Search by book title, author, reservation ID, or status..."
                                    class="w-full px-4 py-2 bg-slate-700 border border-slate-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-primary-orange">
                         </div>
                         <button type="submit" class="bg-primary-orange text-black px-6 py-2 rounded-lg hover:bg-dark-orange transition-colors">
@@ -141,7 +141,7 @@
                                 <span class="text-sm text-gray-400">Search results for "{{ $searchTerm }}"</span>
                             @endif
                         </div>
-                        
+
                         <div class="overflow-x-auto">
                             <table class="min-w-full divide-y divide-slate-700">
                                 <thead class="bg-slate-700">
@@ -168,7 +168,7 @@
                                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-300 font-mono">
                                             #{{ $reservation->reservation_id }}
                                         </td>
-                                        
+
                                         <!-- Book Cover Column -->
                                         <td class="px-6 py-4">
                                             <div class="h-24 w-16 bg-slate-600 rounded-lg overflow-hidden shadow-md flex items-center justify-center">
@@ -179,19 +179,19 @@
                                                 @endif
                                             </div>
                                         </td>
-                                        
+
                                         <!-- Book Details Column -->
                                         <td class="px-6 py-4">
                                             <div class="max-w-xs">
                                                 <div class="text-lg font-semibold text-white mb-1">{{ $book->title }}</div>
-                                                <div class="text-sm text-gray-400 mb-2">by {{ $book->author->name ?? 'Unknown Author' }}</div>
+                                                <div class="text-sm text-gray-400 mb-2">by {{ $book->author->fullname ?? 'Unknown Author' }}</div>
                                                 <div class="text-xs text-gray-500">ISBN: {{ $book->isbn }}</div>
                                                 <a href="{{ route('books.show', $book->book_id) }}" class="text-xs text-primary-orange hover:text-dark-orange mt-2 inline-block">
                                                     <i class="fas fa-eye mr-1"></i> View Book
                                                 </a>
                                             </div>
                                         </td>
-                                        
+
                                         <!-- Dates Columns -->
                                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-300">
                                             {{ $reservation->reservation_date->format('M d, Y') }}
@@ -202,12 +202,12 @@
                                                 <div class="text-xs text-red-400 mt-1">Expired</div>
                                             @endif
                                         </td>
-                                        
+
                                         <!-- Priority Column -->
                                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-300 text-center">
                                             <span class="text-lg font-bold text-primary-orange">#{{ $reservation->priority_number }}</span>
                                         </td>
-                                        
+
                                         <!-- Status Column -->
                                         <td class="px-6 py-4 whitespace-nowrap">
                                             @if($isExpired)
@@ -231,13 +231,13 @@
                                                 @endswitch
                                             @endif
                                         </td>
-                                        
+
                                         <!-- Actions Column -->
                                         <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
                                             @if($reservation->status === 'active' && !$isExpired)
                                                 <form action="{{ route('reservations.cancel', $reservation->reservation_id) }}" method="POST" class="w-full">
                                                     @csrf
-                                                    <button type="submit" 
+                                                    <button type="submit"
                                                             class="w-full flex items-center justify-center px-4 py-2 bg-red-700 text-white text-sm rounded hover:bg-red-600 transition-colors"
                                                             onclick="return confirm('Are you sure you want to cancel this reservation?')">
                                                         <i class="fas fa-times mr-2"></i> Cancel
@@ -292,7 +292,7 @@
                         </a>
                         <a href="{{ route('member.fines.index')}}" class="flex items-center px-2 py-2 text-base font-medium text-gray-300 hover:text-white hover:bg-slate-700 rounded-lg">
                             <i class="fas fa-money-bill-wave mr-4"></i>
-                            Fines 
+                            Fines
                         </a>
                         <a href="{{ route('member.payments.index')}}" class="flex items-center px-2 py-2 text-base font-medium text-gray-300 hover:text-white hover:bg-slate-700 rounded-lg">
                             <i class="fas fa-money-bill-wave mr-4"></i>
@@ -326,7 +326,7 @@
                 </div>
             </div>
         </div>
-    </div> 
+    </div>
 
     <script>
         function toggleMobileSidebar() {
